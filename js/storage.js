@@ -41,14 +41,36 @@ export function saveCustomBeer(beer) {
     localStorage.setItem(STORAGE_KEY_CUSTOM, JSON.stringify(beers));
 }
 
+// --- Rating Template ---
+
+const DEFAULT_TEMPLATE = [
+    { id: 'score', label: 'Note Globale (/20)', type: 'number', min: 0, max: 20, step: 0.5 },
+    { id: 'comment', label: 'Commentaire', type: 'textarea' }
+];
+
+export function getRatingTemplate() {
+    const data = localStorage.getItem('beerdex_rating_template');
+    return data ? JSON.parse(data) : DEFAULT_TEMPLATE;
+}
+
+export function saveRatingTemplate(template) {
+    localStorage.setItem('beerdex_rating_template', JSON.stringify(template));
+}
+
+export function resetRatingTemplate() {
+    localStorage.setItem('beerdex_rating_template', JSON.stringify(DEFAULT_TEMPLATE));
+    return DEFAULT_TEMPLATE;
+}
+
 // --- Import / Export ---
 
 export function exportData() {
     const exportObj = {
         ratings: getAllUserData(),
         customBeers: getCustomBeers(),
+        ratingTemplate: getRatingTemplate(),
         exportDate: new Date().toISOString(),
-        version: 1
+        version: 2
     };
     return JSON.stringify(exportObj);
 }
@@ -58,6 +80,7 @@ export function importData(jsonString) {
         const data = JSON.parse(jsonString);
         if (data.ratings) localStorage.setItem(STORAGE_KEY_RATINGS, JSON.stringify(data.ratings));
         if (data.customBeers) localStorage.setItem(STORAGE_KEY_CUSTOM, JSON.stringify(data.customBeers));
+        if (data.ratingTemplate) localStorage.setItem('beerdex_rating_template', JSON.stringify(data.ratingTemplate));
         return true;
     } catch (e) {
         console.error("Import failed:", e);

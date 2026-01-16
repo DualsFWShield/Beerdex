@@ -89,6 +89,7 @@ export function renderBeerList(beers, container) {
 
 export function renderBeerDetail(beer, onSave) {
     const existingData = Storage.getBeerRating(beer.id) || {};
+    const template = Storage.getRatingTemplate();
 
     const wrapper = document.createElement('div');
     wrapper.className = 'modal-content';
@@ -96,6 +97,42 @@ export function renderBeerDetail(beer, onSave) {
     let imgPath = beer.image;
     if (!imgPath) imgPath = 'images/beer/FUT.jpg';
 
+    // Build Dynamic Form
+    let formFields = template.map(field => {
+        const value = existingData[field.id] !== undefined ? existingData[field.id] : '';
+
+        if (field.type === 'number') {
+            return `
+            <div class="form-group">
+                <label class="form-label">${field.label}</label>
+                <input type="number" class="form-input" name="${field.id}" min="${field.min}" max="${field.max}" step="${field.step}" value="${value}" placeholder="Note... (0-20)">
+            </div>`;
+        } else if (field.type === 'textarea') {
+            return `
+            <div class="form-group">
+                <label class="form-label">${field.label}</label>
+                <textarea class="form-textarea" name="${field.id}" rows="3">${value}</textarea>
+            </div>`;
+        } else if (field.type === 'range') {
+            return `
+            <div class="form-group">
+                <label class="form-label" style="display:flex; justify-content:space-between;">
+                    <span>${field.label}</span>
+                    <span id="val-${field.id}">${value || 0}/10</span>
+                </label>
+                <input type="range" class="form-input" name="${field.id}" min="0" max="10" step="1" value="${value || 0}" 
+                    oninput="document.getElementById('val-${field.id}').innerText = this.value + '/10'"
+                    style="padding:0; height:40px;">
+            </div>`;
+        } else if (field.type === 'checkbox') {
+            return `
+            <div class="form-group" style="display:flex; align-items:center; gap:10px; background:var(--bg-card); padding:10px; border-radius:8px;">
+                <input type="checkbox" name="${field.id}" ${value ? 'checked' : ''} style="width:20px; height:20px;">
+                <label class="form-label" style="margin:0;">${field.label}</label>
+            </div>`;
+        }
+        return '';
+    }).join('');
 
     wrapper.innerHTML = `
         <div style="text-align: center; margin-bottom: 20px;">
@@ -109,31 +146,32 @@ export function renderBeerDetail(beer, onSave) {
         </div>
 
         <form id="rating-form">
-            <div class="form-group">
-                <label class="form-label">Note (/20)</label>
-                <input type="number" class="form-input" id="rating-score" min="0" max="20" step="0.5" value="${existingData.score || ''}" placeholder="Ex: 15.5">
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Commentaire</label>
-                <textarea class="form-textarea" id="rating-comment" rows="3" placeholder="Notes de dégustation... (Amertume, arômes...)">${existingData.comment || ''}</textarea>
-            </div>
-
+            ${formFields}
             <button type="submit" class="btn-primary">Enregistrer la dégustation</button>
         </form>
     `;
 
     wrapper.querySelector('form').onsubmit = (e) => {
         e.preventDefault();
-        const score = document.getElementById('rating-score').value;
-        const comment = document.getElementById('rating-comment').value;
+        const formData = new FormData(e.target);
+        const data = {};
 
-        if (score) {
-            onSave({ score, comment });
-            closeModal();
-        } else {
+        template.forEach(field => {
+            if (field.type === 'checkbox') {
+                data[field.id] = formData.get(field.id) === 'on';
+            } else {
+                data[field.id] = formData.get(field.id);
+            }
+        });
+
+        // Validation for core score if present
+        if (template.find(t => t.id === 'score') && !data.score) {
             alert("Veuillez mettre une note !");
+            return;
         }
+
+        onSave(data);
+        closeModal();
     };
 
     openModal(wrapper);
@@ -188,17 +226,16 @@ export function renderAddBeerForm(onSave) {
 
     let imageBase64 = '';
 
-    // File Reader Logic
+    // File Reader Logic with Resize
     const fileInput = wrapper.querySelector('#image-file-input');
     fileInput.onchange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onload = function (evt) {
-                imageBase64 = evt.target.result;
-                wrapper.querySelector('#file-name').innerText = file.name;
-            };
-            reader.readAsDataURL(file);
+            wrapper.querySelector('#file-name').innerText = "Traitement...";
+            resizeImage(file, 250, 250, (resizedBase64) => {
+                imageBase64 = resizedBase64;
+                wrapper.querySelector('#file-name').innerText = file.name + " (Redimensionné)";
+            });
         }
     };
 
@@ -237,7 +274,13 @@ export function renderStats(allBeers, userData, container) {
                 Vous avez goûté <strong style="color: #fff;">${drunkCount}</strong> bières sur <strong style="color: #fff;">${totalBeers}</strong> disponibles.
             </p>
             
-            <div style="margin-top: 40px; text-align: left; background: var(--bg-card); padding: 20px; border-radius: 16px;">
+            <div style="margin-top: 20px; text-align: left; background: var(--bg-card); padding: 20px; border-radius: 16px;">
+                <h3>Personnalisation</h3>
+                <p style="font-size: 0.8rem; margin-bottom: 20px; color: #888;">Adaptez le formulaire de notation à vos goûts (Sliders, Checkboxes...).</p>
+                <button id="btn-template" class="form-input" style="text-align: center; background: #333; color: white; border: 1px solid #444;">⚙️ Configurer la Notation</button>
+            </div>
+
+            <div style="margin-top: 20px; text-align: left; background: var(--bg-card); padding: 20px; border-radius: 16px;">
                 <h3>Gestion des données</h3>
                 <p style="font-size: 0.8rem; margin-bottom: 20px; color: #888;">Exportez vos données pour les sauvegarder ou les transférer.</p>
                 <button id="btn-export" class="form-input" style="text-align: center; margin-bottom: 10px;">📥 Exporter mes données</button>
@@ -245,6 +288,9 @@ export function renderStats(allBeers, userData, container) {
             </div>
         </div>
        `;
+
+    // Handlers
+    container.querySelector('#btn-template').onclick = () => renderTemplateEditor();
 
     // Handle Export
     container.querySelector('#btn-export').onclick = () => {
@@ -279,4 +325,120 @@ export function renderStats(allBeers, userData, container) {
         };
         input.click();
     };
+}
+
+function renderTemplateEditor() {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'modal-content';
+    let template = Storage.getRatingTemplate();
+
+    const refreshList = () => {
+        const listHtml = template.map((field, index) => `
+            <div style="background:rgba(0,0,0,0.3); padding:10px; margin-bottom:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <strong>${field.label}</strong> <span style="font-size:0.8rem; color:#888;">(${field.type})</span>
+                </div>
+                ${field.id === 'score' || field.id === 'comment' ? '' : `<button data-idx="${index}" class="icon-btn delete-field" style="color:red;">🗑️</button>`}
+            </div>
+        `).join('');
+
+        wrapper.querySelector('#field-list').innerHTML = listHtml;
+
+        wrapper.querySelectorAll('.delete-field').forEach(btn => {
+            btn.onclick = (e) => {
+                template.splice(e.target.dataset.idx, 1);
+                refreshList();
+            };
+        });
+    };
+
+    wrapper.innerHTML = `
+        <h2>Configuration Notation</h2>
+        <div id="field-list" style="margin: 20px 0;"></div>
+        
+        <div style="border-top:1px solid #333; padding-top:20px;">
+            <h3>Ajouter un champ</h3>
+            <div class="form-group">
+                <input type="text" id="new-label" class="form-input" placeholder="Nom (ex: Amertume)">
+            </div>
+            <div class="form-group">
+                <select id="new-type" class="form-select">
+                    <option value="range">Curseur (Slider 0-10)</option>
+                    <option value="checkbox">Case à cocher (Oui/Non)</option>
+                    <option value="textarea">Texte long</option>
+                </select>
+            </div>
+            <button id="add-field" class="btn-primary" style="background:var(--bg-card); border:1px solid var(--accent-gold); color:var(--accent-gold);">+ Ajouter le champ</button>
+        </div>
+
+        <button id="save-template" class="btn-primary" style="margin-top:20px;">Enregistrer la configuration</button>
+        <button id="reset-template" class="form-input" style="margin-top:10px; background:none; border:none; color:red;">Réinitialiser par défaut</button>
+    `;
+
+    setTimeout(refreshList, 0);
+
+    // Add Field
+    wrapper.querySelector('#add-field').onclick = () => {
+        const label = wrapper.querySelector('#new-label').value;
+        const type = wrapper.querySelector('#new-type').value;
+        if (label) {
+            const id = label.toLowerCase().replace(/[^a-z0-9]/g, '_');
+            let field = { id, label, type };
+            if (type === 'range') { field.min = 0; field.max = 10; field.step = 1; }
+            template.push(field);
+            refreshList();
+            wrapper.querySelector('#new-label').value = '';
+        }
+    };
+
+    // Save
+    wrapper.querySelector('#save-template').onclick = () => {
+        Storage.saveRatingTemplate(template);
+        closeModal();
+        showToast("Configuration sauvegardée !");
+    };
+
+    // Reset
+    wrapper.querySelector('#reset-template').onclick = () => {
+        if (confirm("Revenir aux champs par défaut ?")) {
+            Storage.resetRatingTemplate();
+            closeModal();
+            showToast("Réinitialisé !");
+        }
+    };
+
+    openModal(wrapper);
+}
+
+// Helper to resize image
+function resizeImage(file, maxWidth, maxHeight, callback) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height) {
+                if (width > maxWidth) {
+                    height *= maxWidth / width;
+                    width = maxWidth;
+                }
+            } else {
+                if (height > maxHeight) {
+                    width *= maxHeight / height;
+                    height = maxHeight;
+                }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            callback(canvas.toDataURL('image/jpeg', 0.8)); // 0.8 quality jpeg
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
 }
