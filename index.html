@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Beerdex</title>
+    <meta name="description" content="Le Pokedex ultime pour vos bières. Collectionnez, notez et savourez.">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Beerdex">
+    <meta property="og:description" content="Le Pokedex ultime pour vos bières.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://dualsfwshield.be/beerdex">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Russo+One&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="app">
+        <header class="app-header">
+            <div class="logo">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M7 22H17C18.1046 22 19 21.1046 19 20V8C19 6.89543 18.1046 6 17 6H7C5.89543 6 5 6.89543 5 8V20C5 21.1046 5.89543 22 7 22Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M15 2H9C7.89543 2 7 2.89543 7 4V6H17V4C17 2.89543 16.1046 2 15 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12 10V18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <h1>Beerdex</h1>
+            </div>
+            <button id="search-toggle" class="icon-btn" aria-label="Recherche">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+            </button>
+        </header>
+
+         <!-- Search Bar Overlay (Initially Hidden) -->
+        <div id="search-bar" class="search-bar hidden">
+            <input type="text" id="search-input" placeholder="Rechercher une bière..." autocomplete="off">
+            <button id="search-close" class="icon-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+
+        <main id="main-content" class="scroll-container">
+            <!-- Dynamic Content Injected Here -->
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <p>Chargement du Beerdex...</p>
+            </div>
+        </main>
+
+        <!-- Floating Action Button for Adding Data -->
+        <button id="fab-add" class="fab" aria-label="Ajouter une bière">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+        </button>
+
+        <!-- Navigation Bar -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" data-view="home">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+                <span>Dex</span>
+            </button>
+            <button class="nav-item" data-view="drunk">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                   <path d="M12 21.5C16.9706 21.5 21 17.2467 21 12C21 6.75329 16.9706 2.5 12 2.5C7.02944 2.5 3 6.75329 3 12C3 17.2467 7.02944 21.5 12 21.5Z"/>
+                   <path d="M9 12L11 14L15 10"/>
+                </svg>
+                <span>Bus</span>
+            </button>
+            <button class="nav-item" data-view="stats">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+                <span>Stats</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Modals/Overlays -->
+    <div id="modal-container" class="modal-overlay hidden">
+        <!-- Content injected dynamically -->
+    </div>
+
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>
