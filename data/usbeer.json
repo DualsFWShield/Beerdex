@@ -1,0 +1,20 @@
+[
+  {
+    "title": "GOOSE IPA",
+    "brewery": "GOOSE ISLAND (AB INBEV)",
+    "type": "Blonde",
+    "volume": "6 L",
+    "alcohol": "5.9°",
+    "id": "GOOSE IPA_BLONDE_6",
+    "image": "images/beer/us/GOOSE_IPA_BLONDE_6.jpg"
+  },
+  {
+    "title": "KENTUCKY IPA",
+    "brewery": "ALLTECH LEXINGTON BREWING AND DISTILLING CO (Kentucky)",
+    "type": "Blonde",
+    "volume": "0.33 L",
+    "alcohol": "5.5°",
+    "id": "KENTUCKY IPA_BLONDE_0.33",
+    "image": "images/beer/us/KENTUCKY_IPA_BLONDE_033.jpg"
+  }
+]
