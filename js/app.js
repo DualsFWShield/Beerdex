@@ -35,8 +35,37 @@ function renderCurrentView() {
     const mainContent = document.getElementById('main-content');
 
     if (state.view === 'home') {
-        const filteredBeers = searchBeers(state.beers, state.filter);
-        UI.renderBeerList(filteredBeers, mainContent, state.activeFilters);
+        const isDiscovery = Storage.getPreference('discoveryMode', false);
+
+        let filteredBeers = searchBeers(state.beers, state.filter);
+
+        // Discovery Mode Logic: 
+        // If NO SEARCH: Show only discovered beers (My Collection).
+        // If SEARCH: Show matches (allowing discovery of new ones).
+        if (isDiscovery && !state.filter) {
+            const consumedIds = Storage.getAllConsumedBeerIds();
+            filteredBeers = state.beers.filter(b => consumedIds.includes(b.id));
+        }
+
+        // Toggle visibility of 'Bus' tab based on mode
+        const busTab = document.querySelector('.nav-item[data-view="drunk"]');
+        if (busTab) busTab.style.display = isDiscovery ? 'none' : 'flex';
+
+        const showCreatePrompt = isDiscovery && state.filter && filteredBeers.length === 0;
+
+        UI.renderBeerList(filteredBeers, mainContent, state.activeFilters, showCreatePrompt, () => {
+            // Handle "Create" click from empty state
+            UI.renderAddBeerForm((newBeer) => {
+                Storage.saveCustomBeer(newBeer);
+                state.beers.unshift(newBeer);
+                Achievements.checkAchievements(state.beers);
+                // Discovery mode: If we just added it, it matches the filter usually? 
+                // Or we reset filter? Let's just render.
+                renderCurrentView();
+                UI.closeModal();
+                UI.showToast("Bière ajoutée !");
+            }, state.filter); // Pass current search query as default title
+        });
     } else if (state.view === 'drunk') {
         const consumedIds = Storage.getAllConsumedBeerIds();
         const drunkBeers = state.beers.filter(b => consumedIds.includes(b.id));
@@ -45,7 +74,11 @@ function renderCurrentView() {
         // Actually, filtering drunk list is useful.
         UI.renderBeerList(drunkBeers, mainContent, state.activeFilters);
     } else if (state.view === 'stats') {
-        UI.renderStats(state.beers, Storage.getAllUserData(), mainContent);
+        const isDiscovery = Storage.getPreference('discoveryMode', false);
+        UI.renderStats(state.beers, Storage.getAllUserData(), mainContent, isDiscovery, (newVal) => {
+            Storage.savePreference('discoveryMode', newVal);
+            renderCurrentView(); // Re-render to reflect change immediately if we switch views
+        });
     }
 }
 

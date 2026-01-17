@@ -40,7 +40,7 @@ function openModal(content) {
 
 // --- Renders ---
 
-export function renderBeerList(beers, container, filters = null) {
+export function renderBeerList(beers, container, filters = null, showCreatePrompt = false, isDiscoveryCallback = null) {
     container.innerHTML = '';
     const userData = Storage.getAllUserData();
 
@@ -145,6 +145,17 @@ export function renderBeerList(beers, container, filters = null) {
     }
 
     if (filteredBeers.length === 0) {
+        if (showCreatePrompt && isDiscoveryCallback) {
+            container.innerHTML = `
+                <div style="text-align:center; padding: 40px 20px;">
+                    <p style="color: #888; margin-bottom: 20px;">La bière n'existe pas encore...</p>
+                    <button id="btn-create-discovery" class="btn-primary" style="background:var(--accent-gold); color:var(--bg-dark);">
+                        ➕ Créer cette bière
+                    </button>
+                </div>`;
+            document.getElementById('btn-create-discovery').onclick = isDiscoveryCallback;
+            return;
+        }
         container.innerHTML = '<div style="text-align:center; padding: 20px; color: #666;">Aucune bière ne correspond aux critères...</div>';
         return;
     }
@@ -661,7 +672,7 @@ export function renderAddBeerForm(onSave, editModeBeer = null) {
     openModal(wrapper);
 }
 
-export function renderStats(allBeers, userData, container) {
+export function renderStats(allBeers, userData, container, isDiscovery = false, discoveryCallback = null) {
     const totalBeers = allBeers.length;
     const drunkCount = Object.keys(userData).length;
     const percentage = Math.round((drunkCount / totalBeers) * 100) || 0;
@@ -710,6 +721,20 @@ export function renderStats(allBeers, userData, container) {
                     </div>
 
                     <div class="stat-card mt-20 text-center">
+                        <h3>Options</h3>
+                         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:15px; background:rgba(255,255,255,0.05); padding:10px; border-radius:8px;">
+                            <div style="text-align:left;">
+                                <strong style="color:var(--accent-gold);">Mode Découverte</strong>
+                                <p style="font-size:0.7rem; color:#888; margin-top:2px;">Cacher les bières non-trouvées</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="toggle-discovery" ${isDiscovery ? 'checked' : ''}>
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="stat-card mt-20 text-center">
                         <h3>Gestion des données</h3>
                         <p class="mb-20" style="font-size: 0.8rem; color: #888;">Exportez vos données pour les sauvegarder ou les transférer.</p>
                         <div style="display:flex; gap:10px; flex-wrap:wrap;">
@@ -723,6 +748,12 @@ export function renderStats(allBeers, userData, container) {
 
     // Handlers
     container.querySelector('#btn-template').onclick = () => renderTemplateEditor();
+
+    if (discoveryCallback) {
+        container.querySelector('#toggle-discovery').onchange = (e) => {
+            discoveryCallback(e.target.checked);
+        };
+    }
 
     // Handle Export Full
     container.querySelector('#btn-export-full').onclick = async () => {

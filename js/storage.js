@@ -145,6 +145,21 @@ export function resetRatingTemplate() {
     return DEFAULT_TEMPLATE;
 }
 
+// --- Generic Preferences ---
+export function getPreference(key, defaultValue) {
+    const val = localStorage.getItem(`beerdex_pref_${key}`);
+    if (val === null) return defaultValue;
+    try {
+        return JSON.parse(val);
+    } catch {
+        return val;
+    }
+}
+
+export function savePreference(key, value) {
+    localStorage.setItem(`beerdex_pref_${key}`, JSON.stringify(value));
+}
+
 // --- Import / Export ---
 
 // --- Advanced Export / Sharing ---
