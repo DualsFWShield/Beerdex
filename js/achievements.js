@@ -131,7 +131,8 @@ const ACHIEVEMENTS = [
 
 export function checkAchievements(allBeers) {
     const userData = Storage.getAllUserData();
-    const unlocked = getUnlockedAchievements();
+    const previouslyUnlocked = getUnlockedAchievements();
+    let currentUnlocked = [...previouslyUnlocked];
 
     // 1. Compute Stats State
     const stats = {
@@ -241,35 +242,50 @@ export function checkAchievements(allBeers) {
     stats.alphabetCount = stats.firstLetters.size;
     stats.hasVolume = (v) => stats.volumes.has(v);
 
-    // 2. Check Conditions
+    // 2. Check Conditions (Full Re-evaluation)
     let newUnlocks = [];
+    let updatedUnlockList = [];
+
     ACHIEVEMENTS.forEach(ach => {
-        if (!unlocked.includes(ach.id)) {
-            try {
-                if (ach.condition(stats)) {
-                    unlocked.push(ach.id);
-                    newUnlocks.push(ach);
-                }
-            } catch (e) {
-                // Safeguard
-                console.warn("Achievement Check Failed", ach.id, e);
+        let isMet = false;
+        try {
+            if (ach.condition(stats)) {
+                isMet = true;
+            }
+        } catch (e) {
+            console.warn("Achievement Check Failed", ach.id, e);
+        }
+
+        if (isMet) {
+            updatedUnlockList.push(ach.id);
+            // If it wasn't previously unlocked, it's a new unlock
+            if (!previouslyUnlocked.includes(ach.id)) {
+                newUnlocks.push(ach);
             }
         }
+        // If not met, it simply isn't added to updatedUnlockList (effectively locked)
     });
 
     // 3. Save & Notify
-    if (newUnlocks.length > 0) {
-        saveUnlockedAchievements(unlocked);
-        // Notify only a few to avoid spam? No, user wants notifications.
-        newUnlocks.forEach((ach, index) => {
-            // Stagger toasts slightly
-            setTimeout(() => {
-                showToast(`🏆 Succès : ${ach.title}`);
-            }, index * 1000);
-        });
+    // Only save if status changed (array content difference)
+    const hasChanged =
+        updatedUnlockList.length !== previouslyUnlocked.length ||
+        !updatedUnlockList.every(id => previouslyUnlocked.includes(id));
+
+    if (hasChanged) {
+        saveUnlockedAchievements(updatedUnlockList);
+
+        // Notify for NEW unlocks only
+        if (newUnlocks.length > 0) {
+            newUnlocks.forEach((ach, index) => {
+                setTimeout(() => {
+                    showToast(`🏆 Succès : ${ach.title}`);
+                }, index * 1000);
+            });
+        }
     }
 
-    return unlocked;
+    return updatedUnlockList;
 }
 
 // Storage Helpers for Achievements

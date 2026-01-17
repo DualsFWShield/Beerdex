@@ -1026,9 +1026,18 @@ function renderAchievementsList() {
 
             const tooltip = `${title}: ${desc}`;
 
+            // Mobile-friendly: Click to toggle tooltip instead of just title attribute
             return `
-                    <div class="ach-item" style="opacity:${opacity}; filter:${filter};" title="${tooltip}">
+                    <div class="ach-item" style="opacity:${opacity}; filter:${filter}; position:relative; cursor:pointer;" 
+                         onclick="this.querySelector('.ach-content-tooltip').style.display = this.querySelector('.ach-content-tooltip').style.display === 'block' ? 'none' : 'block'; setTimeout(() => this.querySelector('.ach-content-tooltip').style.display = 'none', 3000);">
                         <div class="ach-icon">${ach.icon}</div>
+                        <!-- Custom Tooltip -->
+                        <div class="ach-content-tooltip" style="display:none; position:absolute; bottom:110%; left:50%; transform:translateX(-50%); 
+                                    background:rgba(0,0,0,0.9); color:#fff; padding:8px; border-radius:6px; font-size:0.75rem; 
+                                    width:140px; text-align:center; z-index:100; pointer-events:none; border:1px solid #444;">
+                            <strong style="color:var(--accent-gold); display:block; margin-bottom:2px;">${title}</strong>
+                            ${desc}
+                        </div>
                     </div>`;
         }).join('');
 

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'beerdex-v2';
+const CACHE_NAME = 'Beerdex';
 const ASSETS = [
     './index.html',
     './style.css',
