@@ -7,6 +7,10 @@ const ASSETS = [
     './js/storage.js',
     './js/achievements.js',
     './data/deutchbeer.json',
+    './data/belgiumbeer.json',
+    './data/frenchbeer.json',
+    './data/nlbeer.json',
+    './data/usbeer.json',
     './manifest.webmanifest',
     './images/beer/FUT.jpg'
 ];

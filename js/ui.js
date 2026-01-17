@@ -156,6 +156,19 @@ export function renderBeerList(beers, container, filters = null, showCreatePromp
             document.getElementById('btn-create-discovery').onclick = isDiscoveryCallback;
             return;
         }
+
+        // Specific Empty State for Discovery Mode (No Search, Empty Collection)
+        if (isDiscoveryCallback && !showCreatePrompt) {
+            container.innerHTML = `
+                <div style="text-align:center; padding: 50px 20px; color: #888;">
+                    <div style="font-size: 3rem; margin-bottom: 20px;">🕵️‍♂️</div>
+                    <h3>Mode Découverte</h3>
+                    <p style="margin-top: 10px;">Votre collection est vide.</p>
+                    <p style="font-size: 0.8rem; margin-top: 5px;">Utilisez la recherche 🔍 pour trouver et ajouter des bières.</p>
+                </div>`;
+            return;
+        }
+
         container.innerHTML = '<div style="text-align:center; padding: 20px; color: #666;">Aucune bière ne correspond aux critères...</div>';
         return;
     }
