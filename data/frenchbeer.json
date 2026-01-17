@@ -42,7 +42,7 @@
     "volume": "30 L",
     "alcohol": "5°",
     "id": "CIDRE BRUT VAL DE RANCE_DOREE_30",
-    "image": "images/beer/FUT.jpg"
+    "image": ""
   },
   {
     "title": "CIDRE DOUX VAL DE RANCE",
@@ -51,7 +51,7 @@
     "volume": "20 L",
     "alcohol": "2°",
     "id": "CIDRE DOUX VAL DE RANCE_DOREE_20",
-    "image": "images/beer/FUT.jpg"
+    "image": ""
   },
   {
     "title": "CUVEE DES JONQUILLES",
@@ -411,7 +411,7 @@
     "volume": "30 L",
     "alcohol": "6°",
     "id": "SPECIALE GOLD GAYANT_BLONDE_30",
-    "image": "images/beer/FUT.jpg"
+    "image": ""
   },
   {
     "title": "TANDEM BONNE PIOCHE BIO",
@@ -447,6 +447,6 @@
     "volume": "30 L",
     "alcohol": "4.8°",
     "id": "UNAN 4.8%_BLONDE_30",
-    "image": "images/beer/FUT.jpg"
+    "image": ""
   }
 ]

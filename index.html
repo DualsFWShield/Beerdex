@@ -2,9 +2,13 @@
 <html lang="fr" data-theme="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="theme-color" content="#ffc107">
     <title>Beerdex</title>
     <meta name="description" content="Le Pokedex ultime pour vos bières. Collectionnez, notez et savourez.">
+    <!-- CSP for Security -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data:;">
     
     <!-- Open Graph -->
     <meta property="og:title" content="Beerdex">
@@ -18,22 +22,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Russo+One&display=swap" rel="stylesheet">
     
     <!-- Styles -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=1.1">
 </head>
 <body>
 
     <div id="app">
         <header class="app-header">
             <div class="logo">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M7 22H17C18.1046 22 19 21.1046 19 20V8C19 6.89543 18.1046 6 17 6H7C5.89543 6 5 6.89543 5 8V20C5 21.1046 5.89543 22 7 22Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M15 2H9C7.89543 2 7 2.89543 7 4V6H17V4C17 2.89543 16.1046 2 15 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M12 10V18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+                <img src="icons/logo-bnr.png" width="32" height="32" alt="Beerdex Logo">
                 <h1>Beerdex</h1>
             </div>
-            <button id="search-toggle" class="icon-btn" aria-label="Recherche">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <button type="button" id="filter-toggle" class="icon-btn" aria-label="Ouvrir les filtres" style="margin-right:2px;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                </svg>
+            </button>
+            <button type="button" id="search-toggle" class="icon-btn" aria-label="Ouvrir la recherche">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                     <circle cx="11" cy="11" r="8"></circle>
                     <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                 </svg>
@@ -42,9 +47,9 @@
 
          <!-- Search Bar Overlay (Initially Hidden) -->
         <div id="search-bar" class="search-bar hidden">
-            <input type="text" id="search-input" placeholder="Rechercher une bière..." autocomplete="off">
-            <button id="search-close" class="icon-btn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <input type="text" id="search-input" placeholder="Rechercher une bière..." autocomplete="off" aria-label="Champs de recherche">
+            <button type="button" id="search-close" class="icon-btn" aria-label="Fermer la recherche">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
                     <line x1="6" y1="6" x2="18" y2="18"></line>
                 </svg>
@@ -60,8 +65,8 @@
         </main>
 
         <!-- Floating Action Button for Adding Data -->
-        <button id="fab-add" class="fab" aria-label="Ajouter une bière">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <button type="button" id="fab-add" class="fab" aria-label="Ajouter une bière manuellement">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
             </svg>
@@ -69,8 +74,8 @@
 
         <!-- Navigation Bar -->
         <nav class="bottom-nav">
-            <button class="nav-item active" data-view="home">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <button type="button" class="nav-item active" data-view="home" aria-label="Accueil - Liste des bières">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                     <rect x="3" y="3" width="7" height="7"></rect>
                     <rect x="14" y="3" width="7" height="7"></rect>
                     <rect x="14" y="14" width="7" height="7"></rect>
@@ -78,15 +83,15 @@
                 </svg>
                 <span>Dex</span>
             </button>
-            <button class="nav-item" data-view="drunk">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <button type="button" class="nav-item" data-view="drunk" aria-label="Historique de consommation">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                    <path d="M12 21.5C16.9706 21.5 21 17.2467 21 12C21 6.75329 16.9706 2.5 12 2.5C7.02944 2.5 3 6.75329 3 12C3 17.2467 7.02944 21.5 12 21.5Z"/>
                    <path d="M9 12L11 14L15 10"/>
                 </svg>
                 <span>Bus</span>
             </button>
-            <button class="nav-item" data-view="stats">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <button type="button" class="nav-item" data-view="stats" aria-label="Statistiques et Succès">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                     <line x1="18" y1="20" x2="18" y2="10"></line>
                     <line x1="12" y1="20" x2="12" y2="4"></line>
                     <line x1="6" y1="20" x2="6" y2="14"></line>
@@ -97,10 +102,10 @@
     </div>
 
     <!-- Modals/Overlays -->
-    <div id="modal-container" class="modal-overlay hidden">
+    <div id="modal-container" class="modal-overlay hidden" aria-hidden="true">
         <!-- Content injected dynamically -->
     </div>
 
-    <script type="module" src="js/app.js"></script>
+    <script type="module" src="js/app.js?v=1.0"></script>
 </body>
 </html>

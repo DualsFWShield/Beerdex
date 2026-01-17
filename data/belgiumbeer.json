@@ -15,7 +15,7 @@
     "volume": "0.25 L",
     "alcohol": "6°",
     "id": null,
-    "image": "images/beer/FUT.jpg"
+    "image": "images/beer/default.jpg"
   },
   {
     "title": "AVERBODE",
@@ -60,7 +60,7 @@
     "volume": "20 L",
     "alcohol": "6.7°",
     "id": "BAPTIST IPA_BLONDE_20",
-    "image": "images/beer/FUT.jpg"
+    "image": ""
   },
   {
     "title": "BAPTIST RED",
@@ -69,7 +69,7 @@
     "volume": "20 L",
     "alcohol": "7°",
     "id": "BAPTIST RED_ROUGE/RUBIS_20",
-    "image": "images/beer/FUT.jpg"
+    "image": ""
   },
   {
     "title": "BAPTIST TRIPLE",
@@ -78,7 +78,7 @@
     "volume": "20 L",
     "alcohol": "8°",
     "id": "BAPTIST TRIPLE_BLONDE_20",
-    "image": "images/beer/FUT.jpg"
+    "image": ""
   },
   {
     "title": "BARBAR",
@@ -114,7 +114,7 @@
     "volume": "20 L",
     "alcohol": "6.2°",
     "id": "BERTINCHAMPS BLONDE_BLONDE_20",
-    "image": "images/beer/FUT.jpg"
+    "image": ""
   },
   {
     "title": "BIERE DES OURS",
@@ -159,7 +159,7 @@
     "volume": "20 L",
     "alcohol": "3.2°",
     "id": "BLANCHE DE NAMUR ROSEE_ROSEE_20",
-    "image": "images/beer/FUT.jpg"
+    "image": ""
   },
   {
     "title": "BLANCHE DES NEIGES",
@@ -222,7 +222,7 @@
     "volume": "20 L",
     "alcohol": "7.2°",
     "id": "BORNEM DOUBLE_BRUNE_20",
-    "image": "images/beer/FUT.jpg"
+    "image": ""
   },
   {
     "title": "BRIGAND",
@@ -330,7 +330,7 @@
     "volume": "20 L",
     "alcohol": "10.5°",
     "id": "CAROLUS XMAS_BRUNE_20",
-    "image": "images/beer/FUT.jpg"
+    "image": ""
   },
   {
     "title": "CHARLES QUINT BLONDE DOREE",
@@ -411,7 +411,7 @@
     "volume": "0.33 L",
     "alcohol": "4°",
     "id": "CHOUFFE LITE_BLONDE_20",
-    "image": "images/beer/FUT.jpg"
+    "image": ""
   },
   {
     "title": "COQ HARDI",
@@ -609,7 +609,7 @@
     "volume": "20 L",
     "alcohol": "8.5°",
     "id": "FILOU_BLONDE_20",
-    "image": "images/beer/FUT.jpg"
+    "image": ""
   },
   {
     "title": "FILOU IPA",
@@ -618,7 +618,7 @@
     "volume": "20 L",
     "alcohol": "6.5°",
     "id": "FILOU IPA_BLONDE_20",
-    "image": "images/beer/FUT.jpg"
+    "image": ""
   },
   {
     "title": "FLORIS CACTUS",
@@ -717,7 +717,7 @@
     "volume": "20 L",
     "alcohol": "5.2°",
     "id": "GRISETTE BLANCHE_BLANCHE_20",
-    "image": "images/beer/FUT.jpg"
+    "image": ""
   },
   {
     "title": "GRISETTE BLONDE SANS GLUTEN BIO",
@@ -1158,7 +1158,7 @@
     "volume": "20 L",
     "alcohol": "6.5°",
     "id": "MAREDSOUS BLONDE ABBAYE_BLONDE_20",
-    "image": "images/beer/FUT.jpg"
+    "image": ""
   },
   {
     "title": "MELL'S BRAU PILS",
@@ -1167,7 +1167,7 @@
     "volume": "30 L",
     "alcohol": "4.8°",
     "id": "MELL'S BRAU PILS_BLONDE_30",
-    "image": "images/beer/FUT.jpg"
+    "image": ""
   },
   {
     "title": "MELL'S BRAU PILS TETE CREUSE",
@@ -1176,7 +1176,7 @@
     "volume": "30 L",
     "alcohol": "4.8°",
     "id": "MELL'S BRAU PILS TETE CREUSE",
-    "image": "images/beer/FUT.jpg"
+    "image": ""
   },
   {
     "title": "MERE NOEL",
@@ -1239,7 +1239,7 @@
     "volume": "20 L",
     "alcohol": "8°",
     "id": "OMMEGANG_BLONDE_20",
-    "image": "images/beer/FUT.jpg"
+    "image": ""
   },
   {
     "title": "ORVAL",
@@ -1302,7 +1302,7 @@
     "volume": "30 L",
     "alcohol": "4.8°",
     "id": "PILS EXPORT",
-    "image": "images/beer/FUT.jpg"
+    "image": ""
   },
   {
     "title": "PIRAAT ROUSSE",
@@ -1311,7 +1311,7 @@
     "volume": "20 L",
     "alcohol": "7°",
     "id": "PIRAAT ROUSSE_AMBREE_20",
-    "image": "images/beer/FUT.jpg"
+    "image": ""
   },
   {
     "title": "QUEUE DE CHARRUE AMBREE",
@@ -1365,7 +1365,7 @@
     "volume": "20 L",
     "alcohol": "4.5°",
     "id": "RHODIENNE_BLONDE_20",
-    "image": "images/beer/FUT.jpg"
+    "image": ""
   },
   {
     "title": "RICHARD DIT LE CASTOR IPA",
@@ -1374,7 +1374,7 @@
     "volume": "20 L",
     "alcohol": "6°",
     "id": "RICHARD DIT LE CASTOR IPA_BLONDE_20",
-    "image": "images/beer/FUT.jpg"
+    "image": ""
   },
   {
     "title": "RINCE COCHON BLONDE",
@@ -1671,7 +1671,7 @@
     "volume": "20 L",
     "alcohol": "8.1°",
     "id": "TETE DE MORT DOUBLE IPA_BLONDE_20",
-    "image": "images/beer/FUT.jpg"
+    "image": ""
   },
   {
     "title": "TETE DE MORT RED",
@@ -1779,7 +1779,7 @@
     "volume": "20 L",
     "alcohol": "5.5°",
     "id": "UILTJE JUICY LUCY NEIPA_BLONDE_20",
-    "image": "images/beer/FUT.jpg"
+    "image": ""
   },
   {
     "title": "VAL DIEU BLONDE",
@@ -1797,7 +1797,7 @@
     "volume": "20 L",
     "alcohol": "9°",
     "id": "VAL DIEU TRIPLE_BLONDE_20",
-    "image": "images/beer/FUT.jpg"
+    "image": ""
   },
   {
     "title": "VEDETT EXTRA WHITE",
@@ -1842,7 +1842,7 @@
     "volume": "20 L",
     "alcohol": "7.2°",
     "id": "WESTMALLE DUO_BLONDE_20",
-    "image": "images/beer/FUT.jpg"
+    "image": ""
   },
   {
     "title": "WESTMALLE TRIPEL",

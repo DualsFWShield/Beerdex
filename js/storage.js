@@ -147,23 +147,171 @@ export function resetRatingTemplate() {
 
 // --- Import / Export ---
 
-export function exportData() {
+// --- Advanced Export / Sharing ---
+
+export async function exportDataAdvanced(options = { includeCustom: true }) {
     const exportObj = {
         ratings: getAllUserData(),
-        customBeers: getCustomBeers(),
         ratingTemplate: getRatingTemplate(),
         exportDate: new Date().toISOString(),
-        version: 2
+        version: 3
     };
-    return JSON.stringify(exportObj);
+
+    if (options.includeCustom) {
+        exportObj.customBeers = getCustomBeers();
+    }
+
+    const jsonString = JSON.stringify(exportObj);
+
+    // File System Access API (if available)
+    if (window.showSaveFilePicker) {
+        try {
+            const handle = await window.showSaveFilePicker({
+                suggestedName: `beerdex_backup_${new Date().toISOString().slice(0, 10)}.json`,
+                types: [{
+                    description: 'Beerdex JSON',
+                    accept: { 'application/json': ['.json'] },
+                }],
+            });
+            const writable = await handle.createWritable();
+            await writable.write(jsonString);
+            await writable.close();
+            return true;
+        } catch (err) {
+            console.warn("Save cancelled or failed", err);
+            return false;
+        }
+    } else {
+        // Fallback for Mobile / Older Browsers
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `beerdex_backup_${new Date().toISOString().slice(0, 10)}.json`;
+        a.click();
+        return true;
+    }
+}
+
+export async function shareBeer(beer) {
+    // bundle single beer data + possible rating
+    const rating = getBeerRating(beer.id);
+    const exportObj = {
+        beer: beer,
+        rating: rating,
+        image: beer.image, // Ensure image is included (base64) typically attached to custom beers
+        sharedAt: new Date().toISOString(),
+        type: 'single_beer_share' // Marker for import detection
+    };
+
+    const jsonString = JSON.stringify(exportObj, null, 2);
+    const filename = `beer_${beer.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.json`;
+
+    // Direct File Save / Download
+    if (window.showSaveFilePicker) {
+        try {
+            const handle = await window.showSaveFilePicker({
+                suggestedName: filename,
+                types: [{ description: 'Beerdex Beer JSON', accept: { 'application/json': ['.json'] } }],
+            });
+            const writable = await handle.createWritable();
+            await writable.write(jsonString);
+            await writable.close();
+            return true;
+        } catch (e) {
+            console.warn("Save cancelled", e);
+            return false;
+        }
+    } else {
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+        return true;
+    }
+}
+
+// Kept for backward compat or simple calls
+export function exportData() {
+    return exportDataAdvanced({ includeCustom: true });
 }
 
 export function importData(jsonString) {
     try {
         const data = JSON.parse(jsonString);
+
+        // CASE 1: Single Beer Share
+        if (data.type === 'single_beer_share' && data.beer) {
+            const sharedBeer = data.beer;
+            const sharedRating = data.rating;
+
+            // If it's a custom beer ID or doesn't exist in our DB (simulate check? for now we assume ID collision is unlikely for custom unless same origin)
+            // But if it IS a known ID (e.g. from static DB), we don't add to custom list, we just import rating.
+            // Logic: If ID starts with CUSTOM_, add to my custom list if not present.
+
+            if (String(sharedBeer.id).startsWith('CUSTOM_')) {
+                const customs = getCustomBeers();
+                const exists = customs.find(b => b.id === sharedBeer.id);
+                if (!exists) {
+                    saveCustomBeer(sharedBeer);
+                    // alert("Bière personnalisée ajoutée !"); 
+                } else {
+                    // Update? For now, skip or maybe update if user wants? 
+                    // Let's assume we don't overwrite custom definition to avoid conflicts, unless user specifically requested.
+                    // For simple sharing: if it exists, we stick with what we have.
+                }
+            }
+
+            // Import Rating/Consumption
+            if (sharedRating) {
+                const currentRatings = getAllUserData();
+                // Merge logic: If we have data, we might want to keep ours OR merge history?
+                // Simplest: If I haven't rated it, take the shared rating.
+                // If I have, maybe just add a history entry? 
+
+                // For this V1 of sharing: We overwrite/update the rating info if it's newer or we have nothing.
+                // But actually, sharing is usually "Here is a beer I found", not "Sync my rating".
+                // HOWEVER, the prompt implies importing "une biere a quelqu'un".
+                // Let's just SAVE the rating if we don't have one, or update the score/comment if we do?
+
+                // DECISION: If I have no data, I take theirs. 
+                // If I have data, I KEEP mine but maybe add their comment as a note?
+                // Actually, safeguard: Only import 'static' data (the beer itself).
+                // But user asked "inclut egalement les images des bieres custom", implying sharing DEFINITION is key.
+                // WE ALREADY HANDLED DEFINITION ABOVE.
+
+                // Optional: Import their rating as MY rating? No, that's weird.
+                // Maybe the use case is: "I export my beer to you". You get the beer definition.
+                // Use case "Restore backup": You get everything.
+
+                // CHANGE: If it's a single share, we mainly care about the Beer Definition (Custom).
+                // We typically DO NOT import the other person's consumption history as OURS.
+                // BUT, if it's a backup of a single beer...
+
+                // Compromise: We import the Beer Definition. 
+                // We ask user via confirm? No UI in storage.
+                // We'll just return true signifying "Beer Imported".
+                // If the user wants to copy the rating, that's ambiguous. 
+                // Let's Import Rating ONLY IF we have absolutely nothing for this beer.
+                if (!getAllUserData()[sharedBeer.id] && sharedRating) {
+                    // saveBeerRating(sharedBeer.id, sharedRating); 
+                    // Actually, let's NOT auto-import consumption history of someone else.
+                    // Just importing the beer definition (if custom) is the main value.
+                }
+            }
+            return true;
+        }
+
+        // CASE 2: Full Backup
         if (data.ratings) localStorage.setItem(STORAGE_KEY_RATINGS, JSON.stringify(data.ratings));
         if (data.customBeers) localStorage.setItem(STORAGE_KEY_CUSTOM, JSON.stringify(data.customBeers));
         if (data.ratingTemplate) localStorage.setItem('beerdex_rating_template', JSON.stringify(data.ratingTemplate));
+        if (data.version) {
+            // potential version migration handle
+        }
         return true;
     } catch (e) {
         console.error("Import failed:", e);

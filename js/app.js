@@ -1,11 +1,13 @@
 import * as Data from './data.js';
 import * as UI from './ui.js';
 import * as Storage from './storage.js';
+import * as Achievements from './achievements.js';
 
 // App State
 const state = {
     beers: [],
     filter: '',
+    activeFilters: {}, // New filter state
     view: 'home', // home, drunk, stats
 };
 
@@ -34,11 +36,14 @@ function renderCurrentView() {
 
     if (state.view === 'home') {
         const filteredBeers = searchBeers(state.beers, state.filter);
-        UI.renderBeerList(filteredBeers, mainContent);
+        UI.renderBeerList(filteredBeers, mainContent, state.activeFilters);
     } else if (state.view === 'drunk') {
         const consumedIds = Storage.getAllConsumedBeerIds();
         const drunkBeers = state.beers.filter(b => consumedIds.includes(b.id));
-        UI.renderBeerList(drunkBeers, mainContent);
+        // We could apply filters here too if we want? Let's keep it simple for now, or apply them.
+        // Let's pass the filters but typically filters are for "finding new beers".
+        // Actually, filtering drunk list is useful.
+        UI.renderBeerList(drunkBeers, mainContent, state.activeFilters);
     } else if (state.view === 'stats') {
         UI.renderStats(state.beers, Storage.getAllUserData(), mainContent);
     }
@@ -89,11 +94,27 @@ function setupEventListeners() {
         renderCurrentView();
     });
 
+    // Filter Toggle
+    document.getElementById('filter-toggle').addEventListener('click', () => {
+        UI.renderFilterModal(state.beers, state.activeFilters || {}, (filters) => {
+            state.activeFilters = filters;
+
+            // Visual feedback
+            const btn = document.getElementById('filter-toggle');
+            const hasFilters = Object.keys(filters).length > 0;
+            btn.style.color = hasFilters ? 'var(--accent-gold)' : 'inherit';
+
+            renderCurrentView();
+            if (hasFilters) UI.showToast("Filtres appliqués !");
+        });
+    });
+
     // FAB - Add Custom Beer
     document.getElementById('fab-add').addEventListener('click', () => {
         UI.renderAddBeerForm((newBeer) => {
             Storage.saveCustomBeer(newBeer);
             state.beers.unshift(newBeer); // Add to top
+            Achievements.checkAchievements(state.beers);
             renderCurrentView();
             UI.closeModal();
             UI.showToast("Bière ajoutée avec succès !");
@@ -109,6 +130,7 @@ function setupEventListeners() {
             if (beer) {
                 UI.renderBeerDetail(beer, (ratingData) => {
                     Storage.saveBeerRating(beer.id, ratingData);
+                    Achievements.checkAchievements(state.beers);
                     renderCurrentView(); // Re-render to show checkmarks
                     UI.showToast("Note sauvegardée !");
                 });
@@ -117,5 +139,23 @@ function setupEventListeners() {
     });
 }
 
-// Start App
-document.addEventListener('DOMContentLoaded', init);
+// Initialize
+window.addEventListener('DOMContentLoaded', init);
+
+// Global event listener for actions triggering achievements
+window.addEventListener('beerdex-action', () => {
+    Achievements.checkAchievements(state.beers);
+});
+
+// Register Service Worker for PWA
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+            .then(registration => {
+                console.log('ServiceWorker registration successful with scope: ', registration.scope);
+            })
+            .catch(err => {
+                console.log('ServiceWorker registration failed: ', err);
+            });
+    });
+}

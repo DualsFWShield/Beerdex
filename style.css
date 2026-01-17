@@ -435,3 +435,148 @@ h3 {
         opacity: 1;
     }
 }
+
+/* --- Added for UI Polish & Accessibility --- */
+
+/* Accessibility & Utils */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.p-20 {
+    padding: 20px;
+}
+
+.mt-20 {
+    margin-top: 20px;
+}
+
+.mb-10 {
+    margin-bottom: 10px;
+}
+
+.mb-20 {
+    margin-bottom: 20px;
+}
+
+.gap-10 {
+    gap: 10px;
+}
+
+/* SVG Donut Chart */
+.circular-chart {
+    display: block;
+    margin: 10px auto;
+    max-width: 80%;
+    max-height: 250px;
+}
+
+.circle-bg {
+    fill: none;
+    stroke: #333;
+    stroke-width: 2.8;
+}
+
+.circle {
+    fill: none;
+    stroke-width: 2.8;
+    stroke-linecap: round;
+    animation: progress 1s ease-out forwards;
+    stroke: var(--accent-gold);
+}
+
+@keyframes progress {
+    0% {
+        stroke-dasharray: 0 100;
+    }
+}
+
+/* Stats Cards */
+.stat-card {
+    background: var(--bg-card);
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    font-weight: bold;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: #666;
+}
+
+/* Comparison Items */
+.comp-item {
+    background: var(--bg-card);
+    padding: 10px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    color: #888;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.comp-icon {
+    font-size: 1.2rem;
+}
+
+/* Filter Modal */
+.filter-section {
+    border-top: 1px solid #333;
+    padding-top: 20px;
+    margin-top: 20px;
+}
+
+/* Achievements */
+.ach-category-title {
+    margin-top: 15px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 5px;
+    color: var(--accent-gold);
+}
+
+.ach-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 10px;
+}
+
+.ach-item {
+    text-align: center;
+    cursor: help;
+    position: relative;
+    transition: transform 0.2s;
+}
+
+.ach-item:hover {
+    transform: scale(1.1);
+}
+
+.ach-icon {
+    font-size: 2rem;
+}
+
+/* Backdrop Filter for Safari */
+.app-header,
+.bottom-nav {
+    -webkit-backdrop-filter: blur(10px);
+}
