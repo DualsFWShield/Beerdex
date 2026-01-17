@@ -13,19 +13,30 @@ export function getBeerRating(id) {
     return data[id] || null;
 }
 
-// Save rating
+// Save rating (Separated from consumption, but linked)
 export function saveBeerRating(id, ratingData) {
     const data = getAllUserData();
+    if (!data[id]) data[id] = { count: 1, history: [] }; // Assume rating implies drinking once if not present
+
     data[id] = {
+        ...data[id],
         ...ratingData,
         timestamp: new Date().toISOString()
     };
+
+    // Ensure history exists
+    if (!data[id].history) {
+        data[id].history = [{ date: new Date().toISOString(), volume: 330 }];
+        data[id].count = 1;
+    }
+
     localStorage.setItem(STORAGE_KEY_RATINGS, JSON.stringify(data));
 }
 
 // Get list of all IDs that have data (e.g. have been drunk/rated)
 export function getAllConsumedBeerIds() {
-    return Object.keys(getAllUserData());
+    const data = getAllUserData();
+    return Object.keys(data).filter(id => data[id].count > 0);
 }
 
 // --- Custom Beers ---
@@ -39,6 +50,78 @@ export function saveCustomBeer(beer) {
     const beers = getCustomBeers();
     beers.unshift(beer); // Add to top
     localStorage.setItem(STORAGE_KEY_CUSTOM, JSON.stringify(beers));
+}
+
+export function deleteCustomBeer(id) {
+    let beers = getCustomBeers();
+    beers = beers.filter(b => b.id !== id);
+    localStorage.setItem(STORAGE_KEY_CUSTOM, JSON.stringify(beers));
+}
+
+// --- Consumption Logic ---
+
+export function parseVolumeToMl(volStr) {
+    if (!volStr) return 330; // Default
+    let str = volStr.toLowerCase().replace(',', '.').replace(/\s/g, '');
+    let val = parseFloat(str);
+    if (isNaN(val)) return 330;
+
+    if (str.includes('ml')) return val;
+    if (str.includes('cl')) return val * 10;
+    if (str.includes('l')) return val * 1000;
+
+    // Fallback based on magnitude
+    if (val < 10) return val * 1000; // Assume Liters
+    if (val < 100) return val * 10; // Assume cl
+    return val; // Assume ml
+}
+
+export function addConsumption(id, volumeStr) {
+    const data = getAllUserData();
+    if (!data[id]) {
+        data[id] = { count: 0, history: [] };
+    }
+
+    // Migrate old data if necessary (if it has score but no count)
+    if (data[id].score && data[id].count === undefined) {
+        data[id].count = 1;
+        data[id].history = [{
+            date: data[id].timestamp,
+            volume: 330 // Assumption for historical data
+        }];
+    }
+
+    data[id].count = (data[id].count || 0) + 1;
+
+    const volMl = parseVolumeToMl(volumeStr);
+
+    if (!data[id].history) data[id].history = [];
+    data[id].history.push({
+        date: new Date().toISOString(),
+        volume: volMl
+    });
+
+    localStorage.setItem(STORAGE_KEY_RATINGS, JSON.stringify(data));
+    return data[id];
+}
+
+export function removeConsumption(id) {
+    const data = getAllUserData();
+    if (data[id] && data[id].count > 0) {
+        data[id].count--;
+        if (data[id].history && data[id].history.length > 0) {
+            data[id].history.pop();
+        }
+
+        if (data[id].count <= 0) {
+            // Keep rating data even if count is 0? Or remove?
+            // Requirement says "enlever une biere marquee comme bue".
+            // If count is 0, we treat it as not drunk.
+            data[id].count = 0;
+        }
+        localStorage.setItem(STORAGE_KEY_RATINGS, JSON.stringify(data));
+        return data[id];
+    }
 }
 
 // --- Rating Template ---
