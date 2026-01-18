@@ -814,6 +814,12 @@ export function renderStats(allBeers, userData, container, isDiscovery = false, 
                             <button type="button" id="btn-export-light" class="form-input text-center mb-10" style="flex:1; font-size:0.8rem;">📥 Sans Custom</button>
                         </div>
                         <button type="button" id="btn-import" class="form-input text-center mt-20">📤 Importer des données</button>
+                        
+                        <div style="margin-top:20px; border-top:1px solid #333; padding-top:10px;">
+                            <button type="button" id="btn-backup-text" class="form-input text-center" style="font-size:0.8rem; background:none; border:none; color:var(--accent-gold); text-decoration:underline;">
+                                Copier ma sauvegarde (Texte)
+                            </button>
+                        </div>
                     </div>
                 </div>
                 `;
@@ -859,6 +865,12 @@ export function renderStats(allBeers, userData, container, isDiscovery = false, 
         showToast("Préparation de l'export...");
         await Storage.exportDataAdvanced({ includeCustom: false });
         showToast("Export terminé !");
+    };
+
+    // Handle Text Backup
+    container.querySelector('#btn-backup-text').onclick = () => {
+        const json = Storage.getExportDataString(true);
+        renderTextBackupModal(json);
     };
 
     // Handle Import
@@ -1168,4 +1180,53 @@ function renderAchievementsList() {
     });
 
     return html;
+}
+
+function renderTextBackupModal(jsonString) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'modal-content';
+
+    wrapper.innerHTML = `
+        <h2 style="margin-bottom:20px;">Sauvegarde Texte</h2>
+        <p style="color:#aaa; font-size:0.9rem; margin-bottom:15px;">
+            Si l'export fichier ne fonctionne pas (APK), copiez ce texte et gardez-le précieusement dans vos notes.
+        </p>
+        
+        <textarea id="backup-text-area" class="form-textarea" style="height:200px; font-family:monospace; font-size:0.75rem;" readonly>${jsonString}</textarea>
+        
+        <div style="display:flex; gap:10px; margin-top:15px;">
+            <button id="btn-copy-backup" class="btn-primary" style="margin:0; background:var(--accent-gold);">📋 Copier</button>
+            <button id="btn-share-backup-text" class="btn-primary" style="margin:0; background:var(--bg-card); border:1px solid #444;">📤 Partager</button>
+        </div>
+    `;
+
+    // Copy Handler
+    wrapper.querySelector('#btn-copy-backup').onclick = () => {
+        const area = wrapper.querySelector('#backup-text-area');
+        area.select();
+        document.execCommand('copy'); // Legacy but reliable
+        try {
+            navigator.clipboard.writeText(jsonString);
+        } catch (e) { }
+
+        showToast("Copié dans le presse-papier !");
+    };
+
+    // Share Handler
+    wrapper.querySelector('#btn-share-backup-text').onclick = async () => {
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    text: jsonString,
+                    title: 'Beerdex Backup'
+                });
+            } catch (e) {
+                showToast("Partage non supporté.");
+            }
+        } else {
+            showToast("Partage non supporté.");
+        }
+    };
+
+    openModal(wrapper);
 }

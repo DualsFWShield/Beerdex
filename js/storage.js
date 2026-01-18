@@ -289,6 +289,49 @@ export async function shareBeer(beer) {
     return true;
 }
 
+// --- Text / Backup Helpers ---
+
+export function getExportDataString(includeCustom = true) {
+    const exportObj = {
+        ratings: getAllUserData(),
+        ratingTemplate: getRatingTemplate(),
+        exportDate: new Date().toISOString(),
+        version: 3
+    };
+    if (includeCustom) {
+        exportObj.customBeers = getCustomBeers();
+    }
+    return JSON.stringify(exportObj, null, 2);
+}
+
+export async function shareBeerAsText(beer) {
+    const rating = getBeerRating(beer.id);
+    const exportObj = {
+        beer: beer,
+        rating: rating,
+        image: beer.image,
+        sharedAt: new Date().toISOString(),
+        type: 'single_beer_share'
+    };
+    const jsonString = JSON.stringify(exportObj, null, 2);
+
+    // Try native text share
+    if (navigator.share) {
+        try {
+            await navigator.share({
+                title: `Partage: ${beer.title}`,
+                text: jsonString
+            });
+            return true;
+        } catch (e) {
+            console.warn("Text share failed", e);
+        }
+    }
+
+    // Return string for manual copy if share failed/unsupported
+    return jsonString;
+}
+
 // Kept for backward compat or simple calls
 export function exportData() {
     return exportDataAdvanced({ includeCustom: true });
