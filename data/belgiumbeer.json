@@ -9,6 +9,24 @@
     "image": "images/beer/be/CARA_PILS_PILS_033.png"
   },
   {
+    "title": "CARA BLOND",
+    "brewery": "EVERYDAY (COLRUYT)",
+    "type": "Blonde",
+    "volume": "0.33 L",
+    "alcohol": "8.5°",
+    "id": "CARA_BLOND_BLONDE_0.33",
+    "image": "images/beer/be/cara-blond.png"
+  },
+  {
+    "title": "CARA ROUGE",
+    "brewery": "EVERYDAY (COLRUYT)",
+    "type": "Rouge / Fruit",
+    "volume": "0.33 L",
+    "alcohol": "7.5°",
+    "id": "CARA_ROUGE_ROUGE___FRUIT_0.33",
+    "image": "images/beer/be/cara-rouge.png"
+  },
+  {
     "title": "ABBAYE DE FOREST",
     "brewery": "SILLY",
     "type": "Blonde",
