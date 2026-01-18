@@ -142,6 +142,11 @@ export function renderBeerList(beers, container, filters = null, showCreatePromp
             filteredBeers.sort((a, b) => a.title.localeCompare(b.title));
             if (filters.sortOrder === 'desc') filteredBeers.reverse();
         }
+
+        // Custom Beer Filter
+        if (filters.onlyCustom) {
+            filteredBeers = filteredBeers.filter(b => String(b.id).startsWith('CUSTOM_'));
+        }
     }
 
     if (filteredBeers.length === 0) {
@@ -198,7 +203,7 @@ export function renderBeerList(beers, container, filters = null, showCreatePromp
 
         // If current image is FUT but it's not a keg, fix it immediately
         let displayImage = beer.image;
-        if (displayImage.includes('FUT.jpg') && !isKeg(beer.volume)) {
+        if (!displayImage || (displayImage.includes('FUT.jpg') && !isKeg(beer.volume))) {
             displayImage = fallbackImage;
         }
 
@@ -296,6 +301,13 @@ export function renderFilterModal(allBeers, activeFilters, onApply) {
                 <label class="form-label">Note Minimum (<span id="rate-val">${activeFilters.minRating || 0}</span>/20)</label>
                 <input type="range" name="minRating" class="form-input" min="0" max="20" step="1" value="${activeFilters.minRating || 0}" 
                     oninput="document.getElementById('rate-val').innerText = this.value">
+            </div>
+
+            <div class="form-group" style="padding:10px; background:rgba(255,255,255,0.05); border-radius:8px;">
+                 <label class="form-group" style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+                    <input type="checkbox" name="onlyCustom" ${activeFilters.onlyCustom ? 'checked' : ''} style="width:20px; height:20px;">
+                    <span style="font-weight:bold; color:var(--accent-gold);">Mes Créations Uniquement</span>
+                </label>
             </div>
 
             <div style="display:flex; gap:10px; margin-top:20px;">
@@ -479,7 +491,7 @@ export function renderBeerDetail(beer, onSave) {
     const fallbackImage = isKeg(beer.volume) ? 'images/beer/FUT.jpg' : 'images/beer/default.png';
 
     let displayImage = imgPath;
-    if (displayImage.includes('FUT.jpg') && !isKeg(beer.volume)) {
+    if (!displayImage || (displayImage.includes('FUT.jpg') && !isKeg(beer.volume))) {
         displayImage = fallbackImage;
     }
 
@@ -718,7 +730,7 @@ export function renderStats(allBeers, userData, container, isDiscovery = false, 
 
                     ${renderAdvancedStats(allBeers, userData)}
 
-                    ${renderAdvancedStats(allBeers, userData)}
+
 
                     <div class="stat-card mt-20 text-center">
                         <h3>Succès 🏆</h3>

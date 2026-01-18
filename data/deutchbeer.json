@@ -15,7 +15,7 @@
     "volume": "0.33 L",
     "alcohol": "4.9°",
     "id": "BECK'S_BLONDE_0.33",
-    "image": "images/beer/de/BECKS_BLONDE_033.jpg"
+    "image": "images/beer/de/BECKS_BLONDE_033.png"
   },
   {
     "title": "BENEDIKTINER WEISSBIER",
@@ -24,7 +24,7 @@
     "volume": "0.5 L",
     "alcohol": "5.4°",
     "id": "BENEDIKTINER WEISSBIER_BLANCHE_0.5",
-    "image": "images/beer/de/BENEDIKTINER_WEISSBIER_BLANCHE_05.jpg"
+    "image": "images/beer/de/BENEDIKTINER_WEISSBIER_BLANCHE_05.png"
   },
   {
     "title": "BITBURGER PILS",
@@ -33,7 +33,7 @@
     "volume": "0.5 L",
     "alcohol": "4.8°",
     "id": "BITBURGER PILS_BLONDE_0.5",
-    "image": "images/beer/de/BITBURGER_PILS_BLONDE_05.jpg"
+    "image": "images/beer/de/BITBURGER_PILS_BLONDE_05.png"
   },
   {
     "title": "BITBURGER SANS ALCOOL",
@@ -87,7 +87,7 @@
     "volume": "0.33 L",
     "alcohol": "11°",
     "id": "EKU 28_AMBREE_0.33",
-    "image": "images/beer/de/EKU_28_AMBREE_033.jpg"
+    "image": "images/beer/de/EKU_28_AMBREE_033.png"
   },
   {
     "title": "ENGEL GOLD",
@@ -105,7 +105,7 @@
     "volume": "0.33 L",
     "alcohol": "0°",
     "id": "FASSBRAUSE CITRON_0.33",
-    "image": "images/beer/de/FASSBRAUSE_CITRON_033.jpg"
+    "image": "images/beer/de/FASSBRAUSE_CITRON_033.png"
   },
   {
     "title": "FASSBRAUSE FRAMBOISE",
@@ -114,7 +114,7 @@
     "volume": "0.33 L",
     "alcohol": "0°",
     "id": "FASSBRAUSE FRAMBOISE_0.33",
-    "image": "images/beer/de/FASSBRAUSE_FRAMBOISE_033.jpg"
+    "image": "images/beer/de/FASSBRAUSE_FRAMBOISE_033.png"
   },
   {
     "title": "FASSBRAUSE PASSION",
@@ -123,7 +123,7 @@
     "volume": "0.33 L",
     "alcohol": "0°",
     "id": "FASSBRAUSE PASSION_0.33",
-    "image": "images/beer/de/FASSBRAUSE_PASSION_033.jpg"
+    "image": "images/beer/de/FASSBRAUSE_PASSION_033.png"
   },
   {
     "title": "FRANKEN BRAU SPEZIAL",
@@ -141,7 +141,7 @@
     "volume": "0.5 L",
     "alcohol": "5°",
     "id": "FRANZISKANER HEFE-WEISSBIER NATURTRUB_BLANCHE_0.5",
-    "image": "images/beer/de/FRANZISKANER_HEFE-WEISSBIER_NATURTRUB_BLANCHE_05.jpg"
+    "image": "images/beer/de/FRANZISKANER_HEFE-WEISSBIER_NATURTRUB_BLANCHE_05.png"
   },
   {
     "title": "FRUH KOLSCH",
@@ -150,7 +150,7 @@
     "volume": "0.5 L",
     "alcohol": "4.8°",
     "id": "FRUH KOLSCH_BLONDE_0.5",
-    "image": "images/beer/de/FRUH_KOLSCH_BLONDE_05.jpg"
+    "image": "images/beer/de/FRUH_KOLSCH_BLONDE_05.png"
   },
   {
     "title": "HEFE WEISSBIER 0,0%",
@@ -159,7 +159,7 @@
     "volume": "1.98 L",
     "alcohol": "0°",
     "id": "HEFE WEISSBIER 0,0%_BLANCHE_0.33",
-    "image": "images/beer/de/HEFE_WEISSBIER_00_BLANCHE_033.jpg"
+    "image": "images/beer/de/HEFE_WEISSBIER_00_BLANCHE_033.png"
   },
   {
     "title": "HEFE WEISSBIER DUNKEL",
@@ -168,7 +168,7 @@
     "volume": "0.5 L",
     "alcohol": "5°",
     "id": "HEFE WEISSBIER DUNKEL_BRUNE_0.5",
-    "image": "images/beer/de/HEFE_WEISSBIER_DUNKEL_BRUNE_05.jpg"
+    "image": "images/beer/de/HEFE_WEISSBIER_DUNKEL_BRUNE_05.png"
   },
   {
     "title": "HEFE WEISSBIER NATURTRUB",
@@ -177,7 +177,7 @@
     "volume": "0.5 L",
     "alcohol": "5.5°",
     "id": "HEFE WEISSBIER NATURTRUB_BLANCHE_0.5",
-    "image": "images/beer/de/HEFE_WEISSBIER_NATURTRUB_BLANCHE_05.jpg"
+    "image": "images/beer/de/HEFE_WEISSBIER_NATURTRUB_BLANCHE_05.png"
   },
   {
     "title": "HEFE WEISSE",
@@ -186,7 +186,7 @@
     "volume": "0.5 L",
     "alcohol": "5.5°",
     "id": "HEFE WEISSE_BLANCHE_0.5",
-    "image": "images/beer/de/HEFE_WEISSE_BLANCHE_05.jpg"
+    "image": "images/beer/de/HEFE_WEISSE_BLANCHE_05.png"
   },
   {
     "title": "HEFEWEISS",
@@ -195,7 +195,7 @@
     "volume": "0.5 L",
     "alcohol": "5.4°",
     "id": "HEFEWEISS_BLANCHE_0.5",
-    "image": "images/beer/de/HEFEWEISS_BLANCHE_05.jpg"
+    "image": "images/beer/de/HEFEWEISS_BLANCHE_05.png"
   },
   {
     "title": "HOFBRAU OKTO",
@@ -204,7 +204,7 @@
     "volume": "0.5 L",
     "alcohol": "6.3°",
     "id": "HOFBRAU OKTO",
-    "image": "images/beer/de/HOFBRAU_OKTO.jpg"
+    "image": "images/beer/de/HOFBRAU_OKTO.png"
   },
   {
     "title": "KELLERBIER - HACKER PSCHORR",
@@ -213,7 +213,7 @@
     "volume": "0.5 L",
     "alcohol": "5.5°",
     "id": "KELLERBIER - HACKER PSCHORR_BLONDE_0.5",
-    "image": "images/beer/de/KELLERBIER_-_HACKER_PSCHORR_BLONDE_05.jpg"
+    "image": "images/beer/de/KELLERBIER_-_HACKER_PSCHORR_BLONDE_05.png"
   },
   {
     "title": "KROMBACHER AMBREE",
@@ -240,7 +240,7 @@
     "volume": "1.98 L",
     "alcohol": "4.8°",
     "id": "KROMBACHER PILS_BLONDE_1.98",
-    "image": "images/beer/de/KROMBACHER_PILS_BLONDE_198.jpg"
+    "image": "images/beer/de/KROMBACHER_PILS_BLONDE_198.png"
   },
   {
     "title": "KROMBACHER PILS SANS ALCOOL",
@@ -249,7 +249,7 @@
     "volume": "0.33 L",
     "alcohol": "0°",
     "id": "KROMBACHER PILS SANS ALCOOL_BLONDE_1.98",
-    "image": "images/beer/de/KROMBACHER_PILS_SANS_ALCOOL_BLONDE_198.jpg"
+    "image": "images/beer/de/KROMBACHER_PILS_SANS_ALCOOL_BLONDE_198.png"
   },
   {
     "title": "KROMBACHER RADLER 0,0%",
@@ -258,7 +258,7 @@
     "volume": "0.33 L",
     "alcohol": "0°",
     "id": "KROMBACHER RADLER 0,0%_BLONDE_0.33",
-    "image": "images/beer/de/KROMBACHER_RADLER_00_BLONDE_033.jpg"
+    "image": "images/beer/de/KROMBACHER_RADLER_00_BLONDE_033.png"
   },
   {
     "title": "KROMBACHER WEIZEN",
@@ -267,7 +267,7 @@
     "volume": "0.5 L",
     "alcohol": "5.3°",
     "id": "KROMBACHER WEIZEN_BLANCHE_0.5",
-    "image": "images/beer/de/KROMBACHER_WEIZEN_BLANCHE_05.jpg"
+    "image": "images/beer/de/KROMBACHER_WEIZEN_BLANCHE_05.png"
   },
   {
     "title": "LANDBIER",
@@ -285,7 +285,7 @@
     "volume": "0.5 L",
     "alcohol": "5.2°",
     "id": "LOWENBRAU ORIGINAL_BLONDE_0.5",
-    "image": "images/beer/de/LOWENBRAU_ORIGINAL_BLONDE_05.jpg"
+    "image": "images/beer/de/LOWENBRAU_ORIGINAL_BLONDE_05.png"
   },
   {
     "title": "MUNCHNER",
@@ -294,7 +294,7 @@
     "volume": "0.5 L",
     "alcohol": "5°",
     "id": "MUNCHNER_BLONDE_0.5",
-    "image": "images/beer/de/MUNCHNER_BLONDE_05.jpg"
+    "image": "images/beer/de/MUNCHNER_BLONDE_05.png"
   },
   {
     "title": "PAULANER MUNCHNER HELL ORIGINAL",
@@ -303,7 +303,7 @@
     "volume": "0.5 L",
     "alcohol": "4.9°",
     "id": "MUNCHNER HELL_BLONDE_0.5",
-    "image": "images/beer/de/MUNCHNER_HELL_BLONDE_05.jpg"
+    "image": "images/beer/de/MUNCHNER_HELL_BLONDE_05.png"
   },
   {
     "title": "PAULANER SALVATOR",
@@ -312,7 +312,7 @@
     "volume": "0.5 L",
     "alcohol": "7.9°",
     "id": "PAULANER SALVATOR_AMBREE_0.5",
-    "image": "images/beer/de/PAULANER_SALVATOR_AMBREE_05.jpg"
+    "image": "images/beer/de/PAULANER_SALVATOR_AMBREE_05.png"
   },
   {
     "title": "PAULANER SANS ALCOOL 0.0% CITRON",
@@ -321,7 +321,7 @@
     "volume": "0.33 L",
     "alcohol": "0°",
     "id": "PAULANER SANS ALCOOL 0.0% CITRON_BLONDE_0.33",
-    "image": "images/beer/de/PAULANER_SANS_ALCOOL_00_CITRON_BLONDE_033.jpg"
+    "image": "images/beer/de/PAULANER_SANS_ALCOOL_00_CITRON_BLONDE_033.png"
   },
   {
     "title": "PREMIUM PILSENER",
@@ -330,7 +330,7 @@
     "volume": "0.5 L",
     "alcohol": "4.8°",
     "id": "PREMIUM PILSENER_BLONDE_0.5",
-    "image": "images/beer/de/PREMIUM_PILSENER_BLONDE_05.jpg"
+    "image": "images/beer/de/PREMIUM_PILSENER_BLONDE_05.png"
   },
   {
     "title": "SPATEN MUNCHNER HELL",
@@ -339,7 +339,7 @@
     "volume": "0.5 L",
     "alcohol": "5.2°",
     "id": "SPATEN MUNCHNER HELL_BLONDE_0.5",
-    "image": "images/beer/de/SPATEN_MUNCHNER_HELL_BLONDE_05.jpg"
+    "image": "images/beer/de/SPATEN_MUNCHNER_HELL_BLONDE_05.png"
   },
   {
     "title": "STARNBERGER HELL",
@@ -357,7 +357,7 @@
     "volume": "0.5 L",
     "alcohol": "7.7°",
     "id": "WEIHENSTEPHAN VITUS_BLANCHE_0.5",
-    "image": "images/beer/de/WEIHENSTEPHAN_VITUS_BLANCHE_05.jpg"
+    "image": "images/beer/de/WEIHENSTEPHAN_VITUS_BLANCHE_05.png"
   },
   {
     "title": "WEIHENSTEPHANER ORIGINAL",
@@ -366,7 +366,7 @@
     "volume": "0.5 L",
     "alcohol": "5.1°",
     "id": "WEIHENSTEPHANER ORIGINAL_BLONDE_0.5",
-    "image": "images/beer/de/WEIHENSTEPHANER_ORIGINAL_BLONDE_05.jpg"
+    "image": "images/beer/de/WEIHENSTEPHANER_ORIGINAL_BLONDE_05.png"
   },
   {
     "title": "WEISSBIER",
@@ -375,7 +375,7 @@
     "volume": "0.5 L",
     "alcohol": "5.3°",
     "id": "WEISSBIER_BLANCHE_0.5",
-    "image": "images/beer/de/WEISSBIER_BLANCHE_05.jpg"
+    "image": "images/beer/de/WEISSBIER_BLANCHE_05.png"
   },
   {
     "title": "WEISSBIER KRISTALLKLAR",
@@ -384,6 +384,6 @@
     "volume": "0.5 L",
     "alcohol": "5°",
     "id": "WEISSBIER KRISTALLKLAR_BLONDE_0.5",
-    "image": "images/beer/de/WEISSBIER_KRISTALLKLAR_BLONDE_05.jpg"
+    "image": "images/beer/de/WEISSBIER_KRISTALLKLAR_BLONDE_05.png"
   }
 ]

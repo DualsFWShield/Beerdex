@@ -1,12 +1,21 @@
 [
   {
+    "title": "CARA PILS",
+    "brewery": "EVERYDAY (COLRUYT)",
+    "type": "Pils",
+    "volume": "0.33 L",
+    "alcohol": "4.4°",
+    "id": "CARA_PILS_PILS_0.33",
+    "image": "images/beer/be/CARA_PILS_PILS_033.png"
+  },
+  {
     "title": "ABBAYE DE FOREST",
     "brewery": "SILLY",
     "type": "Blonde",
     "volume": "0.33 L",
     "alcohol": "6.5°",
     "id": "ABBAYE DE FOREST_BLONDE_0.33",
-    "image": "images/beer/be/ABBAYE_DE_FOREST_BLONDE_033.jpg"
+    "image": "images/beer/be/ABBAYE_DE_FOREST_BLONDE_033.png"
   },
   {
     "title": "ADLER",
@@ -24,7 +33,7 @@
     "volume": "0.33 L",
     "alcohol": "7.5°",
     "id": "AVERBODE_BLONDE_0.33",
-    "image": "images/beer/be/AVERBODE_BLONDE_033.jpg"
+    "image": "images/beer/be/AVERBODE_BLONDE_033.png"
   },
   {
     "title": "BACCHUS FRAMBOISE",
@@ -33,7 +42,7 @@
     "volume": "0.375 L",
     "alcohol": "5°",
     "id": "BACCHUS FRAMBOISE_ROUGE/RUBIS_0.375",
-    "image": "images/beer/be/BACCHUS_FRAMBOISE_ROUGERUBIS_0375.jpg"
+    "image": "images/beer/be/BACCHUS_FRAMBOISE_ROUGERUBIS_0375.png"
   },
   {
     "title": "BACCHUS KRIEK",
@@ -42,7 +51,7 @@
     "volume": "0.375 L",
     "alcohol": "5.8°",
     "id": "BACCHUS KRIEK_ROUGE/RUBIS_0.375",
-    "image": "images/beer/be/BACCHUS_KRIEK_ROUGERUBIS_0375.jpg"
+    "image": "images/beer/be/BACCHUS_KRIEK_ROUGERUBIS_0375.png"
   },
   {
     "title": "BAPTIST BLANCHE",
@@ -51,7 +60,7 @@
     "volume": "0.33 L",
     "alcohol": "5°",
     "id": "BAPTIST BLANCHE_BLANCHE_0.33",
-    "image": "images/beer/be/BAPTIST_BLANCHE_BLANCHE_033.jpg"
+    "image": "images/beer/be/BAPTIST_BLANCHE_BLANCHE_033.png"
   },
   {
     "title": "BAPTIST IPA",
@@ -87,7 +96,7 @@
     "volume": "0.33 L",
     "alcohol": "8°",
     "id": "BARBAR_BLONDE_0.33",
-    "image": "images/beer/be/BARBAR_BLONDE_033.jpg"
+    "image": "images/beer/be/BARBAR_BLONDE_033.png"
   },
   {
     "title": "BARBAR BOK",
@@ -96,7 +105,7 @@
     "volume": "0.33 L",
     "alcohol": "8.5°",
     "id": "BARBAR BOK_BRUNE_0.33",
-    "image": "images/beer/be/BARBAR_BOK_BRUNE_033.jpg"
+    "image": "images/beer/be/BARBAR_BOK_BRUNE_033.png"
   },
   {
     "title": "BARBAR ROUGE",
@@ -105,7 +114,7 @@
     "volume": "0.33 L",
     "alcohol": "8°",
     "id": "BARBAR ROUGE_ROUGE/RUBIS_0.33",
-    "image": "images/beer/be/BARBAR_ROUGE_ROUGERUBIS_033.jpg"
+    "image": "images/beer/be/BARBAR_ROUGE_ROUGERUBIS_033.png"
   },
   {
     "title": "BERTINCHAMPS BLONDE",
@@ -123,7 +132,7 @@
     "volume": "0.33 L",
     "alcohol": "8.5°",
     "id": "BIERE DES OURS_AMBREE_0.33",
-    "image": "images/beer/be/BIERE_DES_OURS_AMBREE_033.jpg"
+    "image": "images/beer/be/BIERE_DES_OURS_AMBREE_033.png"
   },
   {
     "title": "BIERE OURS POLAIRE",
@@ -132,7 +141,7 @@
     "volume": "0.33 L",
     "alcohol": "10°",
     "id": "BIERE OURS POLAIRE_BLONDE_0.33",
-    "image": "images/beer/be/BIERE_OURS_POLAIRE_BLONDE_033.jpg"
+    "image": "images/beer/be/BIERE_OURS_POLAIRE_BLONDE_033.png"
   },
   {
     "title": "BLANCHE DE BRUXELLES",
@@ -141,7 +150,7 @@
     "volume": "0.33 L",
     "alcohol": "4.5°",
     "id": "BLANCHE DE BRUXELLES_BLANCHE_0.33",
-    "image": "images/beer/be/BLANCHE_DE_BRUXELLES_BLANCHE_033.jpg"
+    "image": "images/beer/be/BLANCHE_DE_BRUXELLES_BLANCHE_033.png"
   },
   {
     "title": "BLANCHE DE NAMUR",
@@ -150,7 +159,7 @@
     "volume": "0.25 L",
     "alcohol": "4.5°",
     "id": "BLANCHE DE NAMUR_BLANCHE_0.25",
-    "image": "images/beer/be/BLANCHE_DE_NAMUR_BLANCHE_025.jpg"
+    "image": "images/beer/be/BLANCHE_DE_NAMUR_BLANCHE_025.png"
   },
   {
     "title": "BLANCHE DE NAMUR ROSEE",
@@ -168,7 +177,7 @@
     "volume": "0.33 L",
     "alcohol": "4.9°",
     "id": "BLANCHE DES NEIGES_BLANCHE_0.33",
-    "image": "images/beer/be/BLANCHE_DES_NEIGES_BLANCHE_033.jpg"
+    "image": "images/beer/be/BLANCHE_DES_NEIGES_BLANCHE_033.png"
   },
   {
     "title": "BLOEMENBIER",
@@ -177,7 +186,7 @@
     "volume": "0.33 L",
     "alcohol": "7°",
     "id": "BLOEMENBIER_AMBREE_0.33",
-    "image": "images/beer/be/BLOEMENBIER_AMBREE_033.jpg"
+    "image": "images/beer/be/BLOEMENBIER_AMBREE_033.png"
   },
   {
     "title": "BONSECOURS AMBREE",
@@ -186,7 +195,7 @@
     "volume": "0.33 L",
     "alcohol": "8°",
     "id": "BONSECOURS AMBREE_AMBREE_0.33",
-    "image": "images/beer/be/BONSECOURS_AMBREE_AMBREE_033.jpg"
+    "image": "images/beer/be/BONSECOURS_AMBREE_AMBREE_033.png"
   },
   {
     "title": "BONSECOURS BLONDE",
@@ -195,7 +204,7 @@
     "volume": "0.33 L",
     "alcohol": "8°",
     "id": "BONSECOURS BLONDE_BLONDE_0.33",
-    "image": "images/beer/be/BONSECOURS_BLONDE_BLONDE_033.jpg"
+    "image": "images/beer/be/BONSECOURS_BLONDE_BLONDE_033.png"
   },
   {
     "title": "BONSECOURS MYRTILLE",
@@ -204,7 +213,7 @@
     "volume": "0.33 L",
     "alcohol": "6.4°",
     "id": "BONSECOURS MYRTILLE_ROUGE/RUBIS_0.33",
-    "image": "images/beer/be/BONSECOURS_MYRTILLE_ROUGERUBIS_033.jpg"
+    "image": "images/beer/be/BONSECOURS_MYRTILLE_ROUGERUBIS_033.png"
   },
   {
     "title": "BONSECOURS NOEL",
@@ -213,7 +222,7 @@
     "volume": "0.33 L",
     "alcohol": "9°",
     "id": "BONSECOURS NOEL_BLONDE_0.33",
-    "image": "images/beer/be/BONSECOURS_NOEL_BLONDE_033.jpg"
+    "image": "images/beer/be/BONSECOURS_NOEL_BLONDE_033.png"
   },
   {
     "title": "BORNEM DOUBLE",
@@ -231,7 +240,7 @@
     "volume": "0.33 L",
     "alcohol": "9°",
     "id": "BRIGAND_BLONDE_0.33",
-    "image": "images/beer/be/BRIGAND_BLONDE_033.jpg"
+    "image": "images/beer/be/BRIGAND_BLONDE_033.png"
   },
   {
     "title": "BRUGSE SPORT ZOT SANS ALCOOL",
@@ -240,7 +249,7 @@
     "volume": "0.33 L",
     "alcohol": "0°",
     "id": "BRUGSE SPORT ZOT SANS ALCOOL_BLONDE_0.33",
-    "image": "images/beer/be/BRUGSE_SPORT_ZOT_SANS_ALCOOL_BLONDE_033.jpg"
+    "image": "images/beer/be/BRUGSE_SPORT_ZOT_SANS_ALCOOL_BLONDE_033.png"
   },
   {
     "title": "BRUGSE ZOT BLONDE",
@@ -249,7 +258,7 @@
     "volume": "0.33 L",
     "alcohol": "6°",
     "id": "BRUGSE ZOT BLONDE_BLONDE_0.33",
-    "image": "images/beer/be/BRUGSE_ZOT_BLONDE_BLONDE_033.jpg"
+    "image": "images/beer/be/BRUGSE_ZOT_BLONDE_BLONDE_033.png"
   },
   {
     "title": "BUD",
@@ -258,7 +267,7 @@
     "volume": "6 L",
     "alcohol": "5°",
     "id": "BUD_BLONDE_6",
-    "image": "images/beer/be/BUD_BLONDE_6.jpg"
+    "image": "images/beer/be/BUD_BLONDE_6.png"
   },
   {
     "title": "BUSH AMBREE CARACTERE",
@@ -267,7 +276,7 @@
     "volume": "0.33 L",
     "alcohol": "12°",
     "id": "BUSH AMBREE CARACTERE_AMBREE_0.33",
-    "image": "images/beer/be/BUSH_AMBREE_CARACTERE_AMBREE_033.jpg"
+    "image": "images/beer/be/BUSH_AMBREE_CARACTERE_AMBREE_033.png"
   },
   {
     "title": "BUSH BLONDE",
@@ -276,7 +285,7 @@
     "volume": "20 L",
     "alcohol": "10.5°",
     "id": "BUSH BLONDE",
-    "image": "images/beer/be/BUSH_BLONDE_TRIPLE_BLONDE_033.jpg"
+    "image": "images/beer/be/BUSH_BLONDE_TRIPLE_BLONDE_033.png"
   },
   {
     "title": "BUSH BLONDE TRIPLE",
@@ -285,7 +294,7 @@
     "volume": "0.33 L",
     "alcohol": "10.5°",
     "id": "BUSH BLONDE TRIPLE_BLONDE_0.33",
-    "image": "images/beer/be/BUSH_BLONDE_TRIPLE_BLONDE_033.jpg"
+    "image": "images/beer/be/BUSH_BLONDE_TRIPLE_BLONDE_033.png"
   },
   {
     "title": "BUSH DE NUITS",
@@ -294,7 +303,7 @@
     "volume": "0.75 L",
     "alcohol": "12.5°",
     "id": "BUSH DE NUITS_BRUNE_0.75",
-    "image": "images/beer/be/BUSH_DE_NUITS_BRUNE_075.jpg"
+    "image": "images/beer/be/BUSH_DE_NUITS_BRUNE_075.png"
   },
   {
     "title": "BUSH NOEL",
@@ -303,7 +312,7 @@
     "volume": "0.33 L",
     "alcohol": "12°",
     "id": "BUSH NOEL_BRUNE_0.33",
-    "image": "images/beer/be/BUSH_NOEL_BRUNE_033.jpg"
+    "image": "images/beer/be/BUSH_NOEL_BRUNE_033.png"
   },
   {
     "title": "CAROLUS CLASSIC",
@@ -312,7 +321,7 @@
     "volume": "0.33 L",
     "alcohol": "8.5°",
     "id": "CAROLUS CLASSIC_BRUNE_0.33",
-    "image": "images/beer/be/CAROLUS_CLASSIC_BRUNE_033.jpg"
+    "image": "images/beer/be/CAROLUS_CLASSIC_BRUNE_033.png"
   },
   {
     "title": "CAROLUS TRIPLE",
@@ -321,7 +330,7 @@
     "volume": "0.33 L",
     "alcohol": "9°",
     "id": "CAROLUS TRIPLE_BLONDE_0.33",
-    "image": "images/beer/be/CAROLUS_TRIPLE_BLONDE_033.jpg"
+    "image": "images/beer/be/CAROLUS_TRIPLE_BLONDE_033.png"
   },
   {
     "title": "CAROLUS XMAS",
@@ -339,7 +348,7 @@
     "volume": "0.33 L",
     "alcohol": "8.5°",
     "id": "CHARLES QUINT BLONDE DOREE_BLONDE_0.33",
-    "image": "images/beer/be/CHARLES_QUINT_BLONDE_DOREE_BLONDE_033.jpg"
+    "image": "images/beer/be/CHARLES_QUINT_BLONDE_DOREE_BLONDE_033.png"
   },
   {
     "title": "CHIMAY BLEUE",
@@ -348,7 +357,7 @@
     "volume": "0.33 L",
     "alcohol": "9°",
     "id": "CHIMAY BLEUE_BRUNE_0.33",
-    "image": "images/beer/be/CHIMAY_BLEUE_BRUNE_033.jpg"
+    "image": "images/beer/be/CHIMAY_BLEUE_BRUNE_033.png"
   },
   {
     "title": "CHIMAY DOREE",
@@ -357,7 +366,7 @@
     "volume": "0.33 L",
     "alcohol": "4.8°",
     "id": "CHIMAY DOREE_BLONDE_0.33",
-    "image": "images/beer/be/CHIMAY_DOREE_BLONDE_033.jpg"
+    "image": "images/beer/be/CHIMAY_DOREE_BLONDE_033.png"
   },
   {
     "title": "CHIMAY ROUGE",
@@ -366,7 +375,7 @@
     "volume": "0.33 L",
     "alcohol": "7°",
     "id": "CHIMAY ROUGE_AMBREE_0.33",
-    "image": "images/beer/be/CHIMAY_ROUGE_AMBREE_033.jpg"
+    "image": "images/beer/be/CHIMAY_ROUGE_AMBREE_033.png"
   },
   {
     "title": "CHIMAY TRIPLE",
@@ -375,7 +384,7 @@
     "volume": "0.33 L",
     "alcohol": "8°",
     "id": "CHIMAY TRIPLE_BLONDE_0.33",
-    "image": "images/beer/be/CHIMAY_TRIPLE_BLONDE_033.jpg"
+    "image": "images/beer/be/CHIMAY_TRIPLE_BLONDE_033.png"
   },
   {
     "title": "CHIMAY VERTE 150",
@@ -384,7 +393,7 @@
     "volume": "0.33 L",
     "alcohol": "10°",
     "id": "CHIMAY VERTE 150_BLONDE_0.33",
-    "image": "images/beer/be/CHIMAY_VERTE_150_BLONDE_033.jpg"
+    "image": "images/beer/be/CHIMAY_VERTE_150_BLONDE_033.png"
   },
   {
     "title": "CHOUFFE BLONDE",
@@ -393,7 +402,7 @@
     "volume": "0.5 L",
     "alcohol": "8°",
     "id": "CHOUFFE BLONDE_BLONDE_0.5",
-    "image": "images/beer/be/CHOUFFE_BLONDE_BLONDE_05.jpg"
+    "image": "images/beer/be/CHOUFFE_BLONDE_BLONDE_05.png"
   },
   {
     "title": "CHOUFFE CHERRY",
@@ -402,7 +411,7 @@
     "volume": "0.33 L",
     "alcohol": "8°",
     "id": "CHOUFFE CHERRY_ROUGE/RUBIS_0.33",
-    "image": "images/beer/be/CHOUFFE_CHERRY_ROUGERUBIS_033.jpg"
+    "image": "images/beer/be/CHOUFFE_CHERRY_ROUGERUBIS_033.png"
   },
   {
     "title": "CHOUFFE LITE",
@@ -420,7 +429,7 @@
     "volume": "0.25 L",
     "alcohol": "5.7°",
     "id": "COQ HARDI_BLONDE_0.25",
-    "image": "images/beer/be/COQ_HARDI_BLONDE_025.jpg"
+    "image": "images/beer/be/COQ_HARDI_BLONDE_025.png"
   },
   {
     "title": "CORNET",
@@ -429,7 +438,7 @@
     "volume": "0.33 L",
     "alcohol": "8.5°",
     "id": "CORNET_BLONDE_0.33",
-    "image": "images/beer/be/CORNET_BLONDE_033.jpg"
+    "image": "images/beer/be/CORNET_BLONDE_033.png"
   },
   {
     "title": "CORONA",
@@ -438,7 +447,7 @@
     "volume": "6 L",
     "alcohol": "4.5°",
     "id": "CORONA_BLONDE_6",
-    "image": "images/beer/be/CORONA_BLONDE_6.jpg"
+    "image": "images/beer/be/CORONA_BLONDE_6.png"
   },
   {
     "title": "CORSENDONK AGNUS",
@@ -447,7 +456,7 @@
     "volume": "0.33 L",
     "alcohol": "7.5°",
     "id": "CORSENDONK AGNUS_BLONDE_0.33",
-    "image": "images/beer/be/CORSENDONK_AGNUS_BLONDE_033.jpg"
+    "image": "images/beer/be/CORSENDONK_AGNUS_BLONDE_033.png"
   },
   {
     "title": "CORSENDONK BLANCHE",
@@ -456,7 +465,7 @@
     "volume": "0.75 L",
     "alcohol": "4.8°",
     "id": "CORSENDONK BLANCHE_BLANCHE_0.75",
-    "image": "images/beer/be/CORSENDONK_BLANCHE_BLANCHE_075.jpg"
+    "image": "images/beer/be/CORSENDONK_BLANCHE_BLANCHE_075.png"
   },
   {
     "title": "CORSENDONK DOUBLE KRIEK",
@@ -465,7 +474,7 @@
     "volume": "0.33 L",
     "alcohol": "8.7°",
     "id": "CORSENDONK DOUBLE KRIEK_ROUGE/RUBIS_0.33",
-    "image": "images/beer/be/CORSENDONK_DOUBLE_KRIEK_ROUGERUBIS_033.jpg"
+    "image": "images/beer/be/CORSENDONK_DOUBLE_KRIEK_ROUGERUBIS_033.png"
   },
   {
     "title": "CORSENDONK ROUSSE",
@@ -474,7 +483,7 @@
     "volume": "0.33 L",
     "alcohol": "8.1°",
     "id": "CORSENDONK ROUSSE_AMBREE_0.33",
-    "image": "images/beer/be/CORSENDONK_ROUSSE_AMBREE_033.jpg"
+    "image": "images/beer/be/CORSENDONK_ROUSSE_AMBREE_033.png"
   },
   {
     "title": "CURTIUS CLASSIC",
@@ -483,7 +492,7 @@
     "volume": "0.33 L",
     "alcohol": "7°",
     "id": "CURTIUS CLASSIC_BLONDE_0.33",
-    "image": "images/beer/be/CURTIUS_CLASSIC_BLONDE_033.jpg"
+    "image": "images/beer/be/CURTIUS_CLASSIC_BLONDE_033.png"
   },
   {
     "title": "CURTIUS TRIPLE",
@@ -492,7 +501,7 @@
     "volume": "0.33 L",
     "alcohol": "9°",
     "id": "CURTIUS TRIPLE_BLONDE_0.33",
-    "image": "images/beer/be/CURTIUS_TRIPLE_BLONDE_033.jpg"
+    "image": "images/beer/be/CURTIUS_TRIPLE_BLONDE_033.png"
   },
   {
     "title": "CUVEE DES TROLLS",
@@ -501,7 +510,7 @@
     "volume": "0.33 L",
     "alcohol": "7°",
     "id": "CUVEE DES TROLLS_BLONDE_0.33",
-    "image": "images/beer/be/CUVEE_DES_TROLLS_BLONDE_033.jpg"
+    "image": "images/beer/be/CUVEE_DES_TROLLS_BLONDE_033.png"
   },
   {
     "title": "DELIRIUM ARGENTUM",
@@ -510,7 +519,7 @@
     "volume": "0.33 L",
     "alcohol": "7°",
     "id": "DELIRIUM ARGENTUM_AMBREE_0.33",
-    "image": "images/beer/be/DELIRIUM_ARGENTUM_AMBREE_033.jpg"
+    "image": "images/beer/be/DELIRIUM_ARGENTUM_AMBREE_033.png"
   },
   {
     "title": "DELIRIUM DELIRIO",
@@ -519,7 +528,7 @@
     "volume": "0.33 L",
     "alcohol": "0°",
     "id": "DELIRIUM DELIRIO_BLONDE_0.33",
-    "image": "images/beer/be/DELIRIUM_DELIRIO_BLONDE_033.jpg"
+    "image": "images/beer/be/DELIRIUM_DELIRIO_BLONDE_033.png"
   },
   {
     "title": "DELIRIUM NOCTURNUM",
@@ -528,7 +537,7 @@
     "volume": "0.33 L",
     "alcohol": "8.5°",
     "id": "DELIRIUM NOCTURNUM_BRUNE_0.33",
-    "image": "images/beer/be/DELIRIUM_NOCTURNUM_BRUNE_033.jpg"
+    "image": "images/beer/be/DELIRIUM_NOCTURNUM_BRUNE_033.png"
   },
   {
     "title": "DELIRIUM NOEL",
@@ -537,7 +546,7 @@
     "volume": "0.33 L",
     "alcohol": "10°",
     "id": "DELIRIUM NOEL_AMBREE_0.33",
-    "image": "images/beer/be/DELIRIUM_NOEL_AMBREE_033.jpg"
+    "image": "images/beer/be/DELIRIUM_NOEL_AMBREE_033.png"
   },
   {
     "title": "DELIRIUM RED",
@@ -546,7 +555,7 @@
     "volume": "0.33 L",
     "alcohol": "8°",
     "id": "DELIRIUM RED_ROUGE/RUBIS_0.33",
-    "image": "images/beer/be/DELIRIUM_RED_ROUGERUBIS_033.jpg"
+    "image": "images/beer/be/DELIRIUM_RED_ROUGERUBIS_033.png"
   },
   {
     "title": "DELIRIUM TREMENS",
@@ -555,7 +564,7 @@
     "volume": "0.75 L",
     "alcohol": "8.5°",
     "id": "DELIRIUM TREMENS_BLONDE_0.75",
-    "image": "images/beer/be/DELIRIUM_TREMENS_BLONDE_075.jpg"
+    "image": "images/beer/be/DELIRIUM_TREMENS_BLONDE_075.png"
   },
   {
     "title": "DIVINE",
@@ -564,7 +573,7 @@
     "volume": "0.33 L",
     "alcohol": "9.5°",
     "id": "DIVINE_AMBREE_0.33",
-    "image": "images/beer/be/DIVINE_AMBREE_033.jpg"
+    "image": "images/beer/be/DIVINE_AMBREE_033.png"
   },
   {
     "title": "DOUBLE ENGHIEN BLONDE",
@@ -573,7 +582,7 @@
     "volume": "0.33 L",
     "alcohol": "7.5°",
     "id": "DOUBLE ENGHIEN BLONDE_BLONDE_0.33",
-    "image": "images/beer/be/DOUBLE_ENGHIEN_BLONDE_BLONDE_033.jpg"
+    "image": "images/beer/be/DOUBLE_ENGHIEN_BLONDE_BLONDE_033.png"
   },
   {
     "title": "DUVEL",
@@ -582,7 +591,7 @@
     "volume": "0.33 L",
     "alcohol": "8.5°",
     "id": "DUVEL_BLONDE_0.33",
-    "image": "images/beer/be/DUVEL_BLONDE_033.jpg"
+    "image": "images/beer/be/DUVEL_BLONDE_033.png"
   },
   {
     "title": "DUVEL 6.66",
@@ -591,7 +600,7 @@
     "volume": "0.33 L",
     "alcohol": "6.66°",
     "id": "DUVEL 6.66_BLONDE_0.33",
-    "image": "images/beer/be/DUVEL_666_BLONDE_033.jpg"
+    "image": "images/beer/be/DUVEL_666_BLONDE_033.png"
   },
   {
     "title": "DUVEL TRIPLE HOP CITRA",
@@ -600,7 +609,7 @@
     "volume": "0.33 L",
     "alcohol": "9.5°",
     "id": "DUVEL TRIPLE HOP CITRA_BLONDE_0.33",
-    "image": "images/beer/be/DUVEL_TRIPLE_HOP_CITRA_BLONDE_033.jpg"
+    "image": "images/beer/be/DUVEL_TRIPLE_HOP_CITRA_BLONDE_033.png"
   },
   {
     "title": "FILOU",
@@ -627,7 +636,7 @@
     "volume": "0.33 L",
     "alcohol": "4.2°",
     "id": "FLORIS CACTUS_VERTE_0.33",
-    "image": "images/beer/be/FLORIS_CACTUS_VERTE_033.jpg"
+    "image": "images/beer/be/FLORIS_CACTUS_VERTE_033.png"
   },
   {
     "title": "FLORIS FRAMBOISE",
@@ -636,7 +645,7 @@
     "volume": "0.33 L",
     "alcohol": "3.6°",
     "id": "FLORIS FRAMBOISE_BLANCHE_0.33",
-    "image": "images/beer/be/FLORIS_FRAMBOISE_BLANCHE_033.jpg"
+    "image": "images/beer/be/FLORIS_FRAMBOISE_BLANCHE_033.png"
   },
   {
     "title": "FLORIS KRIEK",
@@ -645,7 +654,7 @@
     "volume": "0.33 L",
     "alcohol": "3.6°",
     "id": "FLORIS KRIEK_ROUGE/RUBIS_0.33",
-    "image": "images/beer/be/FLORIS_KRIEK_ROUGERUBIS_033.jpg"
+    "image": "images/beer/be/FLORIS_KRIEK_ROUGERUBIS_033.png"
   },
   {
     "title": "FLORIS PASSION",
@@ -654,7 +663,7 @@
     "volume": "0.33 L",
     "alcohol": "3.6°",
     "id": "FLORIS PASSION_BLONDE_0.33",
-    "image": "images/beer/be/FLORIS_PASSION_BLONDE_033.jpg"
+    "image": "images/beer/be/FLORIS_PASSION_BLONDE_033.png"
   },
   {
     "title": "FLORIS PECHE",
@@ -663,7 +672,7 @@
     "volume": "0.33 L",
     "alcohol": "3.6°",
     "id": "FLORIS PECHE_BLANCHE_0.33",
-    "image": "images/beer/be/FLORIS_PECHE_BLANCHE_033.jpg"
+    "image": "images/beer/be/FLORIS_PECHE_BLANCHE_033.png"
   },
   {
     "title": "FRAMBOISE MAX",
@@ -672,7 +681,7 @@
     "volume": "0.5 L",
     "alcohol": "4.5°",
     "id": "FRAMBOISE MAX_ROSEE_0.5",
-    "image": "images/beer/be/FRAMBOISE_MAX_ROSEE_05.jpg"
+    "image": "images/beer/be/FRAMBOISE_MAX_ROSEE_05.png"
   },
   {
     "title": "FRAMBUSH",
@@ -681,7 +690,7 @@
     "volume": "0.33 L",
     "alcohol": "8.5°",
     "id": "FRAMBUSH_ROUGE/RUBIS_0.33",
-    "image": "images/beer/be/FRAMBUSH_ROUGERUBIS_033.jpg"
+    "image": "images/beer/be/FRAMBUSH_ROUGERUBIS_033.png"
   },
   {
     "title": "GINETTE LAGER",
@@ -690,7 +699,7 @@
     "volume": "6 L",
     "alcohol": "4.5°",
     "id": "GINETTE LAGER_BLONDE_6",
-    "image": "images/beer/be/GINETTE_LAGER_BLONDE_6.jpg"
+    "image": "images/beer/be/GINETTE_LAGER_BLONDE_6.png"
   },
   {
     "title": "GREEN KILLER IPA",
@@ -699,7 +708,7 @@
     "volume": "0.33 L",
     "alcohol": "6.5°",
     "id": "GREEN KILLER IPA_BLONDE_0.33",
-    "image": "images/beer/be/GREEN_KILLER_IPA_BLONDE_033.jpg"
+    "image": "images/beer/be/GREEN_KILLER_IPA_BLONDE_033.png"
   },
   {
     "title": "GRISETTE BLANCHE",
@@ -708,7 +717,7 @@
     "volume": "0.25 L",
     "alcohol": "5.5°",
     "id": "GRISETTE BLANCHE_BLANCHE_0.25",
-    "image": "images/beer/be/GRISETTE_BLANCHE_BLANCHE_025.jpg"
+    "image": "images/beer/be/GRISETTE_BLANCHE_BLANCHE_025.png"
   },
   {
     "title": "GRISETTE BLANCHE",
@@ -726,7 +735,7 @@
     "volume": "0.25 L",
     "alcohol": "5.5°",
     "id": "GRISETTE BLONDE SANS GLUTEN BIO_BLONDE_0.25",
-    "image": "images/beer/be/GRISETTE_BLONDE_SANS_GLUTEN_BIO_BLONDE_025.jpg"
+    "image": "images/beer/be/GRISETTE_BLONDE_SANS_GLUTEN_BIO_BLONDE_025.png"
   },
   {
     "title": "GUILLOTINE",
@@ -735,7 +744,7 @@
     "volume": "0.33 L",
     "alcohol": "8.5°",
     "id": "GUILLOTINE_BLONDE_0.33",
-    "image": "images/beer/be/GUILLOTINE_BLONDE_033.jpg"
+    "image": "images/beer/be/GUILLOTINE_BLONDE_033.png"
   },
   {
     "title": "GULDEN DRAAK",
@@ -744,7 +753,7 @@
     "volume": "0.33 L",
     "alcohol": "10.5°",
     "id": "GULDEN DRAAK_BRUNE_0.33",
-    "image": "images/beer/be/GULDEN_DRAAK_BRUNE_033.jpg"
+    "image": "images/beer/be/GULDEN_DRAAK_BRUNE_033.png"
   },
   {
     "title": "GULDEN DRAAK 9000 QUADRUPEL",
@@ -753,7 +762,7 @@
     "volume": "0.33 L",
     "alcohol": "10.5°",
     "id": "GULDEN DRAAK 9000 QUADRUPEL_AMBREE_0.33",
-    "image": "images/beer/be/GULDEN_DRAAK_9000_QUADRUPEL_AMBREE_033.jpg"
+    "image": "images/beer/be/GULDEN_DRAAK_9000_QUADRUPEL_AMBREE_033.png"
   },
   {
     "title": "HERCULE",
@@ -762,7 +771,7 @@
     "volume": "0.33 L",
     "alcohol": "9°",
     "id": "HERCULE_BRUNE_0.33",
-    "image": "images/beer/be/HERCULE_BRUNE_033.jpg"
+    "image": "images/beer/be/HERCULE_BRUNE_033.png"
   },
   {
     "title": "HIBERNATUS",
@@ -771,7 +780,7 @@
     "volume": "0.75 L",
     "alcohol": "9.5°",
     "id": "HIBERNATUS_NOIRE_0.75",
-    "image": "images/beer/be/HIBERNATUS_NOIRE_075.jpg"
+    "image": "images/beer/be/HIBERNATUS_NOIRE_075.png"
   },
   {
     "title": "HOEGAARDEN BLANCHE",
@@ -780,7 +789,7 @@
     "volume": "6 L",
     "alcohol": "4.9°",
     "id": "HOEGAARDEN BLANCHE_BLANCHE_6",
-    "image": "images/beer/be/HOEGAARDEN_BLANCHE_BLANCHE_6.jpg"
+    "image": "images/beer/be/HOEGAARDEN_BLANCHE_BLANCHE_6.png"
   },
   {
     "title": "HOEGAARDEN GRAND CRU",
@@ -789,7 +798,7 @@
     "volume": "0.33 L",
     "alcohol": "8.5°",
     "id": "HOEGAARDEN GRAND CRU_BLANCHE_0.33",
-    "image": "images/beer/be/HOEGAARDEN_GRAND_CRU_BLANCHE_033.jpg"
+    "image": "images/beer/be/HOEGAARDEN_GRAND_CRU_BLANCHE_033.png"
   },
   {
     "title": "HOPERA",
@@ -798,7 +807,7 @@
     "volume": "0.75 L",
     "alcohol": "6°",
     "id": "HOPERA_BLONDE_0.75",
-    "image": "images/beer/be/HOPERA_BLONDE_075.jpg"
+    "image": "images/beer/be/HOPERA_BLONDE_075.png"
   },
   {
     "title": "JACOBINS ROUGE MAX",
@@ -807,7 +816,7 @@
     "volume": "0.25 L",
     "alcohol": "8°",
     "id": "JACOBINS ROUGE MAX_ROUGE/RUBIS_0.25",
-    "image": "images/beer/be/JACOBINS_ROUGE_MAX_ROUGERUBIS_025.jpg"
+    "image": "images/beer/be/JACOBINS_ROUGE_MAX_ROUGERUBIS_025.png"
   },
   {
     "title": "JUPILER",
@@ -816,7 +825,7 @@
     "volume": "6 L",
     "alcohol": "5.2°",
     "id": "JUPILER_BLONDE_6",
-    "image": "images/beer/be/JUPILER_BLONDE_6.jpg"
+    "image": "images/beer/be/JUPILER_BLONDE_6.png"
   },
   {
     "title": "KASTEEL CUVEE CHATEAU",
@@ -825,7 +834,7 @@
     "volume": "0.33 L",
     "alcohol": "11°",
     "id": "KASTEEL CUVEE CHATEAU_NOIRE_0.33",
-    "image": "images/beer/be/KASTEEL_CUVEE_CHATEAU_NOIRE_033.jpg"
+    "image": "images/beer/be/KASTEEL_CUVEE_CHATEAU_NOIRE_033.png"
   },
   {
     "title": "KASTEEL DONKER",
@@ -834,7 +843,7 @@
     "volume": "0.33 L",
     "alcohol": "11°",
     "id": "KASTEEL DONKER_BRUNE_0.33",
-    "image": "images/beer/be/KASTEEL_DONKER_BRUNE_033.jpg"
+    "image": "images/beer/be/KASTEEL_DONKER_BRUNE_033.png"
   },
   {
     "title": "KASTEEL FILOU",
@@ -843,7 +852,7 @@
     "volume": "0.33 L",
     "alcohol": "8.5°",
     "id": "KASTEEL FILOU_BLONDE_0.33",
-    "image": "images/beer/be/KASTEEL_FILOU_BLONDE_033.jpg"
+    "image": "images/beer/be/KASTEEL_FILOU_BLONDE_033.png"
   },
   {
     "title": "KASTEEL ROUGE",
@@ -852,7 +861,7 @@
     "volume": "0.33 L",
     "alcohol": "8°",
     "id": "KASTEEL ROUGE_ROUGE/RUBIS_0.33",
-    "image": "images/beer/be/KASTEEL_ROUGE_ROUGERUBIS_033.jpg"
+    "image": "images/beer/be/KASTEEL_ROUGE_ROUGERUBIS_033.png"
   },
   {
     "title": "KASTEEL ROUGE 0,0%",
@@ -861,7 +870,7 @@
     "volume": "0.33 L",
     "alcohol": "0°",
     "id": "KASTEEL ROUGE 0,0%_ROUGE/RUBIS_0.33",
-    "image": "images/beer/be/KASTEEL_ROUGE_00_ROUGERUBIS_033.jpg"
+    "image": "images/beer/be/KASTEEL_ROUGE_00_ROUGERUBIS_033.png"
   },
   {
     "title": "KASTEEL RUBUS FRAMBOISE",
@@ -870,7 +879,7 @@
     "volume": "0.33 L",
     "alcohol": "7°",
     "id": "KASTEEL RUBUS FRAMBOISE_ROUGE/RUBIS_0.33",
-    "image": "images/beer/be/KASTEEL_RUBUS_FRAMBOISE_ROUGERUBIS_033.jpg"
+    "image": "images/beer/be/KASTEEL_RUBUS_FRAMBOISE_ROUGERUBIS_033.png"
   },
   {
     "title": "KASTEEL TRIPLE",
@@ -879,7 +888,7 @@
     "volume": "0.33 L",
     "alcohol": "11°",
     "id": "KASTEEL TRIPLE_BLONDE_0.33",
-    "image": "images/beer/be/KASTEEL_TRIPLE_BLONDE_033.jpg"
+    "image": "images/beer/be/KASTEEL_TRIPLE_BLONDE_033.png"
   },
   {
     "title": "KASTEEL TROPICAL",
@@ -888,7 +897,7 @@
     "volume": "0.33 L",
     "alcohol": "7°",
     "id": "KASTEEL TROPICAL_BLONDE_0.33",
-    "image": "images/beer/be/KASTEEL_TROPICAL_BLONDE_033.jpg"
+    "image": "images/beer/be/KASTEEL_TROPICAL_BLONDE_033.png"
   },
   {
     "title": "KASTEEL TROPICAL SANS ALCOOL",
@@ -897,7 +906,7 @@
     "volume": "0.33 L",
     "alcohol": "0°",
     "id": "KASTEEL TROPICAL SANS ALCOOL_BLONDE_0.33",
-    "image": "images/beer/be/KASTEEL_TROPICAL_SANS_ALCOOL_BLONDE_033.jpg"
+    "image": "images/beer/be/KASTEEL_TROPICAL_SANS_ALCOOL_BLONDE_033.png"
   },
   {
     "title": "KWAK",
@@ -906,7 +915,7 @@
     "volume": "0.33 L",
     "alcohol": "8.4°",
     "id": "KWAK_AMBREE_0.33",
-    "image": "images/beer/be/KWAK_AMBREE_033.jpg"
+    "image": "images/beer/be/KWAK_AMBREE_033.png"
   },
   {
     "title": "KWAK BLONDE",
@@ -915,7 +924,7 @@
     "volume": "0.33 L",
     "alcohol": "7.4°",
     "id": "KWAK BLONDE_BLONDE_0.33",
-    "image": "images/beer/be/KWAK_BLONDE_BLONDE_033.jpg"
+    "image": "images/beer/be/KWAK_BLONDE_BLONDE_033.png"
   },
   {
     "title": "KWAK ROUGE",
@@ -924,7 +933,7 @@
     "volume": "6 L",
     "alcohol": "8°",
     "id": "KWAK ROUGE_ROUGE/RUBIS_6",
-    "image": "images/beer/be/KWAK_ROUGE_ROUGERUBIS_6.jpg"
+    "image": "images/beer/be/KWAK_ROUGE_ROUGERUBIS_6.png"
   },
   {
     "title": "LA CHOUFFE",
@@ -933,7 +942,7 @@
     "volume": "0.33 L",
     "alcohol": "8°",
     "id": "LA CHOUFFE_BLONDE_0.33",
-    "image": "images/beer/be/LA_CHOUFFE_BLONDE_033.jpg"
+    "image": "images/beer/be/LA_CHOUFFE_BLONDE_033.png"
   },
   {
     "title": "LA CORNE BLONDE",
@@ -942,7 +951,7 @@
     "volume": "0.33 L",
     "alcohol": "5.9°",
     "id": "LA CORNE BLONDE_BLONDE_0.33",
-    "image": "images/beer/be/LA_CORNE_BLONDE_BLONDE_033.jpg"
+    "image": "images/beer/be/LA_CORNE_BLONDE_BLONDE_033.png"
   },
   {
     "title": "LA CORNE TRIPLE",
@@ -951,7 +960,7 @@
     "volume": "0.33 L",
     "alcohol": "10°",
     "id": "LA CORNE TRIPLE_BLONDE_0.33",
-    "image": "images/beer/be/LA_CORNE_TRIPLE_BLONDE_033.jpg"
+    "image": "images/beer/be/LA_CORNE_TRIPLE_BLONDE_033.png"
   },
   {
     "title": "LEFFE BLONDE",
@@ -960,7 +969,7 @@
     "volume": "6 L",
     "alcohol": "6.6°",
     "id": "LEFFE BLONDE_BLONDE_6",
-    "image": "images/beer/be/LEFFE_BLONDE_BLONDE_6.jpg"
+    "image": "images/beer/be/LEFFE_BLONDE_BLONDE_6.png"
   },
   {
     "title": "LEFFE PRESTIGE",
@@ -969,7 +978,7 @@
     "volume": "6 L",
     "alcohol": "8.5°",
     "id": "LEFFE PRESTIGE_BLONDE_6",
-    "image": "images/beer/be/LEFFE_PRESTIGE_BLONDE_6.jpg"
+    "image": "images/beer/be/LEFFE_PRESTIGE_BLONDE_6.png"
   },
   {
     "title": "LEFFE RUBY",
@@ -978,7 +987,7 @@
     "volume": "6 L",
     "alcohol": "5°",
     "id": "LEFFE RUBY_ROUGE/RUBIS_6",
-    "image": "images/beer/be/LEFFE_RUBY_ROUGERUBIS_6.jpg"
+    "image": "images/beer/be/LEFFE_RUBY_ROUGERUBIS_6.png"
   },
   {
     "title": "LEFORT BRUNE",
@@ -987,7 +996,7 @@
     "volume": "0.33 L",
     "alcohol": "10°",
     "id": "LEFORT BRUNE_BRUNE_0.33",
-    "image": "images/beer/be/LEFORT_BRUNE_BRUNE_033.jpg"
+    "image": "images/beer/be/LEFORT_BRUNE_BRUNE_033.png"
   },
   {
     "title": "LEFORT TRIPLE",
@@ -996,7 +1005,7 @@
     "volume": "0.33 L",
     "alcohol": "8.8°",
     "id": "LEFORT TRIPLE_BLONDE_0.33",
-    "image": "images/beer/be/LEFORT_TRIPLE_BLONDE_033.jpg"
+    "image": "images/beer/be/LEFORT_TRIPLE_BLONDE_033.png"
   },
   {
     "title": "LIEFMANS FRUITESSE",
@@ -1005,7 +1014,7 @@
     "volume": "0.25 L",
     "alcohol": "3.8°",
     "id": "LIEFMANS FRUITESSE_ROUGE/RUBIS_0.25",
-    "image": "images/beer/be/LIEFMANS_FRUITESSE_ROUGERUBIS_025.jpg"
+    "image": "images/beer/be/LIEFMANS_FRUITESSE_ROUGERUBIS_025.png"
   },
   {
     "title": "LIEFMANS FRUITESSE 0.0%",
@@ -1014,7 +1023,7 @@
     "volume": "0.25 L",
     "alcohol": "0°",
     "id": "LIEFMANS FRUITESSE 0.0%_ROUGE/RUBIS_0.25",
-    "image": "images/beer/be/LIEFMANS_FRUITESSE_00_ROUGERUBIS_025.jpg"
+    "image": "images/beer/be/LIEFMANS_FRUITESSE_00_ROUGERUBIS_025.png"
   },
   {
     "title": "LINDEMANS FARO",
@@ -1023,7 +1032,7 @@
     "volume": "0.25 L",
     "alcohol": "5°",
     "id": "LINDEMANS FARO_AMBREE_0.25",
-    "image": "images/beer/be/LINDEMANS_FARO_AMBREE_025.jpg"
+    "image": "images/beer/be/LINDEMANS_FARO_AMBREE_025.png"
   },
   {
     "title": "LINDEMANS FRAMBOISE",
@@ -1032,7 +1041,7 @@
     "volume": "0.25 L",
     "alcohol": "1.1°",
     "id": "LINDEMANS FRAMBOISE_ROUGE/RUBIS_0.25",
-    "image": "images/beer/be/LINDEMANS_FRAMBOISE_ROUGERUBIS_025.jpg"
+    "image": "images/beer/be/LINDEMANS_FRAMBOISE_ROUGERUBIS_025.png"
   },
   {
     "title": "LINDEMANS KRIEK",
@@ -1041,7 +1050,7 @@
     "volume": "0.25 L",
     "alcohol": "3.5°",
     "id": "LINDEMANS KRIEK_ROUGE/RUBIS_0.25",
-    "image": "images/beer/be/LINDEMANS_KRIEK_ROUGERUBIS_025.jpg"
+    "image": "images/beer/be/LINDEMANS_KRIEK_ROUGERUBIS_025.png"
   },
   {
     "title": "LINDEMANS PECHERESSE",
@@ -1050,7 +1059,7 @@
     "volume": "0.25 L",
     "alcohol": "1.1°",
     "id": "LINDEMANS PECHERESSE_BLONDE_0.25",
-    "image": "images/beer/be/LINDEMANS_PECHERESSE_BLONDE_025.jpg"
+    "image": "images/beer/be/LINDEMANS_PECHERESSE_BLONDE_025.png"
   },
   {
     "title": "LINDEMANS TAROT D'OR",
@@ -1059,7 +1068,7 @@
     "volume": "0.25 L",
     "alcohol": "8°",
     "id": "LINDEMANS TAROT D'OR_BLONDE_0.25",
-    "image": "images/beer/be/LINDEMANS_TAROT_DOR_BLONDE_025.jpg"
+    "image": "images/beer/be/LINDEMANS_TAROT_DOR_BLONDE_025.png"
   },
   {
     "title": "LINDEMANS TAROT NOIR",
@@ -1068,7 +1077,7 @@
     "volume": "0.25 L",
     "alcohol": "8°",
     "id": "LINDEMANS TAROT NOIR_ROUGE/RUBIS_0.25",
-    "image": "images/beer/be/LINDEMANS_TAROT_NOIR_ROUGERUBIS_025.jpg"
+    "image": "images/beer/be/LINDEMANS_TAROT_NOIR_ROUGERUBIS_025.png"
   },
   {
     "title": "LOWA TROLLS",
@@ -1077,7 +1086,7 @@
     "volume": "0.33 L",
     "alcohol": "0°",
     "id": "LOWA TROLLS_BLONDE_0.33",
-    "image": "images/beer/be/LOWA_TROLLS_BLONDE_033.jpg"
+    "image": "images/beer/be/LOWA_TROLLS_BLONDE_033.png"
   },
   {
     "title": "LUPULUS BLANCHE",
@@ -1086,7 +1095,7 @@
     "volume": "0.33 L",
     "alcohol": "4.6°",
     "id": "LUPULUS BLANCHE_BLANCHE_0.33",
-    "image": "images/beer/be/LUPULUS_BLANCHE_BLANCHE_033.jpg"
+    "image": "images/beer/be/LUPULUS_BLANCHE_BLANCHE_033.png"
   },
   {
     "title": "LUPULUS FRUCTUS",
@@ -1095,7 +1104,7 @@
     "volume": "0.33 L",
     "alcohol": "4.2°",
     "id": "LUPULUS FRUCTUS_ROUGE/RUBIS_0.33",
-    "image": "images/beer/be/LUPULUS_FRUCTUS_ROUGERUBIS_033.jpg"
+    "image": "images/beer/be/LUPULUS_FRUCTUS_ROUGERUBIS_033.png"
   },
   {
     "title": "LUPULUS ORGANICUS BIO",
@@ -1104,7 +1113,7 @@
     "volume": "0.75 L",
     "alcohol": "8.5°",
     "id": "LUPULUS ORGANICUS BIO",
-    "image": "images/beer/be/LUPULUS_ORGANICUS_BIO.jpg"
+    "image": "images/beer/be/LUPULUS_ORGANICUS_BIO.png"
   },
   {
     "title": "LUPULUS TRIPLE BLONDE",
@@ -1113,7 +1122,7 @@
     "volume": "0.75 L",
     "alcohol": "8.5°",
     "id": "LUPULUS TRIPLE BLONDE_BLONDE_0.75",
-    "image": "images/beer/be/LUPULUS_TRIPLE_BLONDE_BLONDE_075.jpg"
+    "image": "images/beer/be/LUPULUS_TRIPLE_BLONDE_BLONDE_075.png"
   },
   {
     "title": "MAC CHOUFFE",
@@ -1122,7 +1131,7 @@
     "volume": "0.33 L",
     "alcohol": "8°",
     "id": "MAC CHOUFFE_BRUNE_0.33",
-    "image": "images/beer/be/MAC_CHOUFFE_BRUNE_033.jpg"
+    "image": "images/beer/be/MAC_CHOUFFE_BRUNE_033.png"
   },
   {
     "title": "MAREDSOUS 10 TRIPLE",
@@ -1131,7 +1140,7 @@
     "volume": "0.33 L",
     "alcohol": "10°",
     "id": "MAREDSOUS 10 TRIPLE_BLONDE_0.33",
-    "image": "images/beer/be/MAREDSOUS_10_TRIPLE_BLONDE_033.jpg"
+    "image": "images/beer/be/MAREDSOUS_10_TRIPLE_BLONDE_033.png"
   },
   {
     "title": "MAREDSOUS 6 BLONDE",
@@ -1140,7 +1149,7 @@
     "volume": "0.33 L",
     "alcohol": "6.5°",
     "id": "MAREDSOUS 6 BLONDE_BLONDE_0.33",
-    "image": "images/beer/be/MAREDSOUS_6_BLONDE_BLONDE_033.jpg"
+    "image": "images/beer/be/MAREDSOUS_6_BLONDE_BLONDE_033.png"
   },
   {
     "title": "MAREDSOUS 8 BRUNE",
@@ -1149,7 +1158,7 @@
     "volume": "0.33 L",
     "alcohol": "8°",
     "id": "MAREDSOUS 8 BRUNE_BRUNE_0.33",
-    "image": "images/beer/be/MAREDSOUS_8_BRUNE_BRUNE_033.jpg"
+    "image": "images/beer/be/MAREDSOUS_8_BRUNE_BRUNE_033.png"
   },
   {
     "title": "MAREDSOUS BLONDE ABBAYE",
@@ -1185,7 +1194,7 @@
     "volume": "0.33 L",
     "alcohol": "8.5°",
     "id": "MERE NOEL_BLONDE_0.33",
-    "image": "images/beer/be/MERE_NOEL_BLONDE_033.jpg"
+    "image": "images/beer/be/MERE_NOEL_BLONDE_033.png"
   },
   {
     "title": "MOINETTE AMBREE",
@@ -1194,7 +1203,7 @@
     "volume": "0.33 L",
     "alcohol": "8.5°",
     "id": "MOINETTE AMBREE_AMBREE_0.33",
-    "image": "images/beer/be/MOINETTE_AMBREE_AMBREE_033.jpg"
+    "image": "images/beer/be/MOINETTE_AMBREE_AMBREE_033.png"
   },
   {
     "title": "MOINETTE BLONDE",
@@ -1203,7 +1212,7 @@
     "volume": "0.33 L",
     "alcohol": "8.5°",
     "id": "MOINETTE BLONDE_BLONDE_0.33",
-    "image": "images/beer/be/MOINETTE_BLONDE_BLONDE_033.jpg"
+    "image": "images/beer/be/MOINETTE_BLONDE_BLONDE_033.png"
   },
   {
     "title": "MONGOZO COCONUT",
@@ -1212,7 +1221,7 @@
     "volume": "0.33 L",
     "alcohol": "3.6°",
     "id": "MONGOZO COCONUT_BLANCHE_0.33",
-    "image": "images/beer/be/MONGOZO_COCONUT_BLANCHE_033.jpg"
+    "image": "images/beer/be/MONGOZO_COCONUT_BLANCHE_033.png"
   },
   {
     "title": "MYSTIC CERISE",
@@ -1221,7 +1230,7 @@
     "volume": "0.25 L",
     "alcohol": "3.5°",
     "id": "MYSTIC CERISE_ROUGE/RUBIS_0.25",
-    "image": "images/beer/be/MYSTIC_CERISE_ROUGERUBIS_025.jpg"
+    "image": "images/beer/be/MYSTIC_CERISE_ROUGERUBIS_025.png"
   },
   {
     "title": "OMER BLONDE",
@@ -1230,7 +1239,7 @@
     "volume": "0.33 L",
     "alcohol": "8°",
     "id": "OMER BLONDE_BLONDE_0.33",
-    "image": "images/beer/be/OMER_BLONDE_BLONDE_033.jpg"
+    "image": "images/beer/be/OMER_BLONDE_BLONDE_033.png"
   },
   {
     "title": "OMMEGANg",
@@ -1248,7 +1257,7 @@
     "volume": "0.33 L",
     "alcohol": "6.2°",
     "id": "ORVAL_AMBREE_0.33",
-    "image": "images/beer/be/ORVAL_AMBREE_033.jpg"
+    "image": "images/beer/be/ORVAL_AMBREE_033.png"
   },
   {
     "title": "PAIX DIEU",
@@ -1257,7 +1266,7 @@
     "volume": "0.33 L",
     "alcohol": "10°",
     "id": "PAIX DIEU_BLONDE_0.33",
-    "image": "images/beer/be/PAIX_DIEU_BLONDE_033.jpg"
+    "image": "images/beer/be/PAIX_DIEU_BLONDE_033.png"
   },
   {
     "title": "PAIX DIEU NOVA",
@@ -1266,7 +1275,7 @@
     "volume": "0.33 L",
     "alcohol": "6°",
     "id": "PAIX DIEU NOVA_BLONDE_0.33",
-    "image": "images/beer/be/PAIX_DIEU_NOVA_BLONDE_033.jpg"
+    "image": "images/beer/be/PAIX_DIEU_NOVA_BLONDE_033.png"
   },
   {
     "title": "PARANOIA",
@@ -1275,7 +1284,7 @@
     "volume": "0.33 L",
     "alcohol": "5.6°",
     "id": "PARANOIA_BLONDE_0.33",
-    "image": "images/beer/be/PARANOIA_BLONDE_033.jpg"
+    "image": "images/beer/be/PARANOIA_BLONDE_033.png"
   },
   {
     "title": "PECHE MEL BUSH",
@@ -1284,7 +1293,7 @@
     "volume": "0.33 L",
     "alcohol": "8.5°",
     "id": "PECHE MEL BUSH_AMBREE_0.33",
-    "image": "images/beer/be/PECHE_MEL_BUSH_AMBREE_033.jpg"
+    "image": "images/beer/be/PECHE_MEL_BUSH_AMBREE_033.png"
   },
   {
     "title": "PETRUS TRIPLE",
@@ -1293,7 +1302,7 @@
     "volume": "0.33 L",
     "alcohol": "8°",
     "id": "PETRUS TRIPLE_BLONDE_0.33",
-    "image": "images/beer/be/PETRUS_TRIPLE_BLONDE_033.jpg"
+    "image": "images/beer/be/PETRUS_TRIPLE_BLONDE_033.png"
   },
   {
     "title": "PILS EXPORT",
@@ -1320,7 +1329,7 @@
     "volume": "0.33 L",
     "alcohol": "5.5°",
     "id": "QUEUE DE CHARRUE AMBREE_AMBREE_0.33",
-    "image": "images/beer/be/QUEUE_DE_CHARRUE_AMBREE_AMBREE_033.jpg"
+    "image": "images/beer/be/QUEUE_DE_CHARRUE_AMBREE_AMBREE_033.png"
   },
   {
     "title": "QUEUE DE CHARRUE BLONDE",
@@ -1329,7 +1338,7 @@
     "volume": "0.75 L",
     "alcohol": "6.6°",
     "id": "QUEUE DE CHARRUE BLONDE_BLONDE_0.75",
-    "image": "images/beer/be/QUEUE_DE_CHARRUE_BLONDE_BLONDE_075.jpg"
+    "image": "images/beer/be/QUEUE_DE_CHARRUE_BLONDE_BLONDE_075.png"
   },
   {
     "title": "QUEUE DE CHARRUE ROUGE",
@@ -1338,7 +1347,7 @@
     "volume": "0.33 L",
     "alcohol": "8.7°",
     "id": "QUEUE DE CHARRUE ROUGE",
-    "image": "images/beer/be/QUEUE_DE_CHARRUE_ROUGE.jpg"
+    "image": "images/beer/be/QUEUE_DE_CHARRUE_ROUGE.png"
   },
   {
     "title": "QUEUE DE CHARRUE TRIPLE",
@@ -1347,7 +1356,7 @@
     "volume": "0.33 L",
     "alcohol": "9°",
     "id": "QUEUE DE CHARRUE TRIPLE_BLONDE_0.33",
-    "image": "images/beer/be/QUEUE_DE_CHARRUE_TRIPLE_BLONDE_033.jpg"
+    "image": "images/beer/be/QUEUE_DE_CHARRUE_TRIPLE_BLONDE_033.png"
   },
   {
     "title": "RASTA TROLLS",
@@ -1356,7 +1365,7 @@
     "volume": "0.33 L",
     "alcohol": "7°",
     "id": "RASTA TROLLS_BLONDE_0.33",
-    "image": "images/beer/be/RASTA_TROLLS_BLONDE_033.jpg"
+    "image": "images/beer/be/RASTA_TROLLS_BLONDE_033.png"
   },
   {
     "title": "RHODIENNE",
@@ -1383,7 +1392,7 @@
     "volume": "0.33 L",
     "alcohol": "8.5°",
     "id": "RINCE COCHON BLONDE_BLONDE_0.33",
-    "image": "images/beer/be/RINCE_COCHON_BLONDE_BLONDE_033.jpg"
+    "image": "images/beer/be/RINCE_COCHON_BLONDE_BLONDE_033.png"
   },
   {
     "title": "RINCE COCHON RED",
@@ -1392,7 +1401,7 @@
     "volume": "0.33 L",
     "alcohol": "7.5°",
     "id": "RINCE COCHON RED_ROUGE/RUBIS_0.33",
-    "image": "images/beer/be/RINCE_COCHON_RED_ROUGERUBIS_033.jpg"
+    "image": "images/beer/be/RINCE_COCHON_RED_ROUGERUBIS_033.png"
   },
   {
     "title": "ROCHEFORT 10%",
@@ -1401,7 +1410,7 @@
     "volume": "0.33 L",
     "alcohol": "11.3°",
     "id": "ROCHEFORT 10%_BRUNE_0.33",
-    "image": "images/beer/be/ROCHEFORT_10_BRUNE_033.jpg"
+    "image": "images/beer/be/ROCHEFORT_10_BRUNE_033.png"
   },
   {
     "title": "ROCHEFORT 6%",
@@ -1410,7 +1419,7 @@
     "volume": "0.33 L",
     "alcohol": "7.5°",
     "id": "ROCHEFORT 6%_BRUNE_0.33",
-    "image": "images/beer/be/ROCHEFORT_6_BRUNE_033.jpg"
+    "image": "images/beer/be/ROCHEFORT_6_BRUNE_033.png"
   },
   {
     "title": "ROCHEFORT 8%",
@@ -1419,7 +1428,7 @@
     "volume": "0.33 L",
     "alcohol": "9.2°",
     "id": "ROCHEFORT 8%_BRUNE_0.33",
-    "image": "images/beer/be/ROCHEFORT_8_BRUNE_033.jpg"
+    "image": "images/beer/be/ROCHEFORT_8_BRUNE_033.png"
   },
   {
     "title": "ROCHEFORT TRIPLE",
@@ -1428,7 +1437,7 @@
     "volume": "0.33 L",
     "alcohol": "8.1°",
     "id": "ROCHEFORT TRIPLE_BLONDE_0.33",
-    "image": "images/beer/be/ROCHEFORT_TRIPLE_BLONDE_033.jpg"
+    "image": "images/beer/be/ROCHEFORT_TRIPLE_BLONDE_033.png"
   },
   {
     "title": "SAISON DUPONT",
@@ -1437,7 +1446,7 @@
     "volume": "0.75 L",
     "alcohol": "6.5°",
     "id": "Saison Dupont 33cl",
-    "image": "images/beer/be/Saison_Dupont_33cl.jpg"
+    "image": "images/beer/be/Saison_Dupont_33cl.png"
   },
   {
     "title": "SAISON DUPONT DRY HOPPINg",
@@ -1446,7 +1455,7 @@
     "volume": "0.33 L",
     "alcohol": "6.5°",
     "id": "SAISON DUPONT DRY HOPPING_BLONDE_0.33",
-    "image": "images/beer/be/SAISON_DUPONT_DRY_HOPPING_BLONDE_033.jpg"
+    "image": "images/beer/be/SAISON_DUPONT_DRY_HOPPING_BLONDE_033.png"
   },
   {
     "title": "SILLY BLANCHE",
@@ -1455,7 +1464,7 @@
     "volume": "0.25 L",
     "alcohol": "5°",
     "id": "SILLY BLANCHE_BLANCHE_0.25",
-    "image": "images/beer/be/SILLY_BLANCHE_BLANCHE_025.jpg"
+    "image": "images/beer/be/SILLY_BLANCHE_BLANCHE_025.png"
   },
   {
     "title": "SILLY KRIEK",
@@ -1464,7 +1473,7 @@
     "volume": "0.25 L",
     "alcohol": "4.8°",
     "id": "SILLY KRIEK_ROUGE/RUBIS_0.25",
-    "image": "images/beer/be/SILLY_KRIEK_ROUGERUBIS_025.jpg"
+    "image": "images/beer/be/SILLY_KRIEK_ROUGERUBIS_025.png"
   },
   {
     "title": "SILLY PILS",
@@ -1473,7 +1482,7 @@
     "volume": "0.25 L",
     "alcohol": "5°",
     "id": "SILLY PILS_BLONDE_0.25",
-    "image": "images/beer/be/SILLY_PILS_BLONDE_025.jpg"
+    "image": "images/beer/be/SILLY_PILS_BLONDE_025.png"
   },
   {
     "title": "SILLY ROUGE",
@@ -1482,7 +1491,7 @@
     "volume": "0.33 L",
     "alcohol": "8°",
     "id": "SILLY ROUGE_ROUGE/RUBIS_0.33",
-    "image": "images/beer/be/SILLY_ROUGE_ROUGERUBIS_033.jpg"
+    "image": "images/beer/be/SILLY_ROUGE_ROUGERUBIS_033.png"
   },
   {
     "title": "SILLY SAISON",
@@ -1491,7 +1500,7 @@
     "volume": "0.33 L",
     "alcohol": "5°",
     "id": "SILLY SAISON_AMBREE_0.33",
-    "image": "images/beer/be/SILLY_SAISON_AMBREE_033.jpg"
+    "image": "images/beer/be/SILLY_SAISON_AMBREE_033.png"
   },
   {
     "title": "SILLY SESSION",
@@ -1500,7 +1509,7 @@
     "volume": "0.33 L",
     "alcohol": "4.2°",
     "id": "SILLY SESSION_BLONDE_0.33",
-    "image": "images/beer/be/SILLY_SESSION_BLONDE_033.jpg"
+    "image": "images/beer/be/SILLY_SESSION_BLONDE_033.png"
   },
   {
     "title": "SMASH ORIGINAL",
@@ -1509,7 +1518,7 @@
     "volume": "0.33 L",
     "alcohol": "6.2°",
     "id": "SMASH ORIGINAL",
-    "image": "images/beer/be/SMASH_ORIGINAL.jpg"
+    "image": "images/beer/be/SMASH_ORIGINAL.png"
   },
   {
     "title": "ST BERNARDUS ABT",
@@ -1518,7 +1527,7 @@
     "volume": "0.33 L",
     "alcohol": "10°",
     "id": "ST BERNARDUS ABT_BRUNE_0.33",
-    "image": "images/beer/be/ST_BERNARDUS_ABT_BRUNE_033.jpg"
+    "image": "images/beer/be/ST_BERNARDUS_ABT_BRUNE_033.png"
   },
   {
     "title": "ST BERNARDUS EXTRA",
@@ -1527,7 +1536,7 @@
     "volume": "0.33 L",
     "alcohol": "4.8°",
     "id": "ST BERNARDUS EXTRA_BLONDE_0.33",
-    "image": "images/beer/be/ST_BERNARDUS_EXTRA_BLONDE_033.jpg"
+    "image": "images/beer/be/ST_BERNARDUS_EXTRA_BLONDE_033.png"
   },
   {
     "title": "ST BERNARDUS TRIPLE",
@@ -1536,7 +1545,7 @@
     "volume": "0.33 L",
     "alcohol": "8°",
     "id": "ST BERNARDUS TRIPLE_BLONDE_0.33",
-    "image": "images/beer/be/ST_BERNARDUS_TRIPLE_BLONDE_033.jpg"
+    "image": "images/beer/be/ST_BERNARDUS_TRIPLE_BLONDE_033.png"
   },
   {
     "title": "ST FEUILLIEN BLONDE",
@@ -1545,7 +1554,7 @@
     "volume": "0.33 L",
     "alcohol": "7.5°",
     "id": "ST FEUILLIEN BLONDE_BLONDE_0.33",
-    "image": "images/beer/be/ST_FEUILLIEN_BLONDE_BLONDE_033.jpg"
+    "image": "images/beer/be/ST_FEUILLIEN_BLONDE_BLONDE_033.png"
   },
   {
     "title": "ST FEUILLIEN FRUITS",
@@ -1554,7 +1563,7 @@
     "volume": "0.33 L",
     "alcohol": "3.8°",
     "id": "ST FEUILLIEN FRUITS_ROSEE_0.33",
-    "image": "images/beer/be/ST_FEUILLIEN_FRUITS_ROSEE_033.jpg"
+    "image": "images/beer/be/ST_FEUILLIEN_FRUITS_ROSEE_033.png"
   },
   {
     "title": "ST FEUILLIEN GRAND CRU",
@@ -1563,7 +1572,7 @@
     "volume": "0.33 L",
     "alcohol": "9.5°",
     "id": "ST FEUILLIEN GRAND CRU_BLONDE_0.33",
-    "image": "images/beer/be/ST_FEUILLIEN_GRAND_CRU_BLONDE_033.jpg"
+    "image": "images/beer/be/ST_FEUILLIEN_GRAND_CRU_BLONDE_033.png"
   },
   {
     "title": "ST FEUILLIEN NOEL",
@@ -1572,7 +1581,7 @@
     "volume": "0.33 L",
     "alcohol": "9°",
     "id": "ST FEUILLIEN NOEL_BRUNE_0.33",
-    "image": "images/beer/be/ST_FEUILLIEN_NOEL_BRUNE_033.jpg"
+    "image": "images/beer/be/ST_FEUILLIEN_NOEL_BRUNE_033.png"
   },
   {
     "title": "ST FEUILLIEN QUADRUPLE",
@@ -1581,7 +1590,7 @@
     "volume": "0.33 L",
     "alcohol": "11°",
     "id": "ST FEUILLIEN QUADRUPLE_BRUNE_0.33",
-    "image": "images/beer/be/ST_FEUILLIEN_QUADRUPLE_BRUNE_033.jpg"
+    "image": "images/beer/be/ST_FEUILLIEN_QUADRUPLE_BRUNE_033.png"
   },
   {
     "title": "ST FEUILLIEN TRIPLE",
@@ -1590,7 +1599,7 @@
     "volume": "0.33 L",
     "alcohol": "8.5°",
     "id": "ST FEUILLIEN TRIPLE_BLONDE_0.33",
-    "image": "images/beer/be/ST_FEUILLIEN_TRIPLE_BLONDE_033.jpg"
+    "image": "images/beer/be/ST_FEUILLIEN_TRIPLE_BLONDE_033.png"
   },
   {
     "title": "STELLA",
@@ -1599,7 +1608,7 @@
     "volume": "6 L",
     "alcohol": "5.2°",
     "id": "STELLA_BLONDE_6",
-    "image": "images/beer/be/STELLA_BLONDE_6.jpg"
+    "image": "images/beer/be/STELLA_BLONDE_6.png"
   },
   {
     "title": "STRAFFE HENDRIK QUADRUPEL",
@@ -1608,7 +1617,7 @@
     "volume": "0.33 L",
     "alcohol": "11°",
     "id": "STRAFFE HENDRIK QUADRUPEL_AMBREE_0.33",
-    "image": "images/beer/be/STRAFFE_HENDRIK_QUADRUPEL_AMBREE_033.jpg"
+    "image": "images/beer/be/STRAFFE_HENDRIK_QUADRUPEL_AMBREE_033.png"
   },
   {
     "title": "STRAFFE HENDRIK TRIPLE",
@@ -1617,7 +1626,7 @@
     "volume": "0.33 L",
     "alcohol": "9°",
     "id": "STRAFFE HENDRIK TRIPLE_BLONDE_0.33",
-    "image": "images/beer/be/STRAFFE_HENDRIK_TRIPLE_BLONDE_033.jpg"
+    "image": "images/beer/be/STRAFFE_HENDRIK_TRIPLE_BLONDE_033.png"
   },
   {
     "title": "SUPER 8 BLANCHE",
@@ -1626,7 +1635,7 @@
     "volume": "0.33 L",
     "alcohol": "5.1°",
     "id": "SUPER 8 BLANCHE_BLANCHE_0.33",
-    "image": "images/beer/be/SUPER_8_BLANCHE_BLANCHE_033.jpg"
+    "image": "images/beer/be/SUPER_8_BLANCHE_BLANCHE_033.png"
   },
   {
     "title": "SUPER 8 FLANDRIEN",
@@ -1635,7 +1644,7 @@
     "volume": "0.33 L",
     "alcohol": "6.4°",
     "id": "SUPER 8 FLANDRIEN_BLONDE_0.33",
-    "image": "images/beer/be/SUPER_8_FLANDRIEN_BLONDE_033.jpg"
+    "image": "images/beer/be/SUPER_8_FLANDRIEN_BLONDE_033.png"
   },
   {
     "title": "SUPER 8 IPA",
@@ -1644,7 +1653,7 @@
     "volume": "0.33 L",
     "alcohol": "6°",
     "id": "SUPER 8 IPA_AMBREE_0.33",
-    "image": "images/beer/be/SUPER_8_IPA_AMBREE_033.jpg"
+    "image": "images/beer/be/SUPER_8_IPA_AMBREE_033.png"
   },
   {
     "title": "SWAF",
@@ -1653,7 +1662,7 @@
     "volume": "0.33 L",
     "alcohol": "8°",
     "id": "SWAF_BLONDE_0.33",
-    "image": "images/beer/be/SWAF_BLONDE_033.jpg"
+    "image": "images/beer/be/SWAF_BLONDE_033.png"
   },
   {
     "title": "TETE DE MORT",
@@ -1662,7 +1671,7 @@
     "volume": "0.75 L",
     "alcohol": "8.1°",
     "id": "TETE DE MORT_BLONDE_0.75",
-    "image": "images/beer/be/TETE_DE_MORT_BLONDE_075.jpg"
+    "image": "images/beer/be/TETE_DE_MORT_BLONDE_075.png"
   },
   {
     "title": "TETE DE MORT DOUBLE IPA",
@@ -1680,7 +1689,7 @@
     "volume": "0.33 L",
     "alcohol": "8.2°",
     "id": "TETE DE MORT RED_ROUGE/RUBIS_0.33",
-    "image": "images/beer/be/TETE_DE_MORT_RED_ROUGERUBIS_033.jpg"
+    "image": "images/beer/be/TETE_DE_MORT_RED_ROUGERUBIS_033.png"
   },
   {
     "title": "TONGERLO LUX BLONDE",
@@ -1689,7 +1698,7 @@
     "volume": "0.33 L",
     "alcohol": "6°",
     "id": "TONGERLO LUX BLONDE_BLONDE_0.33",
-    "image": "images/beer/be/TONGERLO_LUX_BLONDE_BLONDE_033.jpg"
+    "image": "images/beer/be/TONGERLO_LUX_BLONDE_BLONDE_033.png"
   },
   {
     "title": "TONGERLO NOX BRUNE",
@@ -1698,7 +1707,7 @@
     "volume": "0.33 L",
     "alcohol": "6.5°",
     "id": "TONGERLO NOX BRUNE_BRUNE_0.33",
-    "image": "images/beer/be/TONGERLO_NOX_BRUNE_BRUNE_033.jpg"
+    "image": "images/beer/be/TONGERLO_NOX_BRUNE_BRUNE_033.png"
   },
   {
     "title": "TONGERLO PRIOR TRIPLE",
@@ -1707,7 +1716,7 @@
     "volume": "0.33 L",
     "alcohol": "9°",
     "id": "TONGERLO PRIOR TRIPLE_BLONDE_0.33",
-    "image": "images/beer/be/TONGERLO_PRIOR_TRIPLE_BLONDE_033.jpg"
+    "image": "images/beer/be/TONGERLO_PRIOR_TRIPLE_BLONDE_033.png"
   },
   {
     "title": "TRIPICK 10 QUADRUPLE",
@@ -1716,7 +1725,7 @@
     "volume": "1.5 L",
     "alcohol": "10.5°",
     "id": "TRIPICK 10 QUADRUPLE_BLONDE_1.5",
-    "image": "images/beer/be/TRIPICK_10_QUADRUPLE_BLONDE_15.jpg"
+    "image": "images/beer/be/TRIPICK_10_QUADRUPLE_BLONDE_15.png"
   },
   {
     "title": "TRIPICK 3 FRUITEE",
@@ -1725,7 +1734,7 @@
     "volume": "0.33 L",
     "alcohol": "4.2°",
     "id": "TRIPICK 3 FRUITEE_ROUGE/RUBIS_0.33",
-    "image": "images/beer/be/TRIPICK_3_FRUITEE_ROUGERUBIS_033.jpg"
+    "image": "images/beer/be/TRIPICK_3_FRUITEE_ROUGERUBIS_033.png"
   },
   {
     "title": "TRIPICK 5 DRY HOPPINg",
@@ -1734,7 +1743,7 @@
     "volume": "0.33 L",
     "alcohol": "5.5°",
     "id": "TRIPICK 5 DRY HOPPING_BLONDE_0.33",
-    "image": "images/beer/be/TRIPICK_5_DRY_HOPPING_BLONDE_033.jpg"
+    "image": "images/beer/be/TRIPICK_5_DRY_HOPPING_BLONDE_033.png"
   },
   {
     "title": "TRIPICK 6 BLONDE",
@@ -1743,7 +1752,7 @@
     "volume": "0.33 L",
     "alcohol": "6°",
     "id": "TRIPICK 6 BLONDE_BLONDE_0.33",
-    "image": "images/beer/be/TRIPICK_6_BLONDE_BLONDE_033.jpg"
+    "image": "images/beer/be/TRIPICK_6_BLONDE_BLONDE_033.png"
   },
   {
     "title": "TRIPICK 7 AMBREE",
@@ -1752,7 +1761,7 @@
     "volume": "0.33 L",
     "alcohol": "6.8°",
     "id": "TRIPICK 7 AMBREE_AMBREE_0.33",
-    "image": "images/beer/be/TRIPICK_7_AMBREE_AMBREE_033.jpg"
+    "image": "images/beer/be/TRIPICK_7_AMBREE_AMBREE_033.png"
   },
   {
     "title": "TRIPICK 8 TRIPLE",
@@ -1761,7 +1770,7 @@
     "volume": "0.33 L",
     "alcohol": "8°",
     "id": "TRIPICK 8 TRIPLE_BLONDE_0.33",
-    "image": "images/beer/be/TRIPICK_8_TRIPLE_BLONDE_033.jpg"
+    "image": "images/beer/be/TRIPICK_8_TRIPLE_BLONDE_033.png"
   },
   {
     "title": "TRIPLE KARMELIET",
@@ -1770,7 +1779,7 @@
     "volume": "0.33 L",
     "alcohol": "8.4°",
     "id": "TRIPLE KARMELIET_BLONDE_0.33",
-    "image": "images/beer/be/TRIPLE_KARMELIET_BLONDE_033.jpg"
+    "image": "images/beer/be/TRIPLE_KARMELIET_BLONDE_033.png"
   },
   {
     "title": "UILTJE JUICY LUCY NEIPA",
@@ -1788,7 +1797,7 @@
     "volume": "0.33 L",
     "alcohol": "6°",
     "id": "VAL DIEU BLONDE_BLONDE_0.33",
-    "image": "images/beer/be/VAL_DIEU_BLONDE_BLONDE_033.jpg"
+    "image": "images/beer/be/VAL_DIEU_BLONDE_BLONDE_033.png"
   },
   {
     "title": "VAL DIEU TRIPLE",
@@ -1806,7 +1815,7 @@
     "volume": "0.33 L",
     "alcohol": "4.7°",
     "id": "VEDETT EXTRA WHITE_BLANCHE_0.33",
-    "image": "images/beer/be/VEDETT_EXTRA_WHITE_BLANCHE_033.jpg"
+    "image": "images/beer/be/VEDETT_EXTRA_WHITE_BLANCHE_033.png"
   },
   {
     "title": "VEDETT EXTRAORDINARY IPA",
@@ -1815,7 +1824,7 @@
     "volume": "0.33 L",
     "alcohol": "5.5°",
     "id": "VEDETT EXTRAORDINARY IPA_BLONDE_0.33",
-    "image": "images/beer/be/VEDETT_EXTRAORDINARY_IPA_BLONDE_033.jpg"
+    "image": "images/beer/be/VEDETT_EXTRAORDINARY_IPA_BLONDE_033.png"
   },
   {
     "title": "VICTORIA",
@@ -1824,7 +1833,7 @@
     "volume": "6 L",
     "alcohol": "8.5°",
     "id": "VICTORIA_BLONDE_6",
-    "image": "images/beer/be/VICTORIA_BLONDE_6.jpg"
+    "image": "images/beer/be/VICTORIA_BLONDE_6.png"
   },
   {
     "title": "WESTMALLE DUBBEL",
@@ -1833,7 +1842,7 @@
     "volume": "0.33 L",
     "alcohol": "7°",
     "id": "WESTMALLE DUBBEL_BRUNE_0.33",
-    "image": "images/beer/be/WESTMALLE_DUBBEL_BRUNE_033.jpg"
+    "image": "images/beer/be/WESTMALLE_DUBBEL_BRUNE_033.png"
   },
   {
     "title": "WESTMALLE DUO",
@@ -1851,7 +1860,7 @@
     "volume": "0.33 L",
     "alcohol": "9.5°",
     "id": "WESTMALLE TRIPEL_BLONDE_0.33",
-    "image": "images/beer/be/WESTMALLE_TRIPEL_BLONDE_033.jpg"
+    "image": "images/beer/be/WESTMALLE_TRIPEL_BLONDE_033.png"
   },
   {
     "title": "YPRA",
@@ -1860,7 +1869,7 @@
     "volume": "0.33 L",
     "alcohol": "6°",
     "id": "YPRA_BLONDE_0.33",
-    "image": "images/beer/be/YPRA_BLONDE_033.jpg"
+    "image": "images/beer/be/YPRA_BLONDE_033.png"
   },
   {
     "title": "YPRA HOPPY ALCOHOLFREE",
@@ -1869,7 +1878,7 @@
     "volume": "0.33 L",
     "alcohol": "0°",
     "id": "YPRA HOPPY ALCOHOLFREE_BLONDE_0.33",
-    "image": "images/beer/be/YPRA_HOPPY_ALCOHOLFREE_BLONDE_033.jpg"
+    "image": "images/beer/be/YPRA_HOPPY_ALCOHOLFREE_BLONDE_033.png"
   },
   {
     "title": "YPRA HOPPY TRIPLE",
@@ -1878,6 +1887,6 @@
     "volume": "0.33 L",
     "alcohol": "10°",
     "id": "YPRA HOPPY TRIPLE_BLONDE_0.33",
-    "image": "images/beer/be/YPRA_HOPPY_TRIPLE_BLONDE_033.jpg"
+    "image": "images/beer/be/YPRA_HOPPY_TRIPLE_BLONDE_033.png"
   }
 ]

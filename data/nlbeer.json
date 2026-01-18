@@ -15,7 +15,7 @@
     "volume": "1.98 L",
     "alcohol": "0°",
     "id": "BAVARIA 0,0% IPA_BLONDE_1.98",
-    "image": "images/beer/nl/BAVARIA_00_IPA_BLONDE_198.jpg"
+    "image": "images/beer/nl/BAVARIA_00_IPA_BLONDE_198.png"
   },
   {
     "title": "BAVARIA 8.6 CHERRY",
@@ -24,7 +24,7 @@
     "volume": "0.5 L",
     "alcohol": "7.2°",
     "id": "BAVARIA 8.6 CHERRY_AMBREE_0.5",
-    "image": "images/beer/nl/BAVARIA_86_CHERRY_AMBREE_05.jpg"
+    "image": "images/beer/nl/BAVARIA_86_CHERRY_AMBREE_05.png"
   },
   {
     "title": "BAVARIA 8.6 ORIGINAL",
@@ -33,7 +33,7 @@
     "volume": "0.5 L",
     "alcohol": "8.6°",
     "id": "BAVARIA 8.6 ORIGINAL_BLONDE_0.5",
-    "image": "images/beer/nl/BAVARIA_86_ORIGINAL_BLONDE_05.jpg"
+    "image": "images/beer/nl/BAVARIA_86_ORIGINAL_BLONDE_05.png"
   },
   {
     "title": "BAVARIA 8.6 RED",
@@ -42,7 +42,7 @@
     "volume": "0.5 L",
     "alcohol": "7.9°",
     "id": "BAVARIA 8.6 RED_AMBREE_0.5",
-    "image": "images/beer/nl/BAVARIA_86_RED_AMBREE_05.jpg"
+    "image": "images/beer/nl/BAVARIA_86_RED_AMBREE_05.png"
   },
   {
     "title": "BAVARIA WIT 0,0%",
@@ -51,7 +51,7 @@
     "volume": "0.33 L",
     "alcohol": "0°",
     "id": "BAVARIA WIT 0,0%_BLANCHE_0.33",
-    "image": "images/beer/nl/BAVARIA_WIT_00_BLANCHE_033.jpg"
+    "image": "images/beer/nl/BAVARIA_WIT_00_BLANCHE_033.png"
   },
   {
     "title": "LA TRAPPE BLONDE",
@@ -60,7 +60,7 @@
     "volume": "0.33 L",
     "alcohol": "6.5°",
     "id": "LA TRAPPE BLOND_BLONDE_0.33",
-    "image": "images/beer/nl/LA_TRAPPE_BLOND_BLONDE_033.jpg"
+    "image": "images/beer/nl/LA_TRAPPE_BLOND_BLONDE_033.png"
   },
   {
     "title": "LA TRAPPE DUBBEL",
@@ -69,7 +69,7 @@
     "volume": "0.33 L",
     "alcohol": "7°",
     "id": "LA TRAPPE DUBBEL_BRUNE_0.33",
-    "image": "images/beer/nl/LA_TRAPPE_DUBBEL_BRUNE_033.jpg"
+    "image": "images/beer/nl/LA_TRAPPE_DUBBEL_BRUNE_033.png"
   },
   {
     "title": "LA TRAPPE ISID'OR",
@@ -78,7 +78,7 @@
     "volume": "0.33 L",
     "alcohol": "7.5°",
     "id": "LA TRAPPE ISID'OR_AMBREE_0.33",
-    "image": "images/beer/nl/LA_TRAPPE_ISIDOR_AMBREE_033.jpg"
+    "image": "images/beer/nl/LA_TRAPPE_ISIDOR_AMBREE_033.png"
   },
   {
     "title": "LA TRAPPE QUADRUPEL",
@@ -87,7 +87,7 @@
     "volume": "0.33 L",
     "alcohol": "10°",
     "id": "LA TRAPPE QUADRUPEL_AMBREE_0.33",
-    "image": "images/beer/nl/LA_TRAPPE_QUADRUPEL_AMBREE_033.jpg"
+    "image": "images/beer/nl/LA_TRAPPE_QUADRUPEL_AMBREE_033.png"
   },
   {
     "title": "LA TRAPPE TRIPEL",
@@ -96,7 +96,7 @@
     "volume": "0.33 L",
     "alcohol": "8°",
     "id": "LA TRAPPE TRIPEL_BLONDE_0.33",
-    "image": "images/beer/nl/LA_TRAPPE_TRIPEL_BLONDE_033.jpg"
+    "image": "images/beer/nl/LA_TRAPPE_TRIPEL_BLONDE_033.png"
   },
   {
     "title": "LA TRAPPE WITTE",
@@ -105,7 +105,7 @@
     "volume": "0.33 L",
     "alcohol": "5.5°",
     "id": "LA TRAPPE WITTE_BLANCHE_0.33",
-    "image": "images/beer/nl/LA_TRAPPE_WITTE_BLANCHE_033.jpg"
+    "image": "images/beer/nl/LA_TRAPPE_WITTE_BLANCHE_033.png"
   },
   {
     "title": "RODENBACH FRUITAGE",
@@ -114,6 +114,6 @@
     "volume": "0.25 L",
     "alcohol": "3.9°",
     "id": "RODENBACH FRUITAGE_ROUGE/RUBIS_0.25",
-    "image": "images/beer/nl/RODENBACH_FRUITAGE_ROUGERUBIS_025.jpg"
+    "image": "images/beer/nl/RODENBACH_FRUITAGE_ROUGERUBIS_025.png"
   }
 ]
