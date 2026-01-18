@@ -590,7 +590,7 @@ export function renderBeerDetail(beer, onSave) {
         // Let's dispatch event for cleaner architecture.
         window.dispatchEvent(new CustomEvent('beerdex-action'));
 
-        showToast(`🍻 Santé ! (+${vol})`);
+        showToast(`🍻 Glou Glou ! (+${vol})`);
     };
 
     wrapper.querySelector('#btn-undrink').onclick = () => {
@@ -846,7 +846,7 @@ export function renderStats(allBeers, userData, container, isDiscovery = false, 
                         </div>
                         
                         <div style="margin-top:20px; font-size:0.7rem; color:#444;">
-                            Beerdex v1.4 &copy; 2026
+                            Beerdex v1.6 &copy; 2026
                         </div>
                     </div>
                 </div>
@@ -1225,31 +1225,27 @@ function renderAchievementsList() {
 
         html += byCategory[cat].map(ach => {
             const isUnlocked = unlockedIds.includes(ach.id);
-            const opacity = isUnlocked ? '1' : '0.2';
+            const opacity = isUnlocked ? '1' : '0.4'; // Improved visibility for locked items
             const filter = isUnlocked ? 'none' : 'grayscale(100%)';
 
             let title = ach.title;
             let desc = ach.desc;
 
+            // Only mask if locked AND hidden
             if (!isUnlocked && ach.hidden) {
                 title = '???';
-                desc = 'Mystère...';
+                desc = 'Mystère... Continuez à explorer !';
             }
 
-            const tooltip = `${title}: ${desc}`;
+            // Escape quotes for function arguments
+            const safeTitle = title.replace(/'/g, "&apos;");
+            const safeDesc = desc.replace(/'/g, "&apos;");
+            const safeIcon = ach.icon.replace(/'/g, "&apos;");
 
-            // Mobile-friendly: Click to toggle tooltip instead of just title attribute
             return `
                     <div class="ach-item" style="opacity:${opacity}; filter:${filter}; position:relative; cursor:pointer;" 
-                         onclick="this.querySelector('.ach-content-tooltip').style.display = this.querySelector('.ach-content-tooltip').style.display === 'block' ? 'none' : 'block'; setTimeout(() => this.querySelector('.ach-content-tooltip').style.display = 'none', 3000);">
+                         onclick="UI.showAchievementDetails('${safeTitle}', '${safeDesc}', '${safeIcon}', ${isUnlocked})">
                         <div class="ach-icon">${ach.icon}</div>
-                        <!-- Custom Tooltip -->
-                        <div class="ach-content-tooltip" style="display:none; position:absolute; bottom:110%; left:50%; transform:translateX(-50%); 
-                                    background:rgba(0,0,0,0.9); color:#fff; padding:8px; border-radius:6px; font-size:0.75rem; 
-                                    width:140px; text-align:center; z-index:100; pointer-events:none; border:1px solid #444;">
-                            <strong style="color:var(--accent-gold); display:block; margin-bottom:2px;">${title}</strong>
-                            ${desc}
-                        </div>
                     </div>`;
         }).join('');
 
@@ -1359,6 +1355,58 @@ function renderTextBackupModal(jsonFull, jsonLight) {
             showToast("Partage non supporté.");
         }
     };
+
+    openModal(wrapper);
+}
+
+export function checkAndShowWelcome() {
+    const HAS_SEEN_KEY = 'beerdex_welcome_seen_v2';
+    if (localStorage.getItem(HAS_SEEN_KEY)) return;
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'modal-content text-center';
+    wrapper.innerHTML = `
+        <div style="margin-bottom:20px; font-size:3rem;">🍻</div>
+        <h2 style="color:var(--accent-gold); margin-bottom:15px; font-family:'Russo One', sans-serif;">Bienvenue sur Beerdex !</h2>
+        
+        <p style="font-size:1rem; line-height:1.6; margin-bottom:20px; color:#ddd;">
+            Profitez de cette application (offerte par la maison 🎁) pour découvrir, noter et déguster les mille et une bières existantes.
+        </p>
+        
+        <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:12px; margin-bottom:25px; border:1px solid #444;">
+            <p style="font-size:0.9rem; color:#bbb; margin:0;">
+                ⚠️ <strong>Note de Sagesse :</strong><br>
+                Nous vous invitons à la <em>dégustation</em>, pas à la consommation à outrance.<br>
+                L'abus d'alcool est dangereux pour la santé.<br>
+                <strong>Dégustez avec sagesse !</strong> 🧡
+            </p>
+        </div>
+
+        <button id="btn-welcome-ok" class="btn-primary" style="width:100%; font-size:1.1rem; padding:12px;">Glou glou ! 🍺</button>
+    `;
+
+
+    wrapper.querySelector('#btn-welcome-ok').onclick = () => {
+        localStorage.setItem(HAS_SEEN_KEY, 'true');
+        document.getElementById('modal-container').classList.add('hidden');
+        document.getElementById('modal-container').innerHTML = ''; // Clear
+    };
+
+    openModal(wrapper);
+}
+
+export function showAchievementDetails(title, desc, icon, isUnlocked) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'modal-content text-center';
+
+    wrapper.innerHTML = `
+        <div style="font-size:4rem; margin-bottom:20px; filter:${isUnlocked ? 'none' : 'grayscale(100%)'}; opacity:${isUnlocked ? '1' : '0.5'};">${icon}</div>
+        <h2 style="color:var(--accent-gold); margin-bottom:10px; font-family:'Russo One';">${title}</h2>
+        <p style="font-size:1.1rem; color:#ddd; margin-bottom:30px; line-height:1.5;">
+            ${desc}
+        </p>
+        <button class="btn-primary" onclick="UI.closeModal()">Fermer</button>
+    `;
 
     openModal(wrapper);
 }

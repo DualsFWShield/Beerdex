@@ -3,6 +3,9 @@ import * as UI from './ui.js';
 import * as Storage from './storage.js';
 import * as Achievements from './achievements.js';
 
+// Expose UI for inline HTML event handlers (e.g. onclick="UI.method()")
+window.UI = UI;
+
 // App State
 const state = {
     beers: [],
@@ -31,6 +34,9 @@ async function init() {
 
         // Setup Event Listeners
         setupEventListeners();
+
+        // Check Welcome
+        UI.checkAndShowWelcome();
 
     } catch (error) {
         console.error("Failed to initialize Beerdex:", error);
