@@ -580,3 +580,46 @@ h3 {
 .bottom-nav {
     -webkit-backdrop-filter: blur(10px);
 }
+
+/* Update Toast */
+.update-toast {
+    position: fixed;
+    bottom: 80px;
+    /* Above nav */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--bg-card);
+    /* ensure variable name matches usage */
+    color: var(--text-primary);
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--accent-gold);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    z-index: 1000;
+    animation: slideUp 0.3s ease-out;
+}
+
+.update-toast button {
+    background-color: var(--accent-gold);
+    color: #000;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translate(-50%, 20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translate(-50%, 0);
+        opacity: 1;
+    }
+}

@@ -745,6 +745,10 @@ export function renderStats(allBeers, userData, container, isDiscovery = false, 
                                 <span class="slider round"></span>
                             </label>
                         </div>
+                        
+                         <div style="margin-top:15px; padding-top:15px; border-top:1px solid #333;">
+                            <button id="btn-check-update" class="form-input text-center" style="width:100%;">🔄 Vérifier les mises à jour</button>
+                        </div>
                     </div>
 
                     <div class="stat-card mt-20 text-center">
@@ -767,6 +771,26 @@ export function renderStats(allBeers, userData, container, isDiscovery = false, 
             discoveryCallback(e.target.checked);
         };
     }
+
+    // Handle Update Check
+    container.querySelector('#btn-check-update').onclick = () => {
+        if ('serviceWorker' in navigator) {
+            showToast("Recherche de mises à jour...");
+            navigator.serviceWorker.ready.then(registration => {
+                registration.update().then(() => {
+                    // If no update found after a short delay, tell user.
+                    // If update found, the app.js logic will trigger the toast.
+                    setTimeout(() => {
+                        // We can't easily know if an update was found or not via the promise result directly,
+                        // but if no toast appeared, likely up to date.
+                        showToast("Vérification terminée.");
+                    }, 2000);
+                });
+            });
+        } else {
+            showToast("Service Worker non supporté.");
+        }
+    };
 
     // Handle Export Full
     container.querySelector('#btn-export-full').onclick = async () => {

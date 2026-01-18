@@ -1,4 +1,4 @@
-const CACHE_NAME = 'Beerdex';
+const CACHE_NAME = 'Beerdex-v1'; // Increment to trigger update
 const ASSETS = [
     './index.html',
     './style.css',
@@ -6,13 +6,19 @@ const ASSETS = [
     './js/ui.js',
     './js/storage.js',
     './js/achievements.js',
+    './js/data.js',
     './data/deutchbeer.json',
     './data/belgiumbeer.json',
     './data/frenchbeer.json',
     './data/nlbeer.json',
     './data/usbeer.json',
     './manifest.webmanifest',
-    './images/beer/FUT.jpg'
+    './images/beer/FUT.jpg',
+    './images/beer/default.png',
+    './icons/logo-bnr.png',
+    './icons/192x192.png',
+    './icons/512x512.png',
+    './offline.html'
 ];
 
 // Install Event
@@ -43,7 +49,7 @@ self.addEventListener('activate', event => {
 // Fetch Event
 self.addEventListener('fetch', event => {
     event.respondWith(
-        caches.match(event.request).then(cachedResponse => {
+        caches.match(event.request, { ignoreSearch: true }).then(cachedResponse => {
             // Cache Hit - Return response
             if (cachedResponse) {
                 return cachedResponse;
@@ -68,7 +74,19 @@ self.addEventListener('fetch', event => {
                     });
 
                 return networkResponse;
+            }).catch(() => {
+                // If offline and request is for a page, return offline.html
+                if (event.request.mode === 'navigate') {
+                    return caches.match('./offline.html');
+                }
             });
         })
     );
+});
+
+// Listen for skipWaiting message
+self.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'SKIP_WAITING') {
+        self.skipWaiting();
+    }
 });

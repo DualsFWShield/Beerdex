@@ -186,9 +186,43 @@ if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./sw.js')
             .then(registration => {
                 console.log('ServiceWorker registration successful with scope: ', registration.scope);
+
+                // Check for updates on subsequent loads if the SW is waiting
+                if (registration.waiting) {
+                    notifyUpdate(registration.waiting);
+                }
+
+                // Detect when a new worker is available (installed but waiting)
+                registration.addEventListener('updatefound', () => {
+                    const newWorker = registration.installing;
+                    newWorker.addEventListener('statechange', () => {
+                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                            notifyUpdate(newWorker);
+                        }
+                    });
+                });
             })
             .catch(err => {
                 console.log('ServiceWorker registration failed: ', err);
             });
+    });
+
+    // Handle controller change (when new SW takes over, reload page)
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+        window.location.reload();
+    });
+}
+
+function notifyUpdate(worker) {
+    const toast = document.createElement('div');
+    toast.className = 'update-toast';
+    toast.innerHTML = `
+        <span>Nouvelle version disponible !</span>
+        <button id="reload-btn">Mettre à jour</button>
+    `;
+    document.body.appendChild(toast);
+
+    document.getElementById('reload-btn').addEventListener('click', () => {
+        worker.postMessage({ type: 'SKIP_WAITING' });
     });
 }
