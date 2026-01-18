@@ -208,7 +208,7 @@
   },
   {
     "title": "Fourchette",
-    "brewery": "Brouwerij Van Steenberge",
+    "brewery": "Van Steenberge",
     "type": "Triple (Blonde)",
     "volume": "0.33 L",
     "alcohol": "7.5°",
@@ -370,7 +370,7 @@
   },
   {
     "title": "Gouden Carolus Whisky Infused",
-    "brewery": "Brouwerij Het Anker",
+    "brewery": "Het Anker",
     "type": "Brune (Spéciale)",
     "volume": "0.33 L",
     "alcohol": "11.7°",
@@ -397,7 +397,7 @@
   },
   {
     "title": "Vlaamsche Leeuw Tripel",
-    "brewery": "Brouwerij De Vlier",
+    "brewery": "De Vlier",
     "type": "Triple (Blonde)",
     "volume": "0.33 L",
     "alcohol": "8.5°",
@@ -694,7 +694,7 @@
   },
   {
     "title": "Papegaei",
-    "brewery": "Brouwerij Verstraete",
+    "brewery": "Verstraete",
     "type": "Blonde",
     "volume": "0.33 L",
     "alcohol": "8°",
@@ -739,7 +739,7 @@
   },
   {
     "title": "Wittekop Witte Saison",
-    "brewery": "Brouwerij Belgica",
+    "brewery": "Belgica",
     "type": "Blanche / Saison",
     "volume": "0.33 L",
     "alcohol": "6.5°",
@@ -955,7 +955,7 @@
   },
   {
     "title": "Brugge Tripel",
-    "brewery": "Brouwerij De Halve Maan",
+    "brewery": "De Halve Maan",
     "type": "Triple (Blonde)",
     "volume": "0.33 L",
     "alcohol": "8.7°",
@@ -1072,7 +1072,7 @@
   },
   {
     "title": "Vlierbeek Grand Cru",
-    "brewery": "Brouwerij Broeder Jacob",
+    "brewery": "Broeder Jacob",
     "type": "Triple (Blonde)",
     "volume": "0.33 L",
     "alcohol": "8.5°",
@@ -1108,7 +1108,7 @@
   },
   {
     "title": "Lindemans Tarot d’Or",
-    "brewery": "Brouwerij Lindemans",
+    "brewery": "Lindemans",
     "type": "Blonde",
     "volume": "0.25 L",
     "alcohol": "8°",
@@ -1126,7 +1126,7 @@
   },
   {
     "title": "Satan Black",
-    "brewery": "Brouwerij De Block",
+    "brewery": "De Block",
     "type": "Brune / Noire",
     "volume": "0.33 L",
     "alcohol": "8°",
@@ -1486,7 +1486,7 @@
   },
   {
     "title": "Zundert Trappist 10 Quadrupel",
-    "brewery": "Trappistenbrouwerij De Kievit",
+    "brewery": "TrappistenDe Kievit",
     "type": "Quadruple (Brune)",
     "volume": "0.33 L",
     "alcohol": "10°",
@@ -1594,7 +1594,7 @@
   },
   {
     "title": "Rodenbach Fruitage",
-    "brewery": "Brouwerij Rodenbach",
+    "brewery": "Rodenbach",
     "type": "Fruitée (Rouge)",
     "volume": "0.25 L",
     "alcohol": "3.9°",
@@ -2377,7 +2377,7 @@
   },
   {
     "title": "De Bock Remi",
-    "brewery": "Brouwerij De Bock",
+    "brewery": "De Bock",
     "type": "Blonde",
     "volume": "0.33 L",
     "alcohol": "7.2°",
@@ -2494,7 +2494,7 @@
   },
   {
     "title": "Liefmans Peach",
-    "brewery": "Brouwerij Liefmans",
+    "brewery": "Liefmans",
     "type": "Fruitée (Pêche)",
     "volume": "0.25 L",
     "alcohol": "3.8°",
@@ -2647,7 +2647,7 @@
   },
   {
     "title": "Tripel Katrien",
-    "brewery": "Brouwerij De Vlier",
+    "brewery": "De Vlier",
     "type": "Triple (Blonde)",
     "volume": "0.33 L",
     "alcohol": "8.5°",
@@ -3133,7 +3133,7 @@
   },
   {
     "title": "Keyte Oostendse Triple",
-    "brewery": "Brouwerij Strubbe",
+    "brewery": "Strubbe",
     "type": "Triple (Blonde)",
     "volume": "0.33 L",
     "alcohol": "7.7°",
@@ -3277,7 +3277,7 @@
   },
   {
     "title": "De Leite Enfant Terriple Rum Infused",
-    "brewery": "Brouwerij De Leite",
+    "brewery": "De Leite",
     "type": "Blonde",
     "volume": "0.33 L",
     "alcohol": "12°",
@@ -3511,7 +3511,7 @@
   },
   {
     "title": "Petrus Nitro Quad Chocolate & Cherry",
-    "brewery": "Brouwerij De Brabandere",
+    "brewery": "De Brabandere",
     "type": "Quadruple (Brune)",
     "volume": "0.33 L",
     "alcohol": "11.5°",
@@ -3556,7 +3556,7 @@
   },
   {
     "title": "St Paul Blanche",
-    "brewery": "Brouwerij Sterkens",
+    "brewery": "Sterkens",
     "type": "Blanche",
     "volume": "0.33 L",
     "alcohol": "4.5°",
@@ -3799,7 +3799,7 @@
   },
   {
     "title": "'T Verzet Kameradski Balsamico",
-    "brewery": "Brouwerij 't Verzet",
+    "brewery": "'t Verzet",
     "type": "Stout (Noire)",
     "volume": "0.33 L",
     "alcohol": "13.5°",
@@ -4123,7 +4123,7 @@
   },
   {
     "title": "Kwaremont 0°",
-    "brewery": "Brouwerij de Brabandere",
+    "brewery": "de Brabandere",
     "type": "Blonde",
     "volume": "0.33 L",
     "alcohol": "0°",
@@ -4357,7 +4357,7 @@
   },
   {
     "title": "Piraat Red",
-    "brewery": "Brouwerij Van Steenberge",
+    "brewery": "Van Steenberge",
     "type": "Ambrée / Fruitée",
     "volume": "0.33 L",
     "alcohol": "10.5°",
@@ -4366,7 +4366,7 @@
   },
   {
     "title": "Mongozo Buckwheat White",
-    "brewery": "Brouwerij Huyghe",
+    "brewery": "Huyghe",
     "type": "Blanche (Sans Gluten)",
     "volume": "0.33 L",
     "alcohol": "4.8°",
@@ -4384,7 +4384,7 @@
   },
   {
     "title": "Viven New England IPA",
-    "brewery": "Brouwerij Viven",
+    "brewery": "Viven",
     "type": "NEIPA (Blonde)",
     "volume": "0.33 L",
     "alcohol": "6°",
@@ -4402,7 +4402,7 @@
   },
   {
     "title": "Baptist Blonde",
-    "brewery": "Brouwerij Van Steenberge",
+    "brewery": "Van Steenberge",
     "type": "Blonde",
     "volume": "0.33 L",
     "alcohol": "5.2°",
@@ -4411,7 +4411,7 @@
   },
   {
     "title": "Gageleer Superior Dark",
-    "brewery": "Brouwerij Gageleer",
+    "brewery": "Gageleer",
     "type": "Brune (Bio)",
     "volume": "0.33 L",
     "alcohol": "8.5°",
@@ -4420,7 +4420,7 @@
   },
   {
     "title": "Bux Bruin",
-    "brewery": "Brouwerij Biermaekers",
+    "brewery": "Biermaekers",
     "type": "Brune",
     "volume": "0.33 L",
     "alcohol": "7.5°",
@@ -4429,7 +4429,7 @@
   },
   {
     "title": "Verzet Rebel Local Piss Off",
-    "brewery": "Brouwerij 't Verzet",
+    "brewery": "'t Verzet",
     "type": "IPA (Blonde)",
     "volume": "0.33 L",
     "alcohol": "8.5°",
@@ -4699,7 +4699,7 @@
   },
   {
     "title": "Viven Champagner Weisse",
-    "brewery": "Brouwerij Viven",
+    "brewery": "Viven",
     "type": "Blanche",
     "volume": "0.33 L",
     "alcohol": "4.8°",
@@ -4708,7 +4708,7 @@
   },
   {
     "title": "Adriaen Brouwer Oaked",
-    "brewery": "Brouwerij Roman",
+    "brewery": "Roman",
     "type": "Brune (Bio)",
     "volume": "0.33 L",
     "alcohol": "10°",
@@ -4717,7 +4717,7 @@
   },
   {
     "title": "De Poes Bruin",
-    "brewery": "Brouwerij De Poes",
+    "brewery": "De Poes",
     "type": "Brune",
     "volume": "0.33 L",
     "alcohol": "8°",
@@ -4762,7 +4762,7 @@
   },
   {
     "title": "Waaslander",
-    "brewery": "Brouwerij Boelens",
+    "brewery": "Boelens",
     "type": "Blonde",
     "volume": "0.33 L",
     "alcohol": "6°",
@@ -5365,7 +5365,7 @@
   },
   {
     "title": "Kompel Kriek",
-    "brewery": "Brouwerij Kompel",
+    "brewery": "Kompel",
     "type": "Fruitée (Cerise)",
     "volume": "0.33 L",
     "alcohol": "3.5°",
@@ -5374,7 +5374,7 @@
   },
   {
     "title": "Bittere Bloemen",
-    "brewery": "Brouwerij De Ranke",
+    "brewery": "De Ranke",
     "type": "Blonde (Amère)",
     "volume": "0.33 L",
     "alcohol": "6°",
@@ -5392,7 +5392,7 @@
   },
   {
     "title": "Vlaamsche Leeuw Donker",
-    "brewery": "Brouwerij De Vlier",
+    "brewery": "De Vlier",
     "type": "Brune",
     "volume": "0.33 L",
     "alcohol": "7.5°",
@@ -5401,7 +5401,7 @@
   },
   {
     "title": "Verzet Doktor Rudy Healing Liquid",
-    "brewery": "Brouwerij 't Verzet",
+    "brewery": "'t Verzet",
     "type": "Rouge / Ambrée",
     "volume": "0.33 L",
     "alcohol": "6°",
@@ -5410,7 +5410,7 @@
   },
   {
     "title": "Sloeber IPA",
-    "brewery": "Brouwerij Roman",
+    "brewery": "Roman",
     "type": "IPA (Blonde)",
     "volume": "0.33 L",
     "alcohol": "7.5°",
@@ -5419,7 +5419,7 @@
   },
   {
     "title": "De Ranke Simplex",
-    "brewery": "Brouwerij De Ranke",
+    "brewery": "De Ranke",
     "type": "Blonde (Légère)",
     "volume": "0.33 L",
     "alcohol": "4.5°",
@@ -5455,7 +5455,7 @@
   },
   {
     "title": "Verzet Super Noah Cool Brew",
-    "brewery": "Brouwerij 't Verzet",
+    "brewery": "'t Verzet",
     "type": "Blonde",
     "volume": "0.33 L",
     "alcohol": "4.9°",
@@ -5464,7 +5464,7 @@
   },
   {
     "title": "Verzet Oud Bruin Hip Hons",
-    "brewery": "Brouwerij 't Verzet",
+    "brewery": "'t Verzet",
     "type": "Brune (Vieille)",
     "volume": "0.33 L",
     "alcohol": "6°",
@@ -5797,7 +5797,7 @@
   },
   {
     "title": "Luvanium Tripel",
-    "brewery": "Brouwerij De Kroon",
+    "brewery": "De Kroon",
     "type": "Triple (Blonde)",
     "volume": "0.33 L",
     "alcohol": "8.5°",
@@ -5842,7 +5842,7 @@
   },
   {
     "title": "Broeder Jacob Lazarus Sherry Infused",
-    "brewery": "Brouwerij Broeder Jacob",
+    "brewery": "Broeder Jacob",
     "type": "Brune (Infusée)",
     "volume": "0.33 L",
     "alcohol": "8.5°",
@@ -5869,7 +5869,7 @@
   },
   {
     "title": "Super 8 Export",
-    "brewery": "Brouwerij Haacht",
+    "brewery": "Haacht",
     "type": "Pils (Blonde)",
     "volume": "0.33 L",
     "alcohol": "4.8°",
@@ -5905,7 +5905,7 @@
   },
   {
     "title": "Slaapmutske Hop Collection",
-    "brewery": "Brouwerij Slaapmutske",
+    "brewery": "Slaapmutske",
     "type": "Blonde (Forte)",
     "volume": "0.33 L",
     "alcohol": "10°",
@@ -5923,7 +5923,7 @@
   },
   {
     "title": "Vicaris Winter de Noel",
-    "brewery": "Brouwerij Dilewyns",
+    "brewery": "Dilewyns",
     "type": "Brune (Noël)",
     "volume": "0.33 L",
     "alcohol": "10°",
@@ -6265,7 +6265,7 @@
   },
   {
     "title": "Kompel Prion des Fleurs",
-    "brewery": "Brouwerij Kompel",
+    "brewery": "Kompel",
     "type": "Blonde (Miel)",
     "volume": "0.33 L",
     "alcohol": "8°",
@@ -6274,7 +6274,7 @@
   },
   {
     "title": "Jour de Fete",
-    "brewery": "Brouwerij De Ranke",
+    "brewery": "De Ranke",
     "type": "Blonde",
     "volume": "0.33 L",
     "alcohol": "4°",
@@ -6292,7 +6292,7 @@
   },
   {
     "title": "Gulden Draak Brewmaster",
-    "brewery": "Brouwerij Van Steenberge",
+    "brewery": "Van Steenberge",
     "type": "Brune (Whisky Barrel)",
     "volume": "0.33 L",
     "alcohol": "10.5°",
@@ -6310,7 +6310,7 @@
   },
   {
     "title": "De Graal Bruin",
-    "brewery": "Brouwerij De Graal",
+    "brewery": "De Graal",
     "type": "Brune",
     "volume": "0.33 L",
     "alcohol": "6.5°",
@@ -6337,7 +6337,7 @@
   },
   {
     "title": "Bersalis Tripel",
-    "brewery": "Brouwerij Oud Beersel",
+    "brewery": "Oud Beersel",
     "type": "Triple (Blonde)",
     "volume": "0.33 L",
     "alcohol": "9.5°",
@@ -6778,7 +6778,7 @@
   },
   {
     "title": "Dikke Jan Blond",
-    "brewery": "Brouwerij Dikke Jan",
+    "brewery": "Dikke Jan",
     "type": "Blonde",
     "volume": "0.33 L",
     "alcohol": "5.5°",
@@ -6796,7 +6796,7 @@
   },
   {
     "title": "Ter Dolen Wit",
-    "brewery": "Kasteelbrouwerij Ter Dolen",
+    "brewery": "KasteelTer Dolen",
     "type": "Blanche",
     "volume": "0.33 L",
     "alcohol": "5.1°",
@@ -6814,7 +6814,7 @@
   },
   {
     "title": "Kees Hazy Sunrise",
-    "brewery": "Brouwerij Kees (NL)",
+    "brewery": "Kees (NL)",
     "type": "NEIPA (Blonde)",
     "volume": "0.33 L",
     "alcohol": "5.6°",
@@ -6841,7 +6841,7 @@
   },
   {
     "title": "Amer-Amer",
-    "brewery": "Brouwerij De Ranke",
+    "brewery": "De Ranke",
     "type": "IPA (Ambrée)",
     "volume": "0.33 L",
     "alcohol": "6°",
@@ -6850,7 +6850,7 @@
   },
   {
     "title": "Kees It's a Blond",
-    "brewery": "Brouwerij Kees (NL)",
+    "brewery": "Kees (NL)",
     "type": "Blonde",
     "volume": "0.33 L",
     "alcohol": "6°",
@@ -6859,7 +6859,7 @@
   },
   {
     "title": "Franc Belge",
-    "brewery": "Brouwerij De Ranke",
+    "brewery": "De Ranke",
     "type": "Spéciale Belge (Ambrée)",
     "volume": "0.33 L",
     "alcohol": "5.2°",
@@ -6868,7 +6868,7 @@
   },
   {
     "title": "Bux Triple",
-    "brewery": "Brouwerij Biermaekers",
+    "brewery": "Biermaekers",
     "type": "Triple (Blonde)",
     "volume": "0.33 L",
     "alcohol": "8.5°",
@@ -6913,7 +6913,7 @@
   },
   {
     "title": "Ne Flierefluiter",
-    "brewery": "Brouwerij De Smedt",
+    "brewery": "De Smedt",
     "type": "Triple (Blonde)",
     "volume": "0.33 L",
     "alcohol": "8.5°",
@@ -7183,7 +7183,7 @@
   },
   {
     "title": "Serafijn Pallieter",
-    "brewery": "Microbrouwerij Serafijn",
+    "brewery": "MicroSerafijn",
     "type": "Triple (Blonde)",
     "volume": "0.33 L",
     "alcohol": "8°",
@@ -7201,7 +7201,7 @@
   },
   {
     "title": "Kompel Christmas",
-    "brewery": "Brouwerij Kompel",
+    "brewery": "Kompel",
     "type": "Brune (Noël)",
     "volume": "0.33 L",
     "alcohol": "8.5°",
@@ -7228,7 +7228,7 @@
   },
   {
     "title": "Zatte Rita",
-    "brewery": "Brouwerij Van Steenberge",
+    "brewery": "Van Steenberge",
     "type": "Blonde",
     "volume": "0.33 L",
     "alcohol": "6.5°",
@@ -7246,7 +7246,7 @@
   },
   {
     "title": "Broeder Jacob Lazarus Calvados Infused",
-    "brewery": "Brouwerij Broeder Jacob",
+    "brewery": "Broeder Jacob",
     "type": "Brune (Infusée)",
     "volume": "0.33 L",
     "alcohol": "8.5°",
@@ -7255,7 +7255,7 @@
   },
   {
     "title": "Saison de Dottignies",
-    "brewery": "Brouwerij De Ranke",
+    "brewery": "De Ranke",
     "type": "Saison (Blonde)",
     "volume": "0.33 L",
     "alcohol": "5.5°",
@@ -7264,7 +7264,7 @@
   },
   {
     "title": "Dikke Jan Triple",
-    "brewery": "Brouwerij Dikke Jan",
+    "brewery": "Dikke Jan",
     "type": "Triple (Blonde)",
     "volume": "0.33 L",
     "alcohol": "7.2°",
@@ -7291,7 +7291,7 @@
   },
   {
     "title": "Barbe Noel",
-    "brewery": "Brouwerij Verhaeghe",
+    "brewery": "Verhaeghe",
     "type": "Brune (Noël)",
     "volume": "0.33 L",
     "alcohol": "7.2°",
@@ -7399,7 +7399,7 @@
   },
   {
     "title": "St Paul Speciale",
-    "brewery": "Brouwerij Sterkens",
+    "brewery": "Sterkens",
     "type": "Spéciale (Ambrée)",
     "volume": "0.33 L",
     "alcohol": "5.5°",
@@ -7444,7 +7444,7 @@
   },
   {
     "title": "De Poes Special Belge",
-    "brewery": "Brouwerij De Poes",
+    "brewery": "De Poes",
     "type": "Spéciale (Ambrée)",
     "volume": "0.33 L",
     "alcohol": "6°",
@@ -7453,7 +7453,7 @@
   },
   {
     "title": "T Verzet Moose Blues",
-    "brewery": "Brouwerij 't Verzet",
+    "brewery": "'t Verzet",
     "type": "Brune",
     "volume": "0.33 L",
     "alcohol": "7.5°",
@@ -7462,7 +7462,7 @@
   },
   {
     "title": "Malheur 8",
-    "brewery": "Brouwerij De Landtsheer",
+    "brewery": "De Landtsheer",
     "type": "Blonde",
     "volume": "0.33 L",
     "alcohol": "8°",
@@ -7480,7 +7480,7 @@
   },
   {
     "title": "Cuvee Watou Rouge",
-    "brewery": "Brouwerij Leroy",
+    "brewery": "Leroy",
     "type": "Fruitée / Brune",
     "volume": "0.33 L",
     "alcohol": "8.5°",
@@ -7498,7 +7498,7 @@
   },
   {
     "title": "Vichtenaar",
-    "brewery": "Brouwerij Verhaeghe",
+    "brewery": "Verhaeghe",
     "type": "Rouge des Flandres",
     "volume": "0.25 L",
     "alcohol": "5.1°",
@@ -7507,7 +7507,7 @@
   },
   {
     "title": "Luvanium Blond",
-    "brewery": "Brouwerij De Kroon",
+    "brewery": "De Kroon",
     "type": "Blonde",
     "volume": "0.33 L",
     "alcohol": "6.8°",
@@ -7516,7 +7516,7 @@
   },
   {
     "title": "Broeder Jacob Lazarus Bourbon Whiskey",
-    "brewery": "Brouwerij Broeder Jacob",
+    "brewery": "Broeder Jacob",
     "type": "Brune (Infusée)",
     "volume": "0.33 L",
     "alcohol": "8.5°",
@@ -7525,7 +7525,7 @@
   },
   {
     "title": "T Verzet Oud Bruin Raspberry",
-    "brewery": "Brouwerij 't Verzet",
+    "brewery": "'t Verzet",
     "type": "Fruitée (Framboise)",
     "volume": "0.33 L",
     "alcohol": "6°",
@@ -7534,7 +7534,7 @@
   },
   {
     "title": "Adriaen Brouwer Tripel",
-    "brewery": "Brouwerij Roman",
+    "brewery": "Roman",
     "type": "Triple (Blonde)",
     "volume": "0.33 L",
     "alcohol": "9°",
@@ -7552,7 +7552,7 @@
   },
   {
     "title": "Bux Amber",
-    "brewery": "Brouwerij Biermaekers",
+    "brewery": "Biermaekers",
     "type": "Ambrée",
     "volume": "0.33 L",
     "alcohol": "6.5°",
@@ -7687,7 +7687,7 @@
   },
   {
     "title": "Dikke Jan Bruin",
-    "brewery": "Brouwerij Dikke Jan",
+    "brewery": "Dikke Jan",
     "type": "Brune",
     "volume": "0.33 L",
     "alcohol": "8.5°",
@@ -7696,7 +7696,7 @@
   },
   {
     "title": "Santa Bee",
-    "brewery": "Brouwerij Boelens",
+    "brewery": "Boelens",
     "type": "Brune (Miel/Noël)",
     "volume": "0.33 L",
     "alcohol": "8.5°",
@@ -7714,7 +7714,7 @@
   },
   {
     "title": "Broeder Jacob Lazarus Rum Infused",
-    "brewery": "Brouwerij Broeder Jacob",
+    "brewery": "Broeder Jacob",
     "type": "Brune (Infusée)",
     "volume": "0.33 L",
     "alcohol": "8.5°",
@@ -7723,7 +7723,7 @@
   },
   {
     "title": "Verzet Space Cadet Dream On",
-    "brewery": "Brouwerij 't Verzet",
+    "brewery": "'t Verzet",
     "type": "Blanche / IPA",
     "volume": "0.33 L",
     "alcohol": "5°",
@@ -7732,7 +7732,7 @@
   },
   {
     "title": "Gageleer White No Hops",
-    "brewery": "Brouwerij Gageleer",
+    "brewery": "Gageleer",
     "type": "Blanche (Sans alcool)",
     "volume": "0.33 L",
     "alcohol": "0°",
@@ -7741,7 +7741,7 @@
   },
   {
     "title": "Kotmadam",
-    "brewery": "Brouwerij Dilewyns",
+    "brewery": "Dilewyns",
     "type": "Blonde",
     "volume": "0.33 L",
     "alcohol": "5°",
@@ -7777,7 +7777,7 @@
   },
   {
     "title": "Verzet Golden Tricky Time to Shine",
-    "brewery": "Brouwerij 't Verzet",
+    "brewery": "'t Verzet",
     "type": "IPA (Blonde)",
     "volume": "0.33 L",
     "alcohol": "7.5°",
@@ -7867,7 +7867,7 @@
   },
   {
     "title": "Viven Tripel",
-    "brewery": "Brouwerij Viven",
+    "brewery": "Viven",
     "type": "Triple (Blonde)",
     "volume": "0.33 L",
     "alcohol": "8°",
@@ -7876,7 +7876,7 @@
   },
   {
     "title": "Broeder Jacob Lazarus Armagnac Infused",
-    "brewery": "Brouwerij Broeder Jacob",
+    "brewery": "Broeder Jacob",
     "type": "Brune (Infusée)",
     "volume": "0.33 L",
     "alcohol": "8.5°",
@@ -7885,7 +7885,7 @@
   },
   {
     "title": "Tripel Eight 888",
-    "brewery": "Brouwerij 888",
+    "brewery": "888",
     "type": "Triple (Blonde)",
     "volume": "0.33 L",
     "alcohol": "8.8°",
@@ -7894,7 +7894,7 @@
   },
   {
     "title": "De Poes Houblon",
-    "brewery": "Brouwerij De Poes",
+    "brewery": "De Poes",
     "type": "Blonde (Houblonnée)",
     "volume": "0.33 L",
     "alcohol": "5.5°",
