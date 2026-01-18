@@ -337,6 +337,51 @@ export function exportData() {
     return exportDataAdvanced({ includeCustom: true });
 }
 
+export function mergeUserData(importedData) {
+    // 1. Merge Custom Beers
+    if (importedData.customBeers) {
+        const localCustoms = getCustomBeers();
+        const newCustoms = [...localCustoms];
+
+        importedData.customBeers.forEach(importedBeer => {
+            const exists = localCustoms.some(b => b.id === importedBeer.id);
+            if (!exists) {
+                newCustoms.unshift(importedBeer);
+            }
+        });
+        localStorage.setItem(STORAGE_KEY_CUSTOM, JSON.stringify(newCustoms));
+    }
+
+    // 2. Merge Ratings / Consumptions
+    if (importedData.ratings) {
+        const localRatings = getAllUserData();
+
+        // Loop through imported ratings
+        Object.keys(importedData.ratings).forEach(beerId => {
+            // "Smart Merge: Don't break anything, don't lose anything"
+            // Strategy: 
+            // - If local has NO data for beerId -> Add imported data.
+            // - If local HAS data -> Keep local (Preserve current progress).
+            // - Exception: If local is "empty/placeholder" and imported is real, take imported? (Unlikely case)
+            if (!localRatings[beerId]) {
+                localRatings[beerId] = importedData.ratings[beerId];
+            } else {
+                // Potential deep merge? 
+                // e.g. if local has rating but no comment, and imported has comment?
+                // For safety and simplicity: "Local Authority" wins for conflicts.
+                // We only perform additive merges here.
+            }
+        });
+        localStorage.setItem(STORAGE_KEY_RATINGS, JSON.stringify(localRatings));
+    }
+
+    // 3. Template (optional, ask user? defaulting to overwrite if imported is newer? No, keep local pref)
+    if (importedData.ratingTemplate && !localStorage.getItem('beerdex_rating_template')) {
+        // Only set if we don't have one (fresh install)
+        localStorage.setItem('beerdex_rating_template', JSON.stringify(importedData.ratingTemplate));
+    }
+}
+
 export function importData(jsonString) {
     try {
         const data = JSON.parse(jsonString);
@@ -346,71 +391,32 @@ export function importData(jsonString) {
             const sharedBeer = data.beer;
             const sharedRating = data.rating;
 
-            // If it's a custom beer ID or doesn't exist in our DB (simulate check? for now we assume ID collision is unlikely for custom unless same origin)
-            // But if it IS a known ID (e.g. from static DB), we don't add to custom list, we just import rating.
-            // Logic: If ID starts with CUSTOM_, add to my custom list if not present.
-
             if (String(sharedBeer.id).startsWith('CUSTOM_')) {
                 const customs = getCustomBeers();
                 const exists = customs.find(b => b.id === sharedBeer.id);
                 if (!exists) {
                     saveCustomBeer(sharedBeer);
-                    // alert("Bière personnalisée ajoutée !"); 
-                } else {
-                    // Update? For now, skip or maybe update if user wants? 
-                    // Let's assume we don't overwrite custom definition to avoid conflicts, unless user specifically requested.
-                    // For simple sharing: if it exists, we stick with what we have.
                 }
             }
 
-            // Import Rating/Consumption
+            // Import Rating only if we don't have one
             if (sharedRating) {
                 const currentRatings = getAllUserData();
-                // Merge logic: If we have data, we might want to keep ours OR merge history?
-                // Simplest: If I haven't rated it, take the shared rating.
-                // If I have, maybe just add a history entry? 
-
-                // For this V1 of sharing: We overwrite/update the rating info if it's newer or we have nothing.
-                // But actually, sharing is usually "Here is a beer I found", not "Sync my rating".
-                // HOWEVER, the prompt implies importing "une biere a quelqu'un".
-                // Let's just SAVE the rating if we don't have one, or update the score/comment if we do?
-
-                // DECISION: If I have no data, I take theirs. 
-                // If I have data, I KEEP mine but maybe add their comment as a note?
-                // Actually, safeguard: Only import 'static' data (the beer itself).
-                // But user asked "inclut egalement les images des bieres custom", implying sharing DEFINITION is key.
-                // WE ALREADY HANDLED DEFINITION ABOVE.
-
-                // Optional: Import their rating as MY rating? No, that's weird.
-                // Maybe the use case is: "I export my beer to you". You get the beer definition.
-                // Use case "Restore backup": You get everything.
-
-                // CHANGE: If it's a single share, we mainly care about the Beer Definition (Custom).
-                // We typically DO NOT import the other person's consumption history as OURS.
-                // BUT, if it's a backup of a single beer...
-
-                // Compromise: We import the Beer Definition. 
-                // We ask user via confirm? No UI in storage.
-                // We'll just return true signifying "Beer Imported".
-                // If the user wants to copy the rating, that's ambiguous. 
-                // Let's Import Rating ONLY IF we have absolutely nothing for this beer.
-                if (!getAllUserData()[sharedBeer.id] && sharedRating) {
-                    // saveBeerRating(sharedBeer.id, sharedRating); 
-                    // Actually, let's NOT auto-import consumption history of someone else.
-                    // Just importing the beer definition (if custom) is the main value.
+                if (!currentRatings[sharedBeer.id]) {
+                    saveBeerRating(sharedBeer.id, sharedRating);
                 }
             }
             return true;
         }
 
-        // CASE 2: Full Backup
-        if (data.ratings) localStorage.setItem(STORAGE_KEY_RATINGS, JSON.stringify(data.ratings));
-        if (data.customBeers) localStorage.setItem(STORAGE_KEY_CUSTOM, JSON.stringify(data.customBeers));
-        if (data.ratingTemplate) localStorage.setItem('beerdex_rating_template', JSON.stringify(data.ratingTemplate));
-        if (data.version) {
-            // potential version migration handle
+        // CASE 2: Full Backup (Smart Merge)
+        // Check if structure matches export
+        if (data.ratings || data.customBeers) {
+            mergeUserData(data);
+            return true;
         }
-        return true;
+
+        return false;
     } catch (e) {
         console.error("Import failed:", e);
         return false;

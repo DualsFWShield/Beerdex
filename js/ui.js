@@ -869,9 +869,58 @@ export function renderStats(allBeers, userData, container, isDiscovery = false, 
 
     // Handle Text Backup
     container.querySelector('#btn-backup-text').onclick = () => {
-        const json = Storage.getExportDataString(true);
-        renderTextBackupModal(json);
+        const jsonFull = Storage.getExportDataString(true);
+        const jsonLight = Storage.getExportDataString(false);
+
+        renderTextBackupModal(jsonFull, jsonLight); // Updated signature
     };
+
+    // Handle Paste Import Button
+    const btnPasteImport = document.createElement('button');
+    btnPasteImport.type = 'button';
+    btnPasteImport.className = 'form-input text-center mt-20';
+    btnPasteImport.textContent = '📋 Coller une sauvegarde (Import)';
+    btnPasteImport.style.background = 'none';
+    btnPasteImport.style.border = '1px dashed var(--accent-gold)';
+    btnPasteImport.style.color = 'var(--accent-gold)';
+
+    btnPasteImport.onclick = async () => {
+        try {
+            const text = await navigator.clipboard.readText();
+            if (text && (text.startsWith('{') || text.startsWith('['))) {
+                if (confirm("Importer les données du presse-papier ? (Les données existantes ne seront pas écrasées)")) {
+                    if (Storage.importData(text)) {
+                        showToast("Importation réussie !");
+                        setTimeout(() => location.reload(), 1500);
+                    } else {
+                        showToast("Format invalide.");
+                    }
+                }
+            } else {
+                // Fallback prompt if clipboard read fails or is empty
+                const manual = prompt("Collez le JSON de sauvegarde ici :");
+                if (manual) {
+                    if (Storage.importData(manual)) {
+                        showToast("Importation réussie !");
+                        setTimeout(() => location.reload(), 1500);
+                    } else {
+                        showToast("Format invalide.");
+                    }
+                }
+            }
+        } catch (e) {
+            const manual = prompt("Impossible de lire le presse-papier. Collez le JSON ici :");
+            if (manual && Storage.importData(manual)) {
+                showToast("Importation réussie !");
+                setTimeout(() => location.reload(), 1500);
+            }
+        }
+    };
+
+    // Insert before the file import button or replace it? 
+    // User wants both. Let's add it after the file import button.
+    container.querySelector('#btn-import').parentNode.insertBefore(btnPasteImport, container.querySelector('#btn-backup-text').parentNode);
+
 
     // Handle Import
     container.querySelector('#btn-import').onclick = () => {
@@ -1182,23 +1231,78 @@ function renderAchievementsList() {
     return html;
 }
 
-function renderTextBackupModal(jsonString) {
+function renderTextBackupModal(jsonFull, jsonLight) {
     const wrapper = document.createElement('div');
     wrapper.className = 'modal-content';
+
+    // Default to full
+    let currentJson = jsonFull;
 
     wrapper.innerHTML = `
         <h2 style="margin-bottom:20px;">Sauvegarde Texte</h2>
         <p style="color:#aaa; font-size:0.9rem; margin-bottom:15px;">
-            Si l'export fichier ne fonctionne pas (APK), copiez ce texte et gardez-le précieusement dans vos notes.
+            Si l'export fichier ne fonctionne pas (APK), copiez ce texte.
         </p>
         
-        <textarea id="backup-text-area" class="form-textarea" style="height:200px; font-family:monospace; font-size:0.75rem;" readonly>${jsonString}</textarea>
+        <div style="display:flex; gap:10px; margin-bottom:10px;">
+            <button id="tab-full" class="btn-primary" style="padding:8px; font-size:0.8rem; flex:1; background:var(--accent-gold); color:black;">Complet</button>
+            <button id="tab-light" class="btn-primary" style="padding:8px; font-size:0.8rem; flex:1; background:var(--bg-card); border:1px solid #444; color:white;">Sans Custom</button>
+        </div>
+
+        <textarea id="backup-text-area" class="form-textarea" style="height:200px; font-family:monospace; font-size:0.75rem;" readonly>${jsonFull}</textarea>
         
         <div style="display:flex; gap:10px; margin-top:15px;">
             <button id="btn-copy-backup" class="btn-primary" style="margin:0; background:var(--accent-gold);">📋 Copier</button>
             <button id="btn-share-backup-text" class="btn-primary" style="margin:0; background:var(--bg-card); border:1px solid #444;">📤 Partager</button>
         </div>
     `;
+
+    const textarea = wrapper.querySelector('#backup-text-area');
+    const tabFull = wrapper.querySelector('#tab-full');
+    const tabLight = wrapper.querySelector('#tab-light');
+
+    const updateTabs = (isFull) => {
+        currentJson = isFull ? jsonFull : jsonLight;
+        textarea.value = currentJson;
+
+        tabFull.style.background = isFull ? 'var(--accent-gold)' : 'var(--bg-card)';
+        tabFull.style.color = isFull ? 'black' : 'white';
+        tabFull.style.border = isFull ? 'none' : '1px solid #444';
+
+        tabLight.style.background = !isFull ? 'var(--accent-gold)' : 'var(--bg-card)';
+        tabLight.style.color = !isFull ? 'black' : 'white';
+        tabLight.style.border = !isFull ? 'none' : '1px solid #444';
+    };
+
+    tabFull.onclick = () => updateTabs(true);
+    tabLight.onclick = () => updateTabs(false);
+
+    // Copy Handler
+    wrapper.querySelector('#btn-copy-backup').onclick = () => {
+        textarea.select();
+        document.execCommand('copy');
+        try {
+            navigator.clipboard.writeText(currentJson);
+        } catch (e) { }
+        showToast("Copié dans le presse-papier !");
+    };
+
+    // Share Handler
+    wrapper.querySelector('#btn-share-backup-text').onclick = async () => {
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    text: currentJson,
+                    title: 'Beerdex Backup'
+                });
+            } catch (e) {
+                showToast("Partage non supporté.");
+            }
+        } else {
+            showToast("Partage non supporté.");
+        }
+    };
+
 
     // Copy Handler
     wrapper.querySelector('#btn-copy-backup').onclick = () => {
