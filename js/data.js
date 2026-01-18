@@ -3,7 +3,8 @@ const DATA_FILES = [
     'data/deutchbeer.json',
     'data/frenchbeer.json',
     'data/nlbeer.json',
-    'data/usbeer.json'
+    'data/usbeer.json',
+    'data/newbeer.json'
 ];
 
 export async function fetchAllBeers() {
@@ -14,6 +15,12 @@ export async function fetchAllBeers() {
             .then(response => {
                 if (!response.ok) throw new Error(`Failed to load ${url}`);
                 return response.json();
+            })
+            .then(data => {
+                if (url.includes('newbeer.json')) {
+                    return data.map(b => ({ ...b, removeBackground: true }));
+                }
+                return data;
             })
             .catch(err => {
                 console.warn(`Error loading ${url}:`, err);

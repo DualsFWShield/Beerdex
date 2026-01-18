@@ -40,8 +40,49 @@ function openModal(content) {
 
 // --- Renders ---
 
-export function renderBeerList(beers, container, filters = null, showCreatePrompt = false, isDiscoveryCallback = null) {
-    container.innerHTML = '';
+// Helper to remove white background from images
+window.removeImageBackground = function (img) {
+    if (img.dataset.processed) return;
+
+    // Security check for cross-origin (though local files should be fine)
+    try {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        const ctx = canvas.getContext('2d');
+
+        ctx.drawImage(img, 0, 0);
+
+        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imgData.data;
+        const threshold = 230; // Sensitivity for white detection
+        let hasChanges = false;
+
+        for (let i = 0; i < data.length; i += 4) {
+            const r = data[i];
+            const g = data[i + 1];
+            const b = data[i + 2];
+
+            // Check if pixel is white-ish
+            if (r > threshold && g > threshold && b > threshold) {
+                // Set alpha to 0 (Transparent)
+                data[i + 3] = 0;
+                hasChanges = true;
+            }
+        }
+
+        if (hasChanges) {
+            ctx.putImageData(imgData, 0, 0);
+            img.src = canvas.toDataURL();
+            img.dataset.processed = "true";
+        }
+    } catch (e) {
+        // Silent fail (CORS or other issue)
+    }
+};
+
+export function renderBeerList(beers, container, filters = null, showCreatePrompt = false, isDiscoveryCallback = null, isAppend = false) {
+    if (!isAppend) container.innerHTML = '';
     const userData = Storage.getAllUserData();
 
     // Filtering Logic
@@ -213,6 +254,7 @@ export function renderBeerList(beers, container, filters = null, showCreatePromp
             </svg>
             <div style="width:100%; height:120px; display:flex; justify-content:center; align-items:center;">
                 <img src="${displayImage}" alt="${beer.title}" class="beer-image" loading="${index < 10 ? 'eager' : 'lazy'}" 
+                     ${beer.removeBackground ? 'onload="removeImageBackground(this)"' : ''}
                      onerror="if(this.src.includes('${fallbackImage}')) return; this.src='${fallbackImage}';">
             </div>
             <div class="beer-info">
@@ -499,6 +541,7 @@ export function renderBeerDetail(beer, onSave) {
 
                 <div style="text-align: center; margin-bottom: 20px;">
                     <img src="${displayImage}" style="height: 150px; object-fit: contain; filter: drop-shadow(0 0 10px rgba(255,255,255,0.1));" 
+                         ${beer.removeBackground ? 'onload="removeImageBackground(this)"' : ''}
                          onerror="if(this.src.includes('${fallbackImage}')) return; this.src='${fallbackImage}';">
                         <h2 style="margin-top: 10px; color: var(--accent-gold);">${beer.title}</h2>
                         <p style="color: #888;">${beer.brewery} - ${beer.type}</p>
