@@ -178,15 +178,12 @@ export async function exportDataAdvanced(options = { includeCustom: true }) {
 
     const jsonString = JSON.stringify(exportObj);
 
-    // File System Access API (if available)
+    // File System Access API (Desktop)
     if (window.showSaveFilePicker) {
         try {
             const handle = await window.showSaveFilePicker({
-                suggestedName: `beerdex_backup_${new Date().toISOString().slice(0, 10)}.json`,
-                types: [{
-                    description: 'Beerdex JSON',
-                    accept: { 'application/json': ['.json'] },
-                }],
+                suggestedName: filename,
+                types: [{ description: 'Beerdex JSON', accept: { 'application/json': ['.json'] } }],
             });
             const writable = await handle.createWritable();
             await writable.write(jsonString);
@@ -196,16 +193,38 @@ export async function exportDataAdvanced(options = { includeCustom: true }) {
             console.warn("Save cancelled or failed", err);
             return false;
         }
-    } else {
-        // Fallback for Mobile / Older Browsers
-        const blob = new Blob([jsonString], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `beerdex_backup_${new Date().toISOString().slice(0, 10)}.json`;
-        a.click();
-        return true;
     }
+
+    // Preparation for Share/Download
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const file = new File([blob], filename, { type: 'application/json' });
+
+    // Web Share API Level 2 (Mobile / APK Watcher)
+    // We check if we can share this file
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+            await navigator.share({
+                files: [file],
+                title: 'Export Beerdex',
+                text: 'Voici un export de données Beerdex.'
+            });
+            return true;
+        } catch (err) {
+            if (err.name !== 'AbortError') console.warn("Share failed, trying download fallback", err);
+            // If share fails, we continue to download fallback below
+        }
+    }
+
+    // Fallback: Classic Download Link
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a); // Append required for some browsers (Firefox)
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    return true;
 }
 
 export async function shareBeer(beer) {
@@ -214,15 +233,15 @@ export async function shareBeer(beer) {
     const exportObj = {
         beer: beer,
         rating: rating,
-        image: beer.image, // Ensure image is included (base64) typically attached to custom beers
+        image: beer.image,
         sharedAt: new Date().toISOString(),
-        type: 'single_beer_share' // Marker for import detection
+        type: 'single_beer_share'
     };
 
     const jsonString = JSON.stringify(exportObj, null, 2);
     const filename = `beer_${beer.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.json`;
 
-    // Direct File Save / Download
+    // File System Access API
     if (window.showSaveFilePicker) {
         try {
             const handle = await window.showSaveFilePicker({
@@ -237,16 +256,36 @@ export async function shareBeer(beer) {
             console.warn("Save cancelled", e);
             return false;
         }
-    } else {
-        const blob = new Blob([jsonString], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        a.click();
-        URL.revokeObjectURL(url);
-        return true;
     }
+
+    // Preparation
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const file = new File([blob], filename, { type: 'application/json' });
+
+    // Web Share API (Mobile)
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+            await navigator.share({
+                files: [file],
+                title: `Partage: ${beer.title}`,
+                text: `Découvre cette bière : ${beer.title} ! 🍺`
+            });
+            return true;
+        } catch (err) {
+            if (err.name !== 'AbortError') console.warn("Share failed, trying download fallback", err);
+        }
+    }
+
+    // Fallback Download
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    return true;
 }
 
 // Kept for backward compat or simple calls
