@@ -42,6 +42,9 @@ body {
     overflow: hidden;
     /* App-like feel */
     height: 100vh;
+    /* Fallback */
+    height: 100dvh;
+    /* Mobile Fix */
     display: flex;
     flex-direction: column;
 }
@@ -108,8 +111,8 @@ h3 {
     flex: 1;
     overflow-y: auto;
     padding: var(--spacing-md);
-    padding-bottom: calc(var(--nav-height) + var(--spacing-lg));
-    /* Safe area for inputs */
+    padding-bottom: calc(var(--nav-height) + 80px);
+    /* Safe area for inputs & FAB */
     scroll-behavior: smooth;
 }
 

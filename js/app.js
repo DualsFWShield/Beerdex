@@ -72,29 +72,40 @@ function loadMoreBeers(container, isAppend = false, isDiscoveryMode = false, sho
 }
 
 function setupInfiniteScroll(container) {
-    // Check if sentinel already exists, if not create it
+    // We need to ensure the sentinel is AFTER the beer-grid.
+    // If container == main-content, and it contains .beer-grid, we append sentinel to main-content.
+
     let sentinel = document.getElementById('scroll-sentinel');
     if (!sentinel) {
         sentinel = document.createElement('div');
         sentinel.id = 'scroll-sentinel';
-        sentinel.style.height = '50px';
+        // Make it invisible but present
+        sentinel.style.height = '20px';
         sentinel.style.width = '100%';
+        sentinel.style.clear = 'both'; // Ensure it drops below floated elements if any
         container.appendChild(sentinel);
     } else {
-        // move to bottom
+        // Move to very end
         container.appendChild(sentinel);
     }
 
     if (!state.observer) {
         state.observer = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting && state.pagination.hasMore) {
+                // Debounce slightly to prevent rapid firing
+                if (state.isLoadingMore) return;
+                state.isLoadingMore = true;
+
                 state.pagination.page++;
                 const isDiscovery = Storage.getPreference('discoveryMode', false);
-                // Determine showCreatePrompt... complex in loadMore.
-                // Actually showCreatePrompt only applies if list is empty, so irrelevant for loadMore (page > 1)
-                loadMoreBeers(container, true, isDiscovery, false);
+
+                // Small delay to smooth out UI
+                setTimeout(() => {
+                    loadMoreBeers(container, true, isDiscovery, false);
+                    state.isLoadingMore = false;
+                }, 100);
             }
-        }, { rootMargin: '200px' });
+        }, { rootMargin: '400px' }); // Pre-load earlier
     }
 
     state.observer.observe(sentinel);

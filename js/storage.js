@@ -177,6 +177,7 @@ export async function exportDataAdvanced(options = { includeCustom: true }) {
     }
 
     const jsonString = JSON.stringify(exportObj);
+    const filename = `beerdex_backup_${new Date().toISOString().slice(0, 10)}.json`;
 
     // File System Access API (Desktop)
     if (window.showSaveFilePicker) {
