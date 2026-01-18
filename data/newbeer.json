@@ -697,7 +697,7 @@
     "brewery": "Brouwerij Verstraete",
     "type": "Blonde",
     "volume": "0.33 L",
-    "alcohol": "8.0°",
+    "alcohol": "8°",
     "id": "PAPEGAEI_BIERE_0.33",
     "image": "images/beer/be/papegaei-33cl.png"
   },
@@ -805,7 +805,7 @@
     "brewery": "Hedonis Ambachtsbier",
     "type": "Blonde (Pale Ale)",
     "volume": "0.33 L",
-    "alcohol": "7.0°",
+    "alcohol": "7°",
     "id": "HEDONIS_OUWEN_DUIKER_BIERE_0.33",
     "image": "images/beer/be/hedonis-ouwen-duiker-33cl.png"
   },
@@ -1057,7 +1057,7 @@
     "brewery": "Brasserie des Légendes",
     "type": "Stout (Noire)",
     "volume": "0.33 L",
-    "alcohol": "9.0°",
+    "alcohol": "9°",
     "id": "HERCULE_STOUT_BIERE_0.33",
     "image": "images/beer/be/hercule-stout-33cl.png"
   },
@@ -1129,7 +1129,7 @@
     "brewery": "Brouwerij De Block",
     "type": "Brune / Noire",
     "volume": "0.33 L",
-    "alcohol": "8.0°",
+    "alcohol": "8°",
     "id": "SATAN_BLACK_BIERE_0.33",
     "image": "images/beer/be/satan-black-33cl.png"
   },
@@ -1453,7 +1453,7 @@
     "brewery": "Brasserie St-Feuillien",
     "type": "Triple (Blonde)",
     "volume": "0.25 L",
-    "alcohol": "8.0°",
+    "alcohol": "8°",
     "id": "GRISETTE_TRIPLE_BIO_GLUTEN_FREE_BIERE_0.25",
     "image": "images/beer/be/grisette-triple-bio-gluten-free-25cl.png"
   },
@@ -1489,7 +1489,7 @@
     "brewery": "Trappistenbrouwerij De Kievit",
     "type": "Quadruple (Brune)",
     "volume": "0.33 L",
-    "alcohol": "10.0°",
+    "alcohol": "10°",
     "id": "ZUNDERT_TRAPPIST_10_QUADRUPEL_BIERE_0.33",
     "image": "images/beer/be/zundert-trappist-10-quadrupel-33cl.png"
   },
@@ -2002,7 +2002,7 @@
     "brewery": "Spaten-Franziskaner",
     "type": "Blanche (Weissbier)",
     "volume": "0.50 L",
-    "alcohol": "5.0°",
+    "alcohol": "5°",
     "id": "FRANZISKANER_HEFE_HELL_BIERE_0.50",
     "image": "images/beer/be/franziskaner-hefe-hell-50cl.png"
   },
@@ -2659,7 +2659,7 @@
     "brewery": "Brasserie des Fagnes",
     "type": "Triple (Blonde)",
     "volume": "0.33 L",
-    "alcohol": "9.0°",
+    "alcohol": "9°",
     "id": "FAGNES_TRIPLE_BIERE_0.33",
     "image": "images/beer/be/fagnes-triple-33cl.png"
   },
@@ -2668,7 +2668,7 @@
     "brewery": "Abbaye du Val-Dieu",
     "type": "Double (Brune)",
     "volume": "0.33 L",
-    "alcohol": "6.0°",
+    "alcohol": "6°",
     "id": "AUBEL_DUBBEL_BIERE_0.33",
     "image": "images/beer/be/aubel-dubbel-33cl.png"
   },
@@ -2866,7 +2866,7 @@
     "brewery": "The Brew Society",
     "type": "Quadruple (Brune)",
     "volume": "0.33 L",
-    "alcohol": "12.0°",
+    "alcohol": "12°",
     "id": "MARTHA_BROWN_EYES_BIERE_0.33",
     "image": "images/beer/be/martha-brown-eyes-33cl.png"
   },
@@ -2875,7 +2875,7 @@
     "brewery": "Brasserie Belgoo",
     "type": "Blonde / Ambrée",
     "volume": "0.33 L",
-    "alcohol": "8.0°",
+    "alcohol": "8°",
     "id": "BELGOO_KEEKSEBISJ_BIERE_0.33",
     "image": "images/beer/be/belgoo-keeksebisj-33cl.png"
   },
@@ -3109,7 +3109,7 @@
     "brewery": "Antwerpse Brouw Compagnie",
     "type": "Brune",
     "volume": "0.33 L",
-    "alcohol": "9.0°",
+    "alcohol": "9°",
     "id": "NONKEL_PATER_BIERE_0.33",
     "image": "images/beer/be/nonkel-pater-33cl.png"
   },
@@ -3118,7 +3118,7 @@
     "brewery": "The Brew Society",
     "type": "Blonde",
     "volume": "0.33 L",
-    "alcohol": "8.0°",
+    "alcohol": "8°",
     "id": "MARTHA_BLOND_BIERE_0.33",
     "image": "images/beer/be/martha-blond-33cl.png"
   },
@@ -3145,7 +3145,7 @@
     "brewery": "Abbaye du Val-Dieu",
     "type": "Triple (Blonde)",
     "volume": "0.33 L",
-    "alcohol": "9.0°",
+    "alcohol": "9°",
     "id": "AUBEL_TRIPEL_BIERE_0.33",
     "image": "images/beer/be/aubel-tripel-33cl.png"
   },
@@ -3316,7 +3316,7 @@
     "brewery": "Carlsberg Group",
     "type": "Pils (Blonde)",
     "volume": "0.25 L",
-    "alcohol": "5.0°",
+    "alcohol": "5°",
     "id": "CARLSBERG_BIERE_0.25",
     "image": "images/beer/be/carlsberg-25cl.png"
   },
@@ -3325,7 +3325,7 @@
     "brewery": "The Flying Dutchman",
     "type": "Stout (Noire)",
     "volume": "0.33 L",
-    "alcohol": "6.0°",
+    "alcohol": "6°",
     "id": "BLACK_IS_BLACK_AND_I_WANT_MY_BABY_BACK_BLACK_RYE_IPA_BIERE_0.33",
     "image": "images/beer/be/black-is-black-and-i-want-my-baby-back-black-rye-i.png"
   },
@@ -3334,7 +3334,7 @@
     "brewery": "Brasserie de Silly",
     "type": "Brune (Noël)",
     "volume": "0.33 L",
-    "alcohol": "9.0°",
+    "alcohol": "9°",
     "id": "ENGHIEN_DE_NOEL_BIERE_0.33",
     "image": "images/beer/be/enghien-de-noel-33cl.png"
   },
@@ -3523,7 +3523,7 @@
     "brewery": "Brasserie d'Ebly",
     "type": "Quadruple (Brune)",
     "volume": "0.33 L",
-    "alcohol": "10.0°",
+    "alcohol": "10°",
     "id": "LA_CORNE_QUADRUPLE_BIERE_0.33",
     "image": "images/beer/be/la-corne-quadruple-33cl.png"
   },
@@ -3541,7 +3541,7 @@
     "brewery": "The Musketeers",
     "type": "Wheat IPA (Blonde)",
     "volume": "0.33 L",
-    "alcohol": "6.0°",
+    "alcohol": "6°",
     "id": "ANTIGOON_COURAGEOUS_WIPA_BIERE_0.33",
     "image": "images/beer/be/antigoon-courageous-wipa-33cl.png"
   },
@@ -3775,7 +3775,7 @@
     "brewery": "Brasserie Het Nest",
     "type": "Triple (Vieillie fût)",
     "volume": "0.33 L",
-    "alcohol": "10.0°",
+    "alcohol": "10°",
     "id": "SCHUPPENBOER_BELGIAN_OWL_BA_BIERE_0.33",
     "image": "images/beer/be/schuppenboer-belgian-owl-ba-33cl.png"
   },
@@ -3811,7 +3811,7 @@
     "brewery": "Alken-Maes (Grimbergen)",
     "type": "Blonde (Houblonnée)",
     "volume": "0.33 L",
-    "alcohol": "8.0°",
+    "alcohol": "8°",
     "id": "GRIMBERGEN_HOP_KARAKTER_BIERE_0.33",
     "image": "images/beer/be/grimbergen-hop-karakter-33cl.png"
   },
@@ -4378,7 +4378,7 @@
     "brewery": "Jopen (NL)",
     "type": "Blanche",
     "volume": "0.33 L",
-    "alcohol": "5.0°",
+    "alcohol": "5°",
     "id": "JOPEN_ADRIAAN_WIT_BIERE_0.33",
     "image": "images/beer/be/jopen-adriaan-wit-33cl.png"
   },
@@ -4387,7 +4387,7 @@
     "brewery": "Brouwerij Viven",
     "type": "NEIPA (Blonde)",
     "volume": "0.33 L",
-    "alcohol": "6.0°",
+    "alcohol": "6°",
     "id": "VIVEN_NEW_ENGLAND_IPA_BIERE_0.33",
     "image": "images/beer/be/viven-new-england-ipa-33cl.png"
   },
@@ -4684,7 +4684,7 @@
     "brewery": "Spaten-Franziskaner",
     "type": "Blanche (Brune)",
     "volume": "0.50 L",
-    "alcohol": "5.0°",
+    "alcohol": "5°",
     "id": "FRANZISKANER_HEFE_DUNKEL_BIERE_0.50",
     "image": "images/beer/be/franziskaner-hefe-dunkel-50cl.png"
   },
@@ -4711,7 +4711,7 @@
     "brewery": "Brouwerij Roman",
     "type": "Brune (Bio)",
     "volume": "0.33 L",
-    "alcohol": "10.0°",
+    "alcohol": "10°",
     "id": "ADRIAEN_BROUWER_OAKED_BIERE_0.33",
     "image": "images/beer/be/adriaen-brouwer-oaked-33cl.png"
   },
@@ -4720,7 +4720,7 @@
     "brewery": "Brouwerij De Poes",
     "type": "Brune",
     "volume": "0.33 L",
-    "alcohol": "8.0°",
+    "alcohol": "8°",
     "id": "DE_POES_BRUIN_BIERE_0.33",
     "image": "images/beer/be/de-poes-bruin-33cl.png"
   },
@@ -4729,7 +4729,7 @@
     "brewery": "Brasserie des Légendes",
     "type": "Fruitée (Cassis)",
     "volume": "0.33 L",
-    "alcohol": "3.0°",
+    "alcohol": "3°",
     "id": "DUCASSIS_BIO_BIERE_0.33",
     "image": "images/beer/be/ducassis-bio-33cl.png"
   },
@@ -4738,7 +4738,7 @@
     "brewery": "Vliegende Paard Brouwers",
     "type": "Blanche",
     "volume": "0.33 L",
-    "alcohol": "5.0°",
+    "alcohol": "5°",
     "id": "PREARIS_WHITE_DRAGON_BIERE_0.33",
     "image": "images/beer/be/prearis-white-dragon-33cl.png"
   },
@@ -4747,7 +4747,7 @@
     "brewery": "De Leite",
     "type": "Blonde",
     "volume": "0.33 L",
-    "alcohol": "6.0°",
+    "alcohol": "6°",
     "id": "MA_M_RE_SPECIAL_BLONDE_0.33",
     "image": "images/beer/be/ma-mere-special-33cl.png"
   },
@@ -4765,7 +4765,7 @@
     "brewery": "Brouwerij Boelens",
     "type": "Blonde",
     "volume": "0.33 L",
-    "alcohol": "6.0°",
+    "alcohol": "6°",
     "id": "WAASLANDER_BIERE_0.33",
     "image": "images/beer/be/waaslander-33cl.png"
   },
@@ -5026,7 +5026,7 @@
     "brewery": "Brasserie de Silly",
     "type": "Pils (Bio)",
     "volume": "0.25 L",
-    "alcohol": "5.0°",
+    "alcohol": "5°",
     "id": "SILLY_BIO_BIERE_0.25",
     "image": "images/beer/be/silly-bio-25cl.png"
   },
@@ -5377,7 +5377,7 @@
     "brewery": "Brouwerij De Ranke",
     "type": "Blonde (Amère)",
     "volume": "0.33 L",
-    "alcohol": "6.0°",
+    "alcohol": "6°",
     "id": "BITTERE_BLOEMEN_BIERE_0.33",
     "image": "images/beer/be/bittere-bloemen-33cl.png"
   },
@@ -5404,7 +5404,7 @@
     "brewery": "Brouwerij 't Verzet",
     "type": "Rouge / Ambrée",
     "volume": "0.33 L",
-    "alcohol": "6.0°",
+    "alcohol": "6°",
     "id": "VERZET_DOKTOR_RUDY_HEALING_LIQUID_BIERE_0.33",
     "image": "images/beer/be/verzet-doktor-rudy-healing-liquid-33cl.png"
   },
@@ -5431,7 +5431,7 @@
     "brewery": "Brasserie Cazeau",
     "type": "Blonde",
     "volume": "0.33 L",
-    "alcohol": "6.0°",
+    "alcohol": "6°",
     "id": "3_SCHTENG_BIERE_0.33",
     "image": "images/beer/be/3-schteng-33cl.png"
   },
@@ -5449,7 +5449,7 @@
     "brewery": "Hedonis Ambachtsbier",
     "type": "Stout (Noire)",
     "volume": "0.33 L",
-    "alcohol": "8.0°",
+    "alcohol": "8°",
     "id": "HEDONIS_I_KISS_MY_STOUT_BIERE_0.33",
     "image": "images/beer/be/hedonis-i-kiss-my-stout-33cl.png"
   },
@@ -5467,7 +5467,7 @@
     "brewery": "Brouwerij 't Verzet",
     "type": "Brune (Vieille)",
     "volume": "0.33 L",
-    "alcohol": "6.0°",
+    "alcohol": "6°",
     "id": "VERZET_OUD_BRUIN_HIP_HONS_BIERE_0.33",
     "image": "images/beer/be/verzet-oud-bruin-hip-hons-33cl.png"
   },
@@ -5782,7 +5782,7 @@
     "brewery": "Brasserie St-Feuillien",
     "type": "Blonde",
     "volume": "0.33 L",
-    "alcohol": "5.0°",
+    "alcohol": "5°",
     "id": "ST_FEUILLIEN_FIVE_BIERE_0.33",
     "image": "images/beer/be/st-feuillien-five-33cl.png"
   },
@@ -5818,7 +5818,7 @@
     "brewery": "Brasserie de Silly",
     "type": "Brune",
     "volume": "0.33 L",
-    "alcohol": "8.0°",
+    "alcohol": "8°",
     "id": "DOUBLE_ENGHIEN_BRUIN_BIERE_0.33",
     "image": "images/beer/be/double-enghien-bruin-33cl.png"
   },
@@ -5836,7 +5836,7 @@
     "brewery": "VBDCK Brewery",
     "type": "Stout (Noire)",
     "volume": "0.33 L",
-    "alcohol": "6.0°",
+    "alcohol": "6°",
     "id": "KEREL_STOUT_BIERE_0.33",
     "image": "images/beer/be/kerel-stout-33cl.png"
   },
@@ -5908,7 +5908,7 @@
     "brewery": "Brouwerij Slaapmutske",
     "type": "Blonde (Forte)",
     "volume": "0.33 L",
-    "alcohol": "10.0°",
+    "alcohol": "10°",
     "id": "SLAAPMUTSKE_HOP_COLLECTION_BIERE_0.33",
     "image": "images/beer/be/slaapmutske-hop-collection-33cl.png"
   },
@@ -5926,7 +5926,7 @@
     "brewery": "Brouwerij Dilewyns",
     "type": "Brune (Noël)",
     "volume": "0.33 L",
-    "alcohol": "10.0°",
+    "alcohol": "10°",
     "id": "VICARIS_WINTER_DE_NOEL_BIERE_0.33",
     "image": "images/beer/be/vicaris-winter-de-noel-33cl.png"
   },
@@ -6268,7 +6268,7 @@
     "brewery": "Brouwerij Kompel",
     "type": "Blonde (Miel)",
     "volume": "0.33 L",
-    "alcohol": "8.0°",
+    "alcohol": "8°",
     "id": "KOMPEL_PRION_DES_FLEURS_BIERE_0.33",
     "image": "images/beer/be/kompel-prion-des-fleurs-33cl.png"
   },
@@ -6277,7 +6277,7 @@
     "brewery": "Brouwerij De Ranke",
     "type": "Blonde",
     "volume": "0.33 L",
-    "alcohol": "4.0°",
+    "alcohol": "4°",
     "id": "JOUR_DE_FETE_BIERE_0.33",
     "image": "images/beer/be/jour-de-fete-33cl.png"
   },
@@ -6304,7 +6304,7 @@
     "brewery": "Dochter van de Korenaar",
     "type": "IPA / Ambrée",
     "volume": "0.33 L",
-    "alcohol": "7.0°",
+    "alcohol": "7°",
     "id": "DOCHTER_REVANCHE_BIERE_0.33",
     "image": "images/beer/be/dochter-revanche-33cl.png"
   },
@@ -6331,7 +6331,7 @@
     "brewery": "Brasserie de la Lesse",
     "type": "Blonde",
     "volume": "0.33 L",
-    "alcohol": "6.0°",
+    "alcohol": "6°",
     "id": "CLEMENT_BLONDE_BIERE_0.33",
     "image": "images/beer/be/clement-blonde-33cl.png"
   },
@@ -6763,7 +6763,7 @@
     "brewery": "Fort Lapin",
     "type": "Fruitée (Cerise)",
     "volume": "0.33 L",
-    "alcohol": "5.0°",
+    "alcohol": "5°",
     "id": "FORT_LAPIN_5_KRIEK_BIERE_0.33",
     "image": "images/beer/be/fort-lapin-5-kriek-33cl.png"
   },
@@ -6772,7 +6772,7 @@
     "brewery": "Fort Lapin",
     "type": "Blonde",
     "volume": "0.33 L",
-    "alcohol": "6.0°",
+    "alcohol": "6°",
     "id": "FORT_LAPIN_6_HOPLAPIN_BIERE_0.33",
     "image": "images/beer/be/fort-lapin-6-hoplapin-33cl.png"
   },
@@ -6808,7 +6808,7 @@
     "brewery": "Brasserie de la Lesse",
     "type": "Blonde",
     "volume": "0.33 L",
-    "alcohol": "6.0°",
+    "alcohol": "6°",
     "id": "SLUTTE_BIERE_0.33",
     "image": "images/beer/be/slutte-33cl.png"
   },
@@ -6826,7 +6826,7 @@
     "brewery": "Jopen (NL)",
     "type": "IPA (Sans Gluten)",
     "volume": "0.33 L",
-    "alcohol": "6.0°",
+    "alcohol": "6°",
     "id": "JOPEN_HOP_ZIJ_MET_ONS_BIERE_0.33",
     "image": "images/beer/be/jopen-hop-zij-met-ons-33cl.png"
   },
@@ -6835,7 +6835,7 @@
     "brewery": "Vliegende Paard Brouwers",
     "type": "IPA (Blonde)",
     "volume": "0.33 L",
-    "alcohol": "8.0°",
+    "alcohol": "8°",
     "id": "HOOGHEID_IPA_BIERE_0.33",
     "image": "images/beer/be/hoogheid-ipa-33cl.png"
   },
@@ -6844,7 +6844,7 @@
     "brewery": "Brouwerij De Ranke",
     "type": "IPA (Ambrée)",
     "volume": "0.33 L",
-    "alcohol": "6.0°",
+    "alcohol": "6°",
     "id": "AMER_AMER_BIERE_0.33",
     "image": "images/beer/be/amer-amer-33cl.png"
   },
@@ -6853,7 +6853,7 @@
     "brewery": "Brouwerij Kees (NL)",
     "type": "Blonde",
     "volume": "0.33 L",
-    "alcohol": "6.0°",
+    "alcohol": "6°",
     "id": "KEES_IT_S_A_BLOND_BIERE_0.33",
     "image": "images/beer/be/kees-its-a-blond-33cl.png"
   },
@@ -6898,7 +6898,7 @@
     "brewery": "Brasserie Grain d'Orge",
     "type": "Blonde",
     "volume": "0.33 L",
-    "alcohol": "7.0°",
+    "alcohol": "7°",
     "id": "LA_GRELOTTE_BIERE_0.33",
     "image": "images/beer/be/la-grelotte-33cl.png"
   },
@@ -6907,7 +6907,7 @@
     "brewery": "The Flying Dutchman",
     "type": "Ambrée (Sour)",
     "volume": "0.33 L",
-    "alcohol": "8.0°",
+    "alcohol": "8°",
     "id": "ROSE_HIPPED_HIBISCUS_DIPPED_FLOWER_POWER_FUNKY_SOUR_BIERE_0.33",
     "image": "images/beer/be/rose-hipped-hibiscus-dipped-flower-power-funky-sou.png"
   },
@@ -7150,7 +7150,7 @@
     "brewery": "Fort Lapin",
     "type": "Quadruple (Brune)",
     "volume": "0.33 L",
-    "alcohol": "10.0°",
+    "alcohol": "10°",
     "id": "FORT_LAPIN_10_QUADRUPEL_BIERE_0.33",
     "image": "images/beer/be/fort-lapin-10-quadrupel-33cl.png"
   },
@@ -7186,7 +7186,7 @@
     "brewery": "Microbrouwerij Serafijn",
     "type": "Triple (Blonde)",
     "volume": "0.33 L",
-    "alcohol": "8.0°",
+    "alcohol": "8°",
     "id": "SERAFIJN_PALLIETER_BIERE_0.33",
     "image": "images/beer/be/serafijn-pallieter-33cl.png"
   },
@@ -7222,7 +7222,7 @@
     "brewery": "De Dolle Brouwers",
     "type": "Triple (Blonde)",
     "volume": "0.33 L",
-    "alcohol": "10.0°",
+    "alcohol": "10°",
     "id": "DULLE_TEVE_BIERE_0.33",
     "image": "images/beer/be/dulle-teve-33cl.png"
   },
@@ -7276,7 +7276,7 @@
     "brewery": "Brussels Beer Project",
     "type": "Blonde",
     "volume": "0.33 L",
-    "alcohol": "7.0°",
+    "alcohol": "7°",
     "id": "BABY_LONE_BIERE_0.33",
     "image": "images/beer/be/baby-lone-33cl.png"
   },
@@ -7447,7 +7447,7 @@
     "brewery": "Brouwerij De Poes",
     "type": "Spéciale (Ambrée)",
     "volume": "0.33 L",
-    "alcohol": "6.0°",
+    "alcohol": "6°",
     "id": "DE_POES_SPECIAL_BELGE_BIERE_0.33",
     "image": "images/beer/be/de-poes-special-belge-33cl.png"
   },
@@ -7465,7 +7465,7 @@
     "brewery": "Brouwerij De Landtsheer",
     "type": "Blonde",
     "volume": "0.33 L",
-    "alcohol": "8.0°",
+    "alcohol": "8°",
     "id": "MALHEUR_8_BIERE_0.33",
     "image": "images/beer/be/malheur-8-33cl.png"
   },
@@ -7474,7 +7474,7 @@
     "brewery": "Dochter van de Korenaar",
     "type": "Triple (Blonde)",
     "volume": "0.33 L",
-    "alcohol": "9.0°",
+    "alcohol": "9°",
     "id": "DOCHTER_NOUVEAUX_RICHE_BIERE_0.33",
     "image": "images/beer/be/dochter-nouveaux-riche-33cl.png"
   },
@@ -7528,7 +7528,7 @@
     "brewery": "Brouwerij 't Verzet",
     "type": "Fruitée (Framboise)",
     "volume": "0.33 L",
-    "alcohol": "6.0°",
+    "alcohol": "6°",
     "id": "T_VERZET_OUD_BRUIN_RASPBERRY_BIERE_0.33",
     "image": "images/beer/be/t-verzet-oud-bruin-raspberry-33cl.png"
   },
@@ -7537,7 +7537,7 @@
     "brewery": "Brouwerij Roman",
     "type": "Triple (Blonde)",
     "volume": "0.33 L",
-    "alcohol": "9.0°",
+    "alcohol": "9°",
     "id": "ADRIAEN_BROUWER_TRIPEL_BIERE_0.33",
     "image": "images/beer/be/adriaen-brouwer-tripel-33cl.png"
   },
@@ -7672,7 +7672,7 @@
     "brewery": "Fort Lapin",
     "type": "Double (Brune)",
     "volume": "0.33 L",
-    "alcohol": "6.0°",
+    "alcohol": "6°",
     "id": "FORT_LAPIN_6_DUBBEL_BIERE_0.33",
     "image": "images/beer/be/fort-lapin-6-dubbel-33cl.png"
   },
@@ -7681,7 +7681,7 @@
     "brewery": "Fort Lapin",
     "type": "Triple (Blonde)",
     "volume": "0.33 L",
-    "alcohol": "8.0°",
+    "alcohol": "8°",
     "id": "FORT_LAPIN_8_TRIPEL_BIERE_0.33",
     "image": "images/beer/be/fort-lapin-8-tripel-33cl.png"
   },
@@ -7708,7 +7708,7 @@
     "brewery": "The Brew Society",
     "type": "Fruitée (Rouge)",
     "volume": "0.33 L",
-    "alcohol": "8.0°",
+    "alcohol": "8°",
     "id": "MARTHA_GUILTY_PLEASURE_BIERE_0.33",
     "image": "images/beer/be/martha-guilty-pleasure-33cl.png"
   },
@@ -7726,7 +7726,7 @@
     "brewery": "Brouwerij 't Verzet",
     "type": "Blanche / IPA",
     "volume": "0.33 L",
-    "alcohol": "5.0°",
+    "alcohol": "5°",
     "id": "VERZET_SPACE_CADET_DREAM_ON_BIERE_0.33",
     "image": "images/beer/be/verzet-space-cadet-dream-on-33cl.png"
   },
@@ -7735,7 +7735,7 @@
     "brewery": "Brouwerij Gageleer",
     "type": "Blanche (Sans alcool)",
     "volume": "0.33 L",
-    "alcohol": "0.0°",
+    "alcohol": "0°",
     "id": "GAGELEER_WHITE_NO_HOPS_BIERE_0.33",
     "image": "images/beer/be/gageleer-white-no-hops-33cl.png"
   },
@@ -7744,7 +7744,7 @@
     "brewery": "Brouwerij Dilewyns",
     "type": "Blonde",
     "volume": "0.33 L",
-    "alcohol": "5.0°",
+    "alcohol": "5°",
     "id": "KOTMADAM_BIERE_0.33",
     "image": "images/beer/be/kotmadam-33cl.png"
   },
@@ -7753,7 +7753,7 @@
     "brewery": "Brasserie Het Nest",
     "type": "Triple (Blonde)",
     "volume": "0.33 L",
-    "alcohol": "10.0°",
+    "alcohol": "10°",
     "id": "SCHUPPENBOER_GRAND_CRU_BIERE_0.33",
     "image": "images/beer/be/schuppenboer-grand-cru-33cl.png"
   },
@@ -7762,7 +7762,7 @@
     "brewery": "Hedonis Ambachtsbier",
     "type": "Saison (Blonde)",
     "volume": "0.33 L",
-    "alcohol": "5.0°",
+    "alcohol": "5°",
     "id": "HEDONIS_SUZANNE_BIERE_0.33",
     "image": "images/beer/be/hedonis-suzanne-33cl.png"
   },
@@ -7771,7 +7771,7 @@
     "brewery": "The Flying Dutchman",
     "type": "White IPA",
     "volume": "0.33 L",
-    "alcohol": "6.0°",
+    "alcohol": "6°",
     "id": "FLIP_FLOPPED_WHITE_SOCKED_STRONG_HOPPED_WHITE_IPA_BIERE_0.33",
     "image": "images/beer/be/flip-flopped-white-socked-strong-hopped-white-ipa.png"
   },
@@ -7852,7 +7852,7 @@
     "brewery": "Brasserie St-Feuillien",
     "type": "Quadruple (Brune)",
     "volume": "0.33 L",
-    "alcohol": "11.0°",
+    "alcohol": "11°",
     "id": "ST_FEUILLIEN_QUADRUPEL_BIERE_0.33",
     "image": "images/beer/be/st-feuillien-quadrupel-33cl.png"
   },
@@ -7870,7 +7870,7 @@
     "brewery": "Brouwerij Viven",
     "type": "Triple (Blonde)",
     "volume": "0.33 L",
-    "alcohol": "8.0°",
+    "alcohol": "8°",
     "id": "VIVEN_TRIPEL_BIERE_0.33",
     "image": "images/beer/be/viven-tripel-33cl.png"
   },
@@ -7924,7 +7924,7 @@
     "brewery": "VBDCK Brewery",
     "type": "Blonde (Forte)",
     "volume": "0.33 L",
-    "alcohol": "15.0°",
+    "alcohol": "15°",
     "id": "KEREL_KAISHAKU_BIERE_0.33",
     "image": "images/beer/be/kerel-kaishaku-33cl.png"
   },
