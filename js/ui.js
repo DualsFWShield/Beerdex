@@ -745,6 +745,8 @@ export function renderStats(allBeers, userData, container, isDiscovery = false, 
     const drunkCount = Object.keys(userData).length;
     const percentage = Math.round((drunkCount / totalBeers) * 100) || 0;
 
+    const totalDrunkCount = Object.values(userData).reduce((acc, curr) => acc + (curr.count || 0), 0);
+
     container.innerHTML = `
                 <div class="text-center p-20">
                     <!-- SVG Donut Chart -->
@@ -768,7 +770,10 @@ export function renderStats(allBeers, userData, container, isDiscovery = false, 
                     </div>
                     <h2 class="mt-20">Statistiques</h2>
                     <p style="color: var(--text-secondary); margin-top: 10px;">
-                        Vous avez goûté <strong style="color: #fff;">${drunkCount}</strong> bières sur <strong style="color: #fff;">${totalBeers}</strong> disponibles.
+                        Vous avez goûté <strong style="color: #fff;">${drunkCount}</strong> bières uniques sur <strong style="color: #fff;">${totalBeers}</strong>.
+                    </p>
+                     <p style="color: var(--text-secondary); margin-top: 5px; font-size: 0.9rem;">
+                        Total consommé : <strong style="color: var(--accent-gold);">${totalDrunkCount}</strong> verres 🍺
                     </p>
 
                     ${renderAdvancedStats(allBeers, userData)}
@@ -819,6 +824,29 @@ export function renderStats(allBeers, userData, container, isDiscovery = false, 
                             <button type="button" id="btn-backup-text" class="form-input text-center" style="font-size:0.8rem; background:none; border:none; color:var(--accent-gold); text-decoration:underline;">
                                 Copier ma sauvegarde (Texte)
                             </button>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card mt-20 text-center" style="margin-bottom: 40px;">
+                        <h3 style="color:var(--text-secondary); font-size:1rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:15px;">Crédits</h3>
+                        
+                        <div style="margin-bottom:15px;">
+                            <p style="color:var(--accent-gold); font-size:0.8rem; margin-bottom:5px;">Co-Fondateurs</p>
+                            <p style="font-size:0.9rem;">Dorian Storms & Noah Bruijninckx</p>
+                        </div>
+                        
+                        <div style="margin-bottom:15px;">
+                            <p style="color:var(--accent-gold); font-size:0.8rem; margin-bottom:5px;">Principaux Actionnaires</p>
+                            <p style="font-size:0.9rem;">Tristan Storms & Maxance Veulemans</p>
+                        </div>
+                        
+                        <div>
+                            <p style="color:var(--accent-gold); font-size:0.8rem; margin-bottom:5px;">Design & Développement</p>
+                            <p style="font-size:0.9rem;">Noah Bruijninckx</p>
+                        </div>
+                        
+                        <div style="margin-top:20px; font-size:0.7rem; color:#444;">
+                            Beerdex v1.4 &copy; 2026
                         </div>
                     </div>
                 </div>
