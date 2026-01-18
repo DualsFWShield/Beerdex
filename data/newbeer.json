@@ -2313,6 +2313,24 @@
     "image": "images/beer/be/ename-triple-33cl.png"
   },
   {
+    "title": "Malheur 6",
+    "brewery": "De Landtsheer",
+    "type": "Blonde",
+    "volume": "0.33 L",
+    "alcohol": "6°",
+    "id": "MALHEUR_6_BLONDE_0.33",
+    "image": "images/beer/be/malheur-6.png"
+  },
+  {
+    "title": "Malheur 10",
+    "brewery": "De Landtsheer",
+    "type": "Blonde",
+    "volume": "0.33 L",
+    "alcohol": "10°",
+    "id": "MALHEUR_10_BLONDE_0.33",
+    "image": "images/beer/be/malheur-10.png"
+  },
+  {
     "title": "Malheur 12",
     "brewery": "De Landtsheer",
     "type": "Brune",
@@ -7443,7 +7461,7 @@
     "image": "images/beer/be/t-verzet-moose-blues-33cl.png"
   },
   {
-    "title": "Malheur 8°",
+    "title": "Malheur 8",
     "brewery": "Brouwerij De Landtsheer",
     "type": "Blonde",
     "volume": "0.33 L",
