@@ -2,11 +2,22 @@ import * as Data from './data.js';
 import * as UI from './ui.js';
 import * as Storage from './storage.js';
 import * as Achievements from './achievements.js';
+import * as API from './api.js';
+import * as Share from './share.js';
 
-// Expose UI for inline HTML event handlers (e.g. onclick="UI.method()")
+window.Share = Share;
+
+import * as Wrapped from './wrapped.js';
+
+// Expose UI for inline HTML event handlers
 window.UI = UI;
+window.Wrapped = Wrapped;
+window.showToast = UI.showToast;
 
 // App State
+
+// Initialize Wrapped
+Wrapped.init(() => state.beers);
 const state = {
     beers: [],
     filteredBeers: [], // Cache for filtered results
@@ -36,7 +47,11 @@ async function init() {
         setupEventListeners();
 
         // Check Welcome
+        // Check Welcome
         UI.checkAndShowWelcome();
+
+        // --- API AUTO-ACTION CHECK ---
+        API.start(() => state.beers);
 
     } catch (error) {
         console.error("Failed to initialize Beerdex:", error);

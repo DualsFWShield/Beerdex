@@ -46,7 +46,12 @@ Construit avec la philosophie **"0$ Stack"**, le projet est entièrement statiqu
 
 ### 💾 Données & Vie Privée
 *   **Local First** : Toutes les données sont stockées dans votre navigateur (IndexedDB/LocalStorage).
-*   **Import/Export** : Sauvegardez votre collection en fichier JSON ou transférez-la vers un autre appareil.
+*   **Import/Export Avancé** :
+    *   **Sauvegarde Fichier** : Export complet ou partiel (Bières perso, notes...) en JSON.
+    *   **Lien Magique** : Transférez vos données vers un autre appareil via un simple lien URL.
+*   **Partage Social** :
+    *   Générez des stories Instagram personnalisées avec vos notes.
+    *   Partagez des liens directs vers vos bières préférées.
 
 ---
 

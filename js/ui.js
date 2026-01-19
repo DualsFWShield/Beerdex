@@ -618,8 +618,11 @@ export function renderBeerDetail(beer, onSave) {
 
                 <div style="display:flex; gap:10px; margin-bottom:10px;">
                     <button id="btn-share-beer" class="form-input" style="flex:1;">📤 Lien</button>
-                    <button id="btn-share-insta" class="form-input" style="flex:1; border:1px solid var(--accent-gold); color:var(--accent-gold);">📸 Story</button>
+                    <button id="btn-share-insta" class="form-input" style="flex:1;">📸 Story Rapide</button>
                 </div>
+                <button id="btn-share-advanced" class="btn-primary" style="margin-top:0; border:1px solid var(--accent-gold); color:var(--accent-gold); background:transparent;">
+                    ✨ Story Personnalisée
+                </button>
 
                 ${customActions}
                 `;
@@ -648,6 +651,21 @@ export function renderBeerDetail(beer, onSave) {
     };
 
     // Share Image Handler (Insta-Beer)
+    wrapper.querySelector('#btn-share-insta').onclick = async () => {
+        // Default behavior: uses existing score/comment
+        showToast("Génération image...");
+        // API.handleShare or Share.shareImage directly?
+        // Let's use the API trigger to be safe or Share module directly if available
+        // We need 'api.js' handleShare logic but without params overrides
+        // Better: call Share directly for "Fast Mode"
+        const blob = await window.Share.generateBeerCard(beer, existingData.score || 0, existingData.comment || '');
+        window.Share.shareImage(blob, `Check-in ${beer.title}`);
+    };
+
+    // Advanced Share
+    wrapper.querySelector('#btn-share-advanced').onclick = () => {
+        renderAdvancedShareModal(beer, existingData);
+    };
     wrapper.querySelector('#btn-share-insta').onclick = async () => {
         const btn = wrapper.querySelector('#btn-share-insta');
         const originalText = btn.innerHTML;
@@ -862,7 +880,7 @@ export function renderStats(allBeers, userData, container, isDiscovery = false, 
                         a 15.9155 15.9155 0 0 1 0 -31.831"
                             />
                         </svg>
-                        <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-size:1.8rem; font-weight:bold; color:var(--accent-gold);">
+                        <div style="position:absolute; top:42%; left:50%; transform:translate(-50%, -50%); font-size:1.8rem; font-weight:bold; color:var(--accent-gold);">
                             ${percentage}%
                         </div>
                     </div>
@@ -876,8 +894,6 @@ export function renderStats(allBeers, userData, container, isDiscovery = false, 
 
                     ${renderAdvancedStats(allBeers, userData)}
 
-
-
                     <div class="stat-card mt-20 text-center">
                         <div id="beer-map-container" style="min-height:200px;">
                             <span class="spinner"></span> Chargement de la carte...
@@ -885,104 +901,226 @@ export function renderStats(allBeers, userData, container, isDiscovery = false, 
                     </div>
 
                     <div class="stat-card mt-20 text-center">
-                        <h3>Succès 🏆</h3>
-                        <div class="mt-20">
-                            ${renderAchievementsList()}
-                        </div>
+                        <h3 style="margin-bottom:15px;">Succès 🏆</h3>
+                        ${renderAchievementsList()}
                     </div>
 
                     <div class="stat-card mt-20 text-center">
                         <h3 style="margin-bottom:10px;">Beer Match ⚔️</h3>
                         <p style="font-size:0.8rem; color:#888; margin-bottom:15px;">Compare tes goûts avec un ami !</p>
-                        <button type="button" id="btn-match" class="form-input text-center" style="background:#222; border:1px solid var(--accent-gold); color:var(--accent-gold); cursor:pointer;">
+                        <button type="button" id="btn-match" class="btn-primary" style="background:#222; border:1px solid var(--accent-gold); color:var(--accent-gold);">
                             ⚔️ Lancer un Duel
                         </button>
                     </div>
 
-                    <div class="stat-card mt-20 text-center">
-                        <h3>Personnalisation</h3>
-                        <p class="mb-20" style="font-size: 0.8rem; color: #888;">Adaptez le formulaire de notation à vos goûts (Sliders, Checkboxes...).</p>
-                        <button type="button" id="btn-template" class="form-input text-center" style="background: #333; color: white; border: 1px solid #444;">⚙️ Configurer la Notation</button>
+                    <div style="background: linear-gradient(135deg, #111, #222); padding: 15px; border-radius: 12px; border: 1px solid var(--accent-gold); margin-bottom: 20px; text-align: center; margin-top: 20px;">
+                        <div style="font-size: 2rem; margin-bottom: 5px;">🎬</div>
+                        <h3 style="margin: 0 0 10px 0; color: var(--accent-gold); font-family: 'Russo One', sans-serif;">Beerdex Wrapped</h3>
+                        <p style="font-size: 0.85rem; color: #ccc; margin-bottom: 15px;">Revivez vos moments forts de l'année !</p>
+                        <button id="btn-open-wrapped" class="btn-primary" style="background: var(--accent-gold); color: black; font-weight: bold; width: 100%;">
+                            ▶️ Lancer la Story
+                        </button>
                     </div>
 
-                    <div class="stat-card mt-20 text-center">
-                        <h3>Options</h3>
-                         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:15px; background:rgba(255,255,255,0.05); padding:10px; border-radius:8px;">
+                    <!-- UNIFIED SETTINGS UI -->
+                    <h2 class="mt-40 mb-20 text-center" style="font-family:'Russo One'; color:var(--accent-gold);">Paramètres & Données</h2>
+
+                    <!-- 1. Interface -->
+                    <div class="stat-card">
+                        <h4 style="border-bottom:1px solid #333; padding-bottom:10px; margin-bottom:15px; text-align:left;">🎨 Interface</h4>
+                        
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
                             <div style="text-align:left;">
-                                <strong style="color:var(--accent-gold);">Mode Découverte</strong>
-                                <p style="font-size:0.7rem; color:#888; margin-top:2px;">Cacher les bières non-trouvées</p>
+                                <strong>Mode Découverte</strong>
+                                <p style="font-size:0.75rem; color:#888;">Masquer les bières non trouvées</p>
                             </div>
                             <label class="switch">
                                 <input type="checkbox" id="toggle-discovery" ${isDiscovery ? 'checked' : ''}>
                                 <span class="slider round"></span>
                             </label>
                         </div>
-                        
-                         <div style="margin-top:15px; padding-top:15px; border-top:1px solid #333;">
-                            <button id="btn-check-update" class="form-input text-center" style="width:100%;">🔄 Vérifier les mises à jour</button>
-                        </div>
+
+                         <button type="button" id="btn-template" class="btn-primary" style="background:#222; border:1px solid #444; width:100%; margin:0;">
+                            ⚙️ Configurer la Notation
+                        </button>
                     </div>
 
-                    <div class="stat-card mt-20 text-center">
-                        <h3>Gestion des données</h3>
-                        <p class="mb-20" style="font-size: 0.8rem; color: #888;">Exportez vos données pour les sauvegarder ou les transférer.</p>
-                        <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                            <button type="button" id="btn-export-full" class="form-input text-center mb-10" style="flex:1;">📥 Tout Exporter</button>
-                            <button type="button" id="btn-export-light" class="form-input text-center mb-10" style="flex:1; font-size:0.8rem;">📥 Sans Custom</button>
-                        </div>
-                        <button type="button" id="btn-import" class="form-input text-center mt-20">📤 Importer des données</button>
-                        
-                        <div style="margin-top:20px; border-top:1px solid #333; padding-top:10px;">
-                            <button type="button" id="btn-backup-text" class="form-input text-center" style="font-size:0.8rem; background:none; border:none; color:var(--accent-gold); text-decoration:underline;">
-                                Copier ma sauvegarde (Texte)
+                    <!-- 2. Data Management -->
+                    <div class="stat-card mt-20">
+                        <h4 style="border-bottom:1px solid #333; padding-bottom:10px; margin-bottom:15px; text-align:left;">💾 Données</h4>
+
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
+                            <button id="btn-backup" class="btn-primary" style="background:var(--accent-gold); color:black; margin:0;">
+                                ☁️ Sauvegarder
+                            </button>
+                            <button id="btn-restore" class="btn-primary" style="background:#222; border:1px solid var(--accent-gold); color:var(--accent-gold); margin:0;">
+                                📥 Restaurer
                             </button>
                         </div>
+                        <p style="font-size:0.75rem; color:#666; text-align:center;">
+                            Gérez vos exports fichiers ou liens de partage.
+                        </p>
                     </div>
-                    
-                    <div class="stat-card mt-20 text-center" style="margin-bottom: 40px;">
-                        <h3 style="color:var(--text-secondary); font-size:1rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:15px;">Crédits</h3>
+
+                    <!-- 3. System -->
+                    <div class="stat-card mt-20">
+                        <h4 style="border-bottom:1px solid #333; padding-bottom:10px; margin-bottom:15px; text-align:left;">🛠️ Système</h4>
+
+                        <button id="btn-check-update" class="btn-primary" style="background:#222; border:1px solid #444; width:100%; margin-bottom:15px;">
+                            🔄 Vérifier les Mises à jour
+                        </button>
                         
-                        <div style="margin-bottom:15px;">
-                            <p style="color:var(--accent-gold); font-size:0.8rem; margin-bottom:5px;">Co-Fondateurs</p>
-                            <p style="font-size:0.9rem;">Dorian Storms & Noah Bruijninckx</p>
+                        <details style="border-top:1px solid #333; padding-top:10px;">
+                            <summary style="cursor:pointer; color:#888; font-size:0.8rem; text-align:left;">Zone de Danger</summary>
+                            <div style="margin-top:15px;">
+                                <h5 style="color:#aaa; font-size:0.75rem; margin-bottom:5px; text-align:left;">Réinitialisation Partielle</h5>
+                                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:15px;">
+                                    <button id="btn-reset-ratings" class="btn-primary" style="background:#331; color:#fa0; border:1px solid #540; font-size:0.7rem; padding:8px;">
+                                        Note Uniqt.
+                                    </button>
+                                    <button id="btn-reset-custom" class="btn-primary" style="background:#331; color:#fa0; border:1px solid #540; font-size:0.7rem; padding:8px;">
+                                        Bières Perso
+                                    </button>
+                                    <button id="btn-reset-history" class="btn-primary" style="background:#331; color:#fa0; border:1px solid #540; font-size:0.7rem; padding:8px;">
+                                        Historique
+                                    </button>
+                                     <button id="btn-reset-fav" class="btn-primary" style="background:#331; color:#fa0; border:1px solid #540; font-size:0.7rem; padding:8px;">
+                                        Favoris
+                                    </button>
+                                </div>
+
+                                <h5 style="color:red; font-size:0.75rem; margin-bottom:5px; text-align:left;">Réinitialisation Totale</h5>
+                                <button id="btn-reset-app" class="btn-primary" style="background:rgba(255,0,0,0.1); color:red; border:1px solid red; width:100%;">
+                                    ☠️ RESET APPLICATION
+                                </button>
+                            </div>
+                        </details>
+                    </div>
+                   
+                    <div class="mt-40 text-center" style="margin-bottom: 60px;">
+                        <h3 style="color:var(--text-secondary); font-size:0.8rem; text-transform:uppercase; letter-spacing:2px; margin-bottom:25px;">Crédits</h3>
+                        
+                        <div style="display:flex; flex-direction:column; gap:20px;">
+                            <div>
+                                <p style="color:var(--accent-gold); font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Co-Fondateurs</p>
+                                <p style="font-size:0.9rem; color:#eee;">Dorian Storms & Noah Bruijninckx</p>
+                            </div>
+
+                            <div>
+                                <p style="color:var(--accent-gold); font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Idées supplementaires</p>
+                                <p style="font-size:0.9rem; color:#eee;">Tristan Storms & Maxance Veulemans</p>
+                            </div>
+                            
+                            <div>
+                                <p style="color:var(--accent-gold); font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Design & Code</p>
+                                <p style="font-size:0.9rem; color:#eee;">Noah Bruijninckx</p>
+                            </div>
                         </div>
                         
-                        <div style="margin-bottom:15px;">
-                            <p style="color:var(--accent-gold); font-size:0.8rem; margin-bottom:5px;">Principaux Actionnaires</p>
-                            <p style="font-size:0.9rem;">Tristan Storms & Maxance Veulemans</p>
-                        </div>
-                        
-                        <div>
-                            <p style="color:var(--accent-gold); font-size:0.8rem; margin-bottom:5px;">Design & Développement</p>
-                            <p style="font-size:0.9rem;">Noah Bruijninckx</p>
-                        </div>
-                        
-                        <div style="margin-top:20px; font-size:0.7rem; color:#444;">
+                        <div style="margin-top:30px; font-size:0.7rem; color:#444; border-top:1px solid #222; padding-top:15px; width:50%; margin-left:auto; margin-right:auto;">
                             Beerdex v2.0 &copy; 2026
                         </div>
                     </div>
                 </div>
                 `;
 
-    // Handlers
+    // --- Handlers ---
+
+    // Config
     container.querySelector('#btn-template').onclick = () => renderTemplateEditor();
 
+    if (discoveryCallback) {
+        container.querySelector('#toggle-discovery').onchange = (e) => {
+            discoveryCallback(e.target.checked);
+        };
+    }
+
+    // Match
     const btnMatch = container.querySelector('#btn-match');
     if (btnMatch) btnMatch.onclick = () => renderMatchModal(allBeers);
 
+    // Data
+    container.querySelector('#btn-backup').onclick = () => renderExportModal();
+    container.querySelector('#btn-restore').onclick = () => renderImportModal();
+
+    // Wrapped
+    const btnWrapped = container.querySelector('#btn-open-wrapped');
+    if (btnWrapped) {
+        btnWrapped.onclick = () => window.Wrapped.start();
+    }
+
+    // System
+    container.querySelector('#btn-check-update').onclick = () => {
+        if ('serviceWorker' in navigator) {
+            showToast("Recherche de mises à jour...");
+            navigator.serviceWorker.ready.then(registration => {
+                registration.update().then(() => {
+                    setTimeout(() => showToast("Vérification terminée."), 2000);
+                });
+            });
+        } else {
+            showToast("Service Worker non supporté.");
+        }
+    };
+
+    // Granular Resets
+    const confirmReset = (msg, action) => {
+        if (confirm(msg)) {
+            action();
+            showToast("Données effacées.");
+            setTimeout(() => location.reload(), 1000);
+        }
+    };
+
+    const btnResetRatings = container.querySelector('#btn-reset-ratings');
+    if (btnResetRatings) {
+        btnResetRatings.onclick = () => confirmReset(
+            "⚠️ Effacer UNIQUEMENT toutes les notes et commentaires ?",
+            Storage.resetRatingsOnly
+        );
+    }
+
+    const btnResetCustom = container.querySelector('#btn-reset-custom');
+    if (btnResetCustom) {
+        btnResetCustom.onclick = () => confirmReset(
+            "⚠️ Effacer UNIQUEMENT toutes vos bières personnalisées ?",
+            Storage.resetCustomBeersOnly
+        );
+    }
+
+    const btnResetHistory = container.querySelector('#btn-reset-history');
+    if (btnResetHistory) {
+        btnResetHistory.onclick = () => confirmReset(
+            "⚠️ Effacer l'historique de consommation ? (Les notes seront conservées)",
+            Storage.resetConsumptionHistoryOnly
+        );
+    }
+
+    const btnResetFav = container.querySelector('#btn-reset-fav');
+    if (btnResetFav) {
+        btnResetFav.onclick = () => confirmReset(
+            "⚠️ Retirer tous les favoris ?",
+            Storage.resetFavoritesOnly
+        );
+    }
+
+    container.querySelector('#btn-reset-app').onclick = () => {
+        if (confirm("⚠️ Êtes-vous certain de vouloir TOUT effacer ?\nCette action est irréversible !\n\nToutes vos notes, bières perso et préférences seront perdues.")) {
+            if (confirm("Dernière chance : Confirmez-vous la suppression totale ?")) {
+                Storage.resetAllData();
+                location.reload();
+            }
+        }
+    };
+
     // Init Map
     setTimeout(() => {
-        // We need to construct history list with brewery info
-        // allBeers contains full data. userData contains ratings.
         const history = [];
         const ratings = userData || {};
         Object.keys(ratings).forEach(ratingKey => {
-            // ratingKey is 'BEER_ID' or 'BEER_ID_UNIQUE'.
-            // Extract core ID
             const coreId = ratingKey.split('_')[0];
             const beer = allBeers.find(b => b.id == coreId || b.id == ratingKey);
             const userRating = ratings[ratingKey];
-            // Fix: Map should only show consumed beers
             if (beer && userRating && (userRating.count || 0) > 0) {
                 history.push({ beer: beer, rating: userRating });
             }
@@ -991,94 +1129,6 @@ export function renderStats(allBeers, userData, container, isDiscovery = false, 
         const mapContainer = container.querySelector('#beer-map-container');
         if (mapContainer) Map.renderMapWithData(mapContainer, history);
     }, 100);
-
-    if (discoveryCallback) {
-        container.querySelector('#toggle-discovery').onchange = (e) => {
-            discoveryCallback(e.target.checked);
-        };
-    }
-
-    // Handle Update Check
-    container.querySelector('#btn-check-update').onclick = () => {
-        if ('serviceWorker' in navigator) {
-            showToast("Recherche de mises à jour...");
-            navigator.serviceWorker.ready.then(registration => {
-                registration.update().then(() => {
-                    // If no update found after a short delay, tell user.
-                    // If update found, the app.js logic will trigger the toast.
-                    setTimeout(() => {
-                        // We can't easily know if an update was found or not via the promise result directly,
-                        // but if no toast appeared, likely up to date.
-                        showToast("Vérification terminée.");
-                    }, 2000);
-                });
-            });
-        } else {
-            showToast("Service Worker non supporté.");
-        }
-    };
-
-    // Handle Export Full
-    container.querySelector('#btn-export-full').onclick = async () => {
-        showToast("Préparation de l'export...");
-        await Storage.exportDataAdvanced({ includeCustom: true });
-        showToast("Export terminé !");
-    };
-
-    // Handle Export Light
-    container.querySelector('#btn-export-light').onclick = async () => {
-        showToast("Préparation de l'export...");
-        await Storage.exportDataAdvanced({ includeCustom: false });
-        showToast("Export terminé !");
-    };
-
-    // Handle Text Backup
-    container.querySelector('#btn-backup-text').onclick = () => {
-        const jsonFull = Storage.getExportDataString(true);
-        const jsonLight = Storage.getExportDataString(false);
-
-        renderTextBackupModal(jsonFull, jsonLight); // Updated signature
-    };
-
-    // Handle Paste Import Button
-    const btnPasteImport = document.createElement('button');
-    btnPasteImport.type = 'button';
-    btnPasteImport.className = 'form-input text-center mt-20';
-    btnPasteImport.textContent = '📋 Coller une sauvegarde (Import)';
-    btnPasteImport.style.background = 'none';
-    btnPasteImport.style.border = '1px dashed var(--accent-gold)';
-    btnPasteImport.style.color = 'var(--accent-gold)';
-
-    btnPasteImport.onclick = () => {
-        renderImportModal();
-    };
-
-    // Insert before the file import button or replace it? 
-    // User wants both. Let's add it after the file import button.
-    container.querySelector('#btn-import').parentNode.insertBefore(btnPasteImport, container.querySelector('#btn-backup-text').parentNode);
-
-
-    // Handle Import
-    container.querySelector('#btn-import').onclick = () => {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = '.json';
-        input.onchange = (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (evt) => {
-                if (Storage.importData(evt.target.result)) {
-                    showToast("Données importées avec succès !");
-                    setTimeout(() => location.reload(), 1500);
-                } else {
-                    showToast("Erreur lors de l'importation.");
-                }
-            };
-            reader.readAsText(file);
-        };
-        input.click();
-    };
 }
 
 function renderTemplateEditor() {
@@ -1362,7 +1412,7 @@ function renderAdvancedStats(allBeers, userData) {
                     <p class="text-center" style="font-size:0.75rem; color:#888; margin-bottom:10px;">C'est comme si vous aviez bu...</p>
                     ${alcHTML}
                 </div>
-                `;
+    `;
 }
 
 // --- Achievements Helper ---
@@ -1412,9 +1462,9 @@ function renderAchievementsList() {
             const safeIcon = ach.icon.replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
             return `
-                    <div class="ach-item" style="opacity:${opacity}; filter:${filter}; position:relative; cursor:pointer;" 
-                         onclick="UI.showAchievementDetails('${safeTitle}', '${safeDesc}', '${safeIcon}', ${isUnlocked})">
-                        <div class="ach-icon">${ach.icon}</div>
+        <div class="ach-item" style="opacity:${opacity}; filter:${filter}; position:relative; cursor:pointer;"
+    onclick="UI.showAchievementDetails('${safeTitle}', '${safeDesc}', '${safeIcon}', ${isUnlocked})">
+        <div class="ach-icon">${ach.icon}</div>
                     </div>`;
         }).join('');
 
@@ -1424,94 +1474,6 @@ function renderAchievementsList() {
     return html;
 }
 
-function renderTextBackupModal(jsonFull, jsonLight) {
-    const wrapper = document.createElement('div');
-    wrapper.className = 'modal-content';
-
-    // Default to full
-    let currentJson = jsonFull;
-
-    wrapper.innerHTML = `
-        <h2 style="margin-bottom:20px;">Sauvegarde Texte</h2>
-        <p style="color:#aaa; font-size:0.9rem; margin-bottom:15px;">
-            Si l'export fichier ne fonctionne pas (APK), copiez ce texte.
-        </p>
-        
-        <div style="display:flex; gap:10px; margin-bottom:10px;">
-            <button id="tab-full" class="btn-primary" style="padding:8px; font-size:0.8rem; flex:1; background:var(--accent-gold); color:black;">Complet</button>
-            <button id="tab-light" class="btn-primary" style="padding:8px; font-size:0.8rem; flex:1; background:var(--bg-card); border:1px solid #444; color:white;">Sans Custom</button>
-        </div>
-
-        <textarea id="backup-text-area" class="form-textarea" style="height:200px; font-family:monospace; font-size:0.75rem;" readonly>${jsonFull}</textarea>
-        
-        <div style="display:flex; gap:10px; margin-top:15px;">
-            <button id="btn-copy-backup" class="btn-primary" style="margin:0; background:var(--accent-gold);">📋 Copier</button>
-            <button id="btn-share-backup-text" class="btn-primary" style="margin:0; background:var(--bg-card); border:1px solid #444;">📤 Partager</button>
-        </div>
-    `;
-
-    const textarea = wrapper.querySelector('#backup-text-area');
-    const tabFull = wrapper.querySelector('#tab-full');
-    const tabLight = wrapper.querySelector('#tab-light');
-
-    const updateTabs = (isFull) => {
-        currentJson = isFull ? jsonFull : jsonLight;
-        textarea.value = currentJson;
-
-        tabFull.style.background = isFull ? 'var(--accent-gold)' : 'var(--bg-card)';
-        tabFull.style.color = isFull ? 'black' : 'white';
-        tabFull.style.border = isFull ? 'none' : '1px solid #444';
-
-        tabLight.style.background = !isFull ? 'var(--accent-gold)' : 'var(--bg-card)';
-        tabLight.style.color = !isFull ? 'black' : 'white';
-        tabLight.style.border = !isFull ? 'none' : '1px solid #444';
-    };
-
-    tabFull.onclick = () => updateTabs(true);
-    tabLight.onclick = () => updateTabs(false);
-
-    // Copy Handler
-    wrapper.querySelector('#btn-copy-backup').onclick = () => {
-        textarea.select();
-        document.execCommand('copy');
-        try {
-            navigator.clipboard.writeText(currentJson);
-        } catch (e) { }
-        showToast("Copié dans le presse-papier !");
-    };
-
-    // Share Handler
-    wrapper.querySelector('#btn-share-backup-text').onclick = async () => {
-        // --- MEDIAN BRIDGE ---
-        if (window.median) {
-            try {
-                window.median.share.sharePage({
-                    title: 'Backup Beerdex',
-                    text: currentJson,
-                    label: "Sauvegarder Données"
-                });
-                return;
-            } catch (e) {
-                console.error("Median Share Error", e);
-            }
-        }
-
-        if (navigator.share) {
-            try {
-                await navigator.share({
-                    text: currentJson,
-                    title: 'Beerdex Backup'
-                });
-            } catch (e) {
-                showToast("Partage non supporté.");
-            }
-        } else {
-            showToast("Partage non supporté.");
-        }
-    };
-
-    openModal(wrapper);
-}
 
 export function checkAndShowWelcome() {
     const HAS_SEEN_KEY = 'beerdex_welcome_seen_v2';
@@ -1520,7 +1482,7 @@ export function checkAndShowWelcome() {
     const wrapper = document.createElement('div');
     wrapper.className = 'modal-content text-center';
     wrapper.innerHTML = `
-        <div style="margin-bottom:20px; font-size:3rem;">🍻</div>
+        < div style = "margin-bottom:20px; font-size:3rem;" >🍻</div >
         <h2 style="color:var(--accent-gold); margin-bottom:15px; font-family:'Russo One', sans-serif;">Bienvenue sur Beerdex !</h2>
         
         <p style="font-size:1rem; line-height:1.6; margin-bottom:20px; color:#ddd;">
@@ -1858,17 +1820,24 @@ export function renderImportModal() {
     wrapper.style.maxHeight = '80vh';
 
     wrapper.innerHTML = `
-        <h2 style="margin-bottom:15px; flex-shrink:0;">Importer des données</h2>
-        <p style="color:#aaa; font-size:0.9rem; margin-bottom:10px; flex-shrink:0;">
-            Collez le texte JSON de sauvegarde ci-dessous.
+        <h2 style="margin-bottom:20px;">Restaurer / Importer</h2>
+        <p style="color:#888; font-size:0.85rem; margin-bottom:20px;">
+            Collez le code JSON ou le lien magique ci-dessous, ou chargez un fichier.
         </p>
 
-        <textarea id="import-area" class="form-textarea" style="flex:1; min-height:150px; font-family:monospace; font-size:0.75rem; margin-bottom:15px; resize:none;" placeholder='{"beerdex_ratings":...}'></textarea>
-        
-        <div style="display:flex; gap:10px; flex-shrink:0;">
-            <button id="btn-do-import" class="btn-primary" style="margin:0; background:var(--accent-gold);">Importer</button>
-            <button id="btn-paste-clipboard" class="btn-primary" style="margin:0; background:var(--bg-card); border:1px solid #444;">📋 Coller</button>
+        <textarea id="import-area" class="form-textarea" rows="5" placeholder='{"ratings":...} ou URL...'></textarea>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+            <button id="btn-paste" class="text-btn">📋 Coller</button>
+            <label class="text-btn" style="cursor:pointer; display:flex; align-items:center; gap:5px;">
+                📂 Charger Fichier
+                <input type="file" id="import-file-input" accept=".json, .txt" style="display:none;">
+            </label>
         </div>
+
+        <button id="btn-do-import" class="btn-primary" style="margin-top:20px; background:var(--accent-gold); color:black;">
+            📥 Importer
+        </button>
     `;
 
     const textarea = wrapper.querySelector('#import-area');
@@ -1877,7 +1846,7 @@ export function renderImportModal() {
     setTimeout(() => textarea.focus(), 100);
 
     // Paste Button
-    wrapper.querySelector('#btn-paste-clipboard').onclick = async () => {
+    wrapper.querySelector('#btn-paste').onclick = async () => {
         try {
             const text = await navigator.clipboard.readText();
             if (text) textarea.value = text;
@@ -1905,5 +1874,300 @@ export function renderImportModal() {
         }
     };
 
+    // File Input Handler
+    wrapper.querySelector('#import-file-input').onchange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            const content = ev.target.result;
+            textarea.value = content;
+            showToast("Fichier chargé ! Cliquez sur Importer.");
+        };
+        reader.readAsText(file);
+    };
+
     openModal(wrapper);
 }
+
+export function renderAdvancedShareModal(beer, userRating) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'modal-content';
+    wrapper.innerHTML = `
+        <h2>✨ Story Personnalisée</h2>
+        <p style="color:#888; font-size:0.85rem; margin-bottom:20px;">
+            Modifiez la note et le commentaire pour cette story (ne change pas vos données réelles).
+        </p>
+
+        <div class="form-group">
+            <label class="form-label">Note affichée (/20)</label>
+            <input type="number" id="share-score" class="form-input" value="${userRating.score || 0}" min="0" max="20" step="0.5">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Commentaire affiché</label>
+            <textarea id="share-comment" class="form-textarea" rows="3">${userRating.comment || ''}</textarea>
+        </div>
+
+        <button id="btn-gen-link" class="btn-primary" style="margin-top:20px; background:var(--accent-gold); color:black;">
+            🔗 Générer le Lien API
+        </button>
+    `;
+
+    wrapper.querySelector('#btn-gen-link').onclick = () => {
+        const score = wrapper.querySelector('#share-score').value;
+        const comment = wrapper.querySelector('#share-comment').value;
+
+        // Construct API Link
+        const baseUrl = window.location.origin + window.location.pathname;
+        const link = `${baseUrl}?action=share&id=${beer.id}&score=${score}&comment=${encodeURIComponent(comment)}&fallback=true`;
+
+        renderShareLink(link);
+    };
+
+    openModal(wrapper);
+}
+
+// --- NEW EXPORT MODAL ---
+export function renderExportModal(defaultScope = 'all') {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'modal-content';
+    wrapper.style.textAlign = 'center';
+
+    let currentScope = defaultScope;
+    let currentMode = 'file'; // file | url | text
+    let selectedCustomIds = []; // For custom beer selection
+    let downloadMode = false; // For URL mode
+
+    // Pre-load custom beers status
+    let allCustomBeers = [];
+    if (Storage.getCustomBeers) {
+        allCustomBeers = Storage.getCustomBeers();
+        selectedCustomIds = allCustomBeers.map(b => b.id); // Default select all
+    }
+
+    const renderContent = () => {
+        let customSelectionHTML = '';
+        if (currentScope === 'custom' && allCustomBeers.length > 0) {
+            customSelectionHTML = `
+                <div style="text-align:left; background:#111; padding:10px; border-radius:8px; margin-bottom:15px; max-height:150px; overflow-y:auto; border:1px solid #333;">
+                    <div style="font-size:0.75rem; color:#888; margin-bottom:5px;">Sélectionnez les bières :</div>
+                    ${allCustomBeers.map(b => `
+                        <label style="display:flex; align-items:center; gap:8px; padding:4px 0; cursor:pointer;">
+                            <input type="checkbox" class="cb-custom" value="${b.id}" ${selectedCustomIds.includes(b.id) ? 'checked' : ''}>
+                            <span style="font-size:0.85rem; color:#fff;">${b.title}</span>
+                        </label>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        wrapper.innerHTML = `
+            <h2>Sauvegarder & Partager</h2>
+            <p style="color:#888; margin-bottom:20px;">Exportez vos données pour les sauvegarder ou les transférer.</p>
+
+            <div style="margin-bottom:20px; text-align:left;">
+                <label style="display:block; color:var(--accent-gold); margin-bottom:8px;">1. Quoi exporter ?</label>
+                <div class="scope-selector" style="display:flex; gap:10px; margin-bottom:10px;">
+                    <button class="btn-scope ${currentScope === 'all' ? 'active' : ''}" data-scope="all" style="flex:1; padding:10px; border-radius:8px; border:1px solid #444; background:${currentScope === 'all' ? 'var(--accent-gold)' : '#222'}; color:${currentScope === 'all' ? 'black' : '#fff'};">
+                        Tout
+                    </button>
+                    <button class="btn-scope ${currentScope === 'custom' ? 'active' : ''}" data-scope="custom" style="flex:1; padding:10px; border-radius:8px; border:1px solid #444; background:${currentScope === 'custom' ? 'var(--accent-gold)' : '#222'}; color:${currentScope === 'custom' ? 'black' : '#fff'};">
+                        Bières Perso
+                    </button>
+                    <button class="btn-scope ${currentScope === 'ratings' ? 'active' : ''}" data-scope="ratings" style="flex:1; padding:10px; border-radius:8px; border:1px solid #444; background:${currentScope === 'ratings' ? 'var(--accent-gold)' : '#222'}; color:${currentScope === 'ratings' ? 'black' : '#fff'};">
+                        Notes
+                    </button>
+                </div>
+                ${customSelectionHTML}
+            </div>
+
+            <div style="margin-bottom:20px; text-align:left;">
+                <label style="display:block; color:var(--accent-gold); margin-bottom:8px;">2. Méthode d'export</label>
+                
+                <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:5px; margin-bottom:15px;">
+                    <button id="mode-file" class="btn-primary" style="font-size:0.75rem; padding:8px; background:${currentMode === 'file' ? '#333' : '#111'}; color:#fff; border:1px solid ${currentMode === 'file' ? 'var(--accent-gold)' : '#444'}; opacity:${currentMode === 'file' ? 1 : 0.7};">
+                        📄 Fichier
+                    </button>
+                    <button id="mode-url" class="btn-primary" style="font-size:0.75rem; padding:8px; background:${currentMode === 'url' ? '#333' : '#111'}; color:#fff; border:1px solid ${currentMode === 'url' ? 'var(--accent-gold)' : '#444'}; opacity:${currentMode === 'url' ? 1 : 0.7};">
+                        🔗 Lien
+                    </button>
+                    <button id="mode-text" class="btn-primary" style="font-size:0.75rem; padding:8px; background:${currentMode === 'text' ? '#333' : '#111'}; color:#fff; border:1px solid ${currentMode === 'text' ? 'var(--accent-gold)' : '#444'}; opacity:${currentMode === 'text' ? 1 : 0.7};">
+                        📝 Texte
+                    </button>
+                </div>
+
+                ${currentMode === 'file' ? `
+                    <div style="background:#222; padding:10px; border-radius:8px; font-size:0.85rem; color:#ccc;">
+                        Télécharge un fichier <code>.json</code>. Utilisez "Restaurer" pour l'importer plus tard.
+                    </div>
+                ` : currentMode === 'url' ? `
+                    <div style="background:#222; padding:10px; border-radius:8px; font-size:0.85rem; color:#ccc;">
+                        <div style="margin-bottom:10px;">Type de lien :</div>
+                        <label style="display:flex; align-items:center; gap:10px; cursor:pointer; margin-bottom:5px;">
+                            <input type="radio" name="urlTxType" class="rb-url-type" value="import" ${!downloadMode ? 'checked' : ''}>
+                            <span>Lien d'Import (Direct)</span>
+                        </label>
+                        <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+                            <input type="radio" name="urlTxType" class="rb-url-type" value="download" ${downloadMode ? 'checked' : ''}>
+                            <span>Lien de Téléchargement (Fichier)</span>
+                        </label>
+                    </div>
+                ` : `
+                    <div style="background:#222; padding:10px; border-radius:8px; font-size:0.85rem; color:#ccc;">
+                        Affiche le code JSON brut à copier/coller manuellement.
+                    </div>
+                `}
+            </div>
+
+            <button id="btn-do-export" class="btn-primary" style="width:100%; margin-top:10px;">
+                ${currentMode === 'file' ? '📥 Télécharger' : currentMode === 'url' ? '✨ Générer Lien' : '👀 Voir le Code'}
+            </button>
+        `;
+
+        // Bind Scope
+        wrapper.querySelectorAll('.btn-scope').forEach(btn => {
+            btn.onclick = () => {
+                currentScope = btn.dataset.scope;
+                renderContent();
+            };
+        });
+
+        // Bind Checkboxes
+        wrapper.querySelectorAll('.cb-custom').forEach(cb => {
+            cb.onchange = (e) => {
+                if (e.target.checked) {
+                    if (!selectedCustomIds.includes(e.target.value)) selectedCustomIds.push(e.target.value);
+                } else {
+                    selectedCustomIds = selectedCustomIds.filter(id => id !== e.target.value);
+                }
+            };
+        });
+
+        // Bind Mode
+        wrapper.querySelector('#mode-file').onclick = () => { currentMode = 'file'; renderContent(); };
+        wrapper.querySelector('#mode-url').onclick = () => { currentMode = 'url'; renderContent(); };
+        wrapper.querySelector('#mode-text').onclick = () => { currentMode = 'text'; renderContent(); };
+
+        // Bind URL Type Radio
+        wrapper.querySelectorAll('.rb-url-type').forEach(rb => {
+            rb.onchange = (e) => {
+                downloadMode = e.target.value === 'download';
+            };
+        });
+
+        // Bind Action
+        wrapper.querySelector('#btn-do-export').onclick = async () => {
+            const btn = wrapper.querySelector('#btn-do-export');
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '⏳ ...';
+
+            // Prepare IDs if custom
+            let idsToExport = null;
+            if (currentScope === 'custom') {
+                idsToExport = selectedCustomIds;
+            }
+            // NOTE: 'ratings' scope with specific IDs logic is supported in Storage but we don't expose checkbox UI for ratings (too many)
+
+            setTimeout(async () => {
+                if (currentMode === 'file') {
+                    const count = Storage.triggerExportFile(currentScope, idsToExport);
+                    if (count > 0) {
+                        showToast(`Export réussi !`, "success");
+                        closeModal();
+                    } else {
+                        showToast("Rien à exporter !", "warning");
+                        btn.disabled = false;
+                        btn.innerHTML = originalText;
+                    }
+                } else if (currentMode === 'url') {
+                    const link = Storage.getShareableLink(currentScope, idsToExport, downloadMode);
+                    if (link) {
+                        showLinkResult(link, currentScope);
+                    } else {
+                        showToast("Erreur ou Trop de données", "error");
+                        btn.disabled = false;
+                        btn.innerHTML = originalText;
+                    }
+                } else if (currentMode === 'text') {
+                    // Get object
+                    // We need a helper in Storage to just get the object
+                    // getShareableLink gets compressed string.
+                    // triggerExportFile saves file.
+                    // exportDataAdvanced returns nothing useful for text display directly.
+                    // Let's implement a quick helper or reuse logic
+                    // Actually Storage.exportDataAdvanced is async and writes to file.
+
+                    // Helper:
+                    const dataStr = Storage.getExportDataString(currentScope === 'custom' ? false : true);
+                    // Wait, getExportDataString doesn't support scopes nicely.
+                    // Let's call a new helper or just manually use existing methods if possible.
+                    // Since Storage.getExportDataString exists, let's use it but it might include too much.
+
+                    // Better: Use `getShareableLink` logic but without compression? 
+                    // Or just `exportDataAdvanced` adapted? 
+                    // Let's modify renderContent to show text result using a hack:
+                    // We'll use `Storage.triggerExportFile`? No.
+
+                    let exportObj = {};
+                    if (currentScope === 'all' || currentScope === 'ratings') exportObj.ratings = Storage.getAllUserData();
+                    if (currentScope === 'all' || currentScope === 'custom') {
+                        let customs = Storage.getCustomBeers();
+                        if (idsToExport) customs = customs.filter(b => idsToExport.includes(String(b.id)));
+                        exportObj.customBeers = customs;
+                    }
+                    const json = JSON.stringify(exportObj, null, 2);
+                    showLinkResult(json, currentScope, true); // true = text mode
+                }
+            }, 300);
+        };
+    };
+
+    const showLinkResult = (content, scopeName, isText = false) => {
+        wrapper.innerHTML = `
+            <h2>${isText ? '📝 Code JSON' : '🔗 Lien Prêt !'}</h2>
+            <p style="font-size:0.85rem; color:#ccc; margin-bottom:15px;">
+                ${isText ? 'Copiez ce code pour le sauvegarder ou l\'envoyer.' : `Copiez ce lien pour importer : <strong>${scopeName}</strong>.`}
+            </p>
+            
+            <textarea id="result-area" readonly style="width:100%; height:150px; background:#111; color:#0f0; border:1px solid #333; border-radius:4px; font-family:monospace; font-size:0.7rem; padding:5px;">${content}</textarea>
+            
+            <button id="btn-copy-result" class="btn-primary" style="width:100%; margin-top:10px;">
+                📋 Copier
+            </button>
+            
+            <button id="btn-back" class="btn-primary" style="margin-top:15px; background:transparent; border:1px solid #444; color:#fff;">Retour</button>
+        `;
+
+        wrapper.querySelector('#btn-copy-result').onclick = () => {
+            const area = wrapper.querySelector('#result-area');
+            area.select();
+            navigator.clipboard.writeText(content).then(() => {
+                showToast("Copié !", "success");
+            });
+        };
+
+        wrapper.querySelector('#btn-back').onclick = () => {
+            renderContent();
+        };
+    };
+
+    renderContent();
+    openModal(wrapper);
+}
+
+export function renderShareLink(link) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'modal-content';
+    wrapper.style.textAlign = 'center';
+    wrapper.innerHTML = `
+        <h2>Lien de Partage</h2>
+        <p style="color:#888; font-size:0.85rem; margin-bottom:15px;">Si l'image ne s'affiche pas, utilisez ce lien :</p>
+        <textarea readonly style="width:100%; height:80px; background:#111; color:#0f0; border:1px solid #333; margin-bottom:10px;">${link}</textarea>
+        <button class="btn-primary" onclick="navigator.clipboard.writeText('${link}').then(() => showToast('Copié !'))">Copier</button>
+    `;
+    openModal(wrapper);
+}
+

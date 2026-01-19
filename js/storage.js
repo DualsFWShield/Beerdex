@@ -174,6 +174,52 @@ export function resetRatingTemplate() {
     return DEFAULT_TEMPLATE;
 }
 
+// --- Granular Resets ---
+
+export function resetRatingsOnly() {
+    const data = getAllUserData();
+    Object.keys(data).forEach(id => {
+        delete data[id].score;
+        delete data[id].comment;
+        // Cleanup if empty
+        if ((!data[id].count || data[id].count === 0) && !data[id].favorite) {
+            delete data[id];
+        }
+    });
+    localStorage.setItem(STORAGE_KEY_RATINGS, JSON.stringify(data));
+}
+
+export function resetFavoritesOnly() {
+    const data = getAllUserData();
+    Object.keys(data).forEach(id => {
+        if (data[id].favorite) {
+            data[id].favorite = false;
+        }
+    });
+    localStorage.setItem(STORAGE_KEY_RATINGS, JSON.stringify(data));
+}
+
+export function resetConsumptionHistoryOnly() {
+    const data = getAllUserData();
+    Object.keys(data).forEach(id => {
+        data[id].count = 0;
+        data[id].history = [];
+        // Note: We keep the entry if it has a rating or favorite
+        if (!data[id].score && !data[id].comment && !data[id].favorite) {
+            delete data[id];
+        }
+    });
+    localStorage.setItem(STORAGE_KEY_RATINGS, JSON.stringify(data));
+}
+
+export function resetCustomBeersOnly() {
+    localStorage.removeItem(STORAGE_KEY_CUSTOM);
+}
+
+export function resetAllData() {
+    localStorage.clear();
+}
+
 // --- Generic Preferences ---
 export function getPreference(key, defaultValue) {
     const val = localStorage.getItem(`beerdex_pref_${key}`);
@@ -193,20 +239,54 @@ export function savePreference(key, value) {
 
 // --- Advanced Export / Sharing ---
 
-export async function exportDataAdvanced(options = { includeCustom: true }) {
+// --- Advanced Export / Sharing ---
+
+export function triggerExportFile(scope = 'all', ids = null) {
+    return exportDataAdvanced({ scope: scope, ids: ids });
+}
+
+export async function exportDataAdvanced(options = { scope: 'all' }) {
     const exportObj = {
-        ratings: getAllUserData(),
         ratingTemplate: getRatingTemplate(),
         exportDate: new Date().toISOString(),
         version: 3
     };
 
-    if (options.includeCustom) {
-        exportObj.customBeers = getCustomBeers();
+    const scope = options.scope;
+    const ids = options.ids; // Array of string IDs or null
+
+    // SCOPE LOGIC
+    if (scope === 'all' || scope === 'ratings') {
+        const allRatings = getAllUserData();
+        if (ids && ids.length > 0) {
+            // Filter by IDs
+            exportObj.ratings = {};
+            ids.forEach(id => {
+                if (allRatings[id]) exportObj.ratings[id] = allRatings[id];
+            });
+        } else {
+            exportObj.ratings = allRatings;
+        }
+    }
+
+    if (scope === 'all' || scope === 'custom') {
+        const allCustoms = getCustomBeers();
+        if (ids && ids.length > 0) {
+            // Filter custom beers
+            exportObj.customBeers = allCustoms.filter(b => ids.includes(String(b.id)));
+        } else {
+            exportObj.customBeers = allCustoms;
+        }
+    }
+
+    // Check if we have anything
+    if ((!exportObj.ratings || Object.keys(exportObj.ratings).length === 0) &&
+        (!exportObj.customBeers || exportObj.customBeers.length === 0)) {
+        return 0; // Return count implies empty
     }
 
     const jsonString = JSON.stringify(exportObj);
-    const filename = `beerdex_backup_${new Date().toISOString().slice(0, 10)}.json`;
+    const filename = `beerdex_${scope}_${new Date().toISOString().slice(0, 10)}.json`;
 
     // File System Access API (Desktop)
     if (window.showSaveFilePicker) {
@@ -218,24 +298,22 @@ export async function exportDataAdvanced(options = { includeCustom: true }) {
             const writable = await handle.createWritable();
             await writable.write(jsonString);
             await writable.close();
-            return true;
+            return (exportObj.ratings ? Object.keys(exportObj.ratings).length : 0) + (exportObj.customBeers ? exportObj.customBeers.length : 0);
         } catch (err) {
             console.warn("Save cancelled or failed", err);
-            return false;
+            return 0;
         }
     }
 
     // --- MEDIAN / GONATIVE BRIDGE ---
     if (window.median) {
         try {
-            // User requested "share everywhere" for APKs
-            // Sharing backup JSON as TEXT via native share sheet
             window.median.share.sharePage({
                 title: 'Backup Beerdex',
                 text: jsonString,
                 label: "Sauvegarder Données"
             });
-            return true;
+            return (exportObj.ratings ? Object.keys(exportObj.ratings).length : 0) + (exportObj.customBeers ? exportObj.customBeers.length : 0);
         } catch (e) {
             console.error("Median Export Error", e);
         }
@@ -246,7 +324,6 @@ export async function exportDataAdvanced(options = { includeCustom: true }) {
     const file = new File([blob], filename, { type: 'application/json' });
 
     // Web Share API Level 2 (Mobile / APK Watcher)
-    // We check if we can share this file
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
         try {
             await navigator.share({
@@ -254,10 +331,9 @@ export async function exportDataAdvanced(options = { includeCustom: true }) {
                 title: 'Export Beerdex',
                 text: 'Voici un export de données Beerdex.'
             });
-            return true;
+            return (exportObj.ratings ? Object.keys(exportObj.ratings).length : 0) + (exportObj.customBeers ? exportObj.customBeers.length : 0);
         } catch (err) {
             if (err.name !== 'AbortError') console.warn("Share failed, trying download fallback", err);
-            // If share fails, we continue to download fallback below
         }
     }
 
@@ -266,11 +342,60 @@ export async function exportDataAdvanced(options = { includeCustom: true }) {
     const a = document.createElement('a');
     a.href = url;
     a.download = filename;
-    document.body.appendChild(a); // Append required for some browsers (Firefox)
+    document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    return true;
+    return (exportObj.ratings ? Object.keys(exportObj.ratings).length : 0) + (exportObj.customBeers ? exportObj.customBeers.length : 0);
+}
+
+export function downloadRawJSON(jsonString, filename) {
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+export function getShareableLink(scope = 'all', ids = null, downloadMode = false) {
+    const exportObj = {};
+
+    if (scope === 'all' || scope === 'ratings') {
+        const allRatings = getAllUserData();
+        if (ids && ids.length > 0) {
+            exportObj.ratings = {};
+            ids.forEach(id => {
+                if (allRatings[id]) exportObj.ratings[id] = allRatings[id];
+            });
+        } else {
+            exportObj.ratings = allRatings;
+        }
+    }
+    if (scope === 'all' || scope === 'custom') {
+        const allCustoms = getCustomBeers();
+        if (ids && ids.length > 0) {
+            exportObj.customBeers = allCustoms.filter(b => ids.includes(String(b.id)));
+        } else {
+            exportObj.customBeers = allCustoms;
+        }
+    }
+
+    // Minimal overhead
+    const jsonStr = JSON.stringify(exportObj);
+
+    if (!window.LZString) return null;
+    const compressed = LZString.compressToEncodedURIComponent(jsonStr);
+
+    // Construct absolute URL
+    // We assume index.html is root, so just ?action=import...
+    const baseUrl = window.location.origin + window.location.pathname;
+    let url = `${baseUrl}?action=import&data=${compressed}`;
+    if (downloadMode) url += '&download=true';
+    return url;
 }
 
 export async function shareBeer(beer) {
@@ -290,8 +415,6 @@ export async function shareBeer(beer) {
     // --- MEDIAN / GONATIVE BRIDGE ---
     if (window.median) {
         try {
-            // Median sharePage shares text/link. Sharing actual file content via text
-            // is safer than blob if plugin missing.
             window.median.share.sharePage({
                 title: `Partage: ${beer.title}`,
                 text: jsonString,
@@ -395,7 +518,7 @@ export async function shareBeerAsText(beer) {
 
 // Kept for backward compat or simple calls
 export function exportData() {
-    return exportDataAdvanced({ includeCustom: true });
+    return exportDataAdvanced({ scope: 'all' });
 }
 
 export function mergeUserData(importedData) {
@@ -419,26 +542,19 @@ export function mergeUserData(importedData) {
 
         // Loop through imported ratings
         Object.keys(importedData.ratings).forEach(beerId => {
-            // "Smart Merge: Don't break anything, don't lose anything"
-            // Strategy: 
-            // - If local has NO data for beerId -> Add imported data.
-            // - If local HAS data -> Keep local (Preserve current progress).
-            // - Exception: If local is "empty/placeholder" and imported is real, take imported? (Unlikely case)
             if (!localRatings[beerId]) {
                 localRatings[beerId] = importedData.ratings[beerId];
             } else {
-                // Potential deep merge? 
-                // e.g. if local has rating but no comment, and imported has comment?
-                // For safety and simplicity: "Local Authority" wins for conflicts.
-                // We only perform additive merges here.
+                // AddITIVE merge for counts??
+                // No, just keep local for now to be safe.
+                // Could implement smarter merge later.
             }
         });
         localStorage.setItem(STORAGE_KEY_RATINGS, JSON.stringify(localRatings));
     }
 
-    // 3. Template (optional, ask user? defaulting to overwrite if imported is newer? No, keep local pref)
+    // 3. Template
     if (importedData.ratingTemplate && !localStorage.getItem('beerdex_rating_template')) {
-        // Only set if we don't have one (fresh install)
         localStorage.setItem('beerdex_rating_template', JSON.stringify(importedData.ratingTemplate));
     }
 }
