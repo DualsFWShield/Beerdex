@@ -196,6 +196,24 @@ export async function exportDataAdvanced(options = { includeCustom: true }) {
         }
     }
 
+    // --- MEDIAN / GONATIVE BRIDGE ---
+    if (window.median) {
+        try {
+            // Encode safely for UTF-8
+            const base64 = btoa(unescape(encodeURIComponent(jsonString)));
+            const dataUri = `data:application/json;charset=utf-8;base64,${base64}`;
+
+            // Trigger native download
+            // Median intercepts Data URIs as downloads usually
+            window.location.href = dataUri;
+
+            showToast("Téléchargement via Bridge lancée...");
+            return true;
+        } catch (e) {
+            console.error("Median Export Error", e);
+        }
+    }
+
     // Preparation for Share/Download
     const blob = new Blob([jsonString], { type: 'application/json' });
     const file = new File([blob], filename, { type: 'application/json' });
@@ -241,6 +259,22 @@ export async function shareBeer(beer) {
 
     const jsonString = JSON.stringify(exportObj, null, 2);
     const filename = `beer_${beer.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.json`;
+
+    // --- MEDIAN / GONATIVE BRIDGE ---
+    if (window.median) {
+        try {
+            // Median sharePage shares text/link. Sharing actual file content via text
+            // is safer than blob if plugin missing.
+            window.median.share.sharePage({
+                title: `Partage: ${beer.title}`,
+                text: jsonString,
+                label: "Partager Bière"
+            });
+            return true;
+        } catch (e) {
+            console.error("Median Share Error", e);
+        }
+    }
 
     // File System Access API
     if (window.showSaveFilePicker) {
