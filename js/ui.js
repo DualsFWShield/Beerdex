@@ -1,4 +1,11 @@
 import * as Storage from './storage.js';
+import * as Share from './share.js';
+import Match from './match.js';
+import * as Map from './map.js';
+
+// We assume global libs: QRCode, Html5QrcodeScanner (handled via CDN)
+const QRCodeLib = window.QRCode;
+const Html5Qrcode = window.Html5Qrcode;
 
 // Helpers
 const modalContainer = document.getElementById('modal-container');
@@ -561,15 +568,40 @@ export function renderBeerDetail(beer, onSave) {
                     </form>
                 </details>
 
-                <button id="btn-share-beer" class="form-input" style="margin-bottom:10px;">📤 Partager cette bière</button>
+                <div style="display:flex; gap:10px; margin-bottom:10px;">
+                    <button id="btn-share-beer" class="form-input" style="flex:1;">📤 Lien</button>
+                    <button id="btn-share-insta" class="form-input" style="flex:1; border:1px solid var(--accent-gold); color:var(--accent-gold);">📸 Story</button>
+                </div>
 
                 ${customActions}
                 `;
 
-    // Share Handler
+    // Share Link Handler
     wrapper.querySelector('#btn-share-beer').onclick = async () => {
         showToast("Préparation du partage...");
         await Storage.shareBeer(beer);
+    };
+
+    // Share Image Handler (Insta-Beer)
+    wrapper.querySelector('#btn-share-insta').onclick = async () => {
+        const btn = wrapper.querySelector('#btn-share-insta');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '⏳ Création...';
+
+        try {
+            // Get user data
+            const existingData = Storage.getBeerRating(beer.id) || {};
+            const userRating = existingData.score || 0;
+            const userComment = existingData.comment || "";
+
+            const blob = await Share.generateBeerCard(beer, userRating, userComment);
+            await Share.shareImage(blob, `Check-in: ${beer.title}`);
+            btn.innerHTML = originalText;
+        } catch (err) {
+            console.error(err);
+            btn.innerHTML = originalText;
+            showToast(err.message === 'Web Share API not supported' ? 'Partage fichier non supporté' : 'Erreur de partage');
+        }
     };
 
     // Re-binding Logic for Consumption
@@ -781,10 +813,24 @@ export function renderStats(allBeers, userData, container, isDiscovery = false, 
 
 
                     <div class="stat-card mt-20 text-center">
+                        <div id="beer-map-container" style="min-height:200px;">
+                            <span class="spinner"></span> Chargement de la carte...
+                        </div>
+                    </div>
+
+                    <div class="stat-card mt-20 text-center">
                         <h3>Succès 🏆</h3>
                         <div class="mt-20">
                             ${renderAchievementsList()}
                         </div>
+                    </div>
+
+                    <div class="stat-card mt-20 text-center">
+                        <h3 style="margin-bottom:10px;">Beer Match ⚔️</h3>
+                        <p style="font-size:0.8rem; color:#888; margin-bottom:15px;">Compare tes goûts avec un ami !</p>
+                        <button type="button" id="btn-match" class="form-input text-center" style="background:#222; border:1px solid var(--accent-gold); color:var(--accent-gold); cursor:pointer;">
+                            ⚔️ Lancer un Duel
+                        </button>
                     </div>
 
                     <div class="stat-card mt-20 text-center">
@@ -846,7 +892,7 @@ export function renderStats(allBeers, userData, container, isDiscovery = false, 
                         </div>
                         
                         <div style="margin-top:20px; font-size:0.7rem; color:#444;">
-                            Beerdex v1.6 &copy; 2026
+                            Beerdex v2.0 &copy; 2026
                         </div>
                     </div>
                 </div>
@@ -854,6 +900,29 @@ export function renderStats(allBeers, userData, container, isDiscovery = false, 
 
     // Handlers
     container.querySelector('#btn-template').onclick = () => renderTemplateEditor();
+
+    const btnMatch = container.querySelector('#btn-match');
+    if (btnMatch) btnMatch.onclick = () => renderMatchModal(allBeers);
+
+    // Init Map
+    setTimeout(() => {
+        // We need to construct history list with brewery info
+        // allBeers contains full data. userData contains ratings.
+        const history = [];
+        const ratings = userData || {};
+        Object.keys(ratings).forEach(ratingKey => {
+            // ratingKey is 'BEER_ID' or 'BEER_ID_UNIQUE'.
+            // Extract core ID
+            const coreId = ratingKey.split('_')[0];
+            const beer = allBeers.find(b => b.id == coreId || b.id == ratingKey);
+            if (beer) {
+                history.push({ beer: beer, rating: ratings[ratingKey] });
+            }
+        });
+
+        const mapContainer = container.querySelector('#beer-map-container');
+        if (mapContainer) Map.renderMapWithData(mapContainer, history);
+    }, 100);
 
     if (discoveryCallback) {
         container.querySelector('#toggle-discovery').onchange = (e) => {
@@ -1238,9 +1307,10 @@ function renderAchievementsList() {
             }
 
             // Escape quotes for function arguments
-            const safeTitle = title.replace(/'/g, "&apos;");
-            const safeDesc = desc.replace(/'/g, "&apos;");
-            const safeIcon = ach.icon.replace(/'/g, "&apos;");
+            // We need \\' for JS string inside HTML attribute
+            const safeTitle = title.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            const safeDesc = desc.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            const safeIcon = ach.icon.replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
             return `
                     <div class="ach-item" style="opacity:${opacity}; filter:${filter}; position:relative; cursor:pointer;" 
@@ -1409,4 +1479,204 @@ export function showAchievementDetails(title, desc, icon, isUnlocked) {
     `;
 
     openModal(wrapper);
+}
+
+// --- Beer Match (QR) ---
+
+export function renderMatchModal(allBeers) {
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = `
+        <div class="modal-content text-center" style="max-width: 90%; width: 500px; padding: 25px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h2 style="margin:0; font-family:'Russo One'; color:var(--accent-gold);">⚔️ Beer Match</h2>
+                <button type="button" class="close-btn" style="background:none; border:none; color:#fff; font-size:1.5rem; cursor:pointer;">&times;</button>
+            </div>
+
+            <div style="display:flex; border-bottom:1px solid #333; margin-bottom:20px;">
+                <button id="tab-qr" style="flex:1; background:none; border:none; color:var(--accent-gold); padding:10px; border-bottom:2px solid var(--accent-gold); cursor:pointer;">Mon Code</button>
+                <button id="tab-scan" style="flex:1; background:none; border:none; color:#666; padding:10px; cursor:pointer;">Scanner</button>
+            </div>
+
+            <div id="view-qr" style="display:block;">
+                <p style="color:#aaa; font-size:0.9rem; margin-bottom:20px;">Montrez ce code à un ami.</p>
+                <div id="qrcode-container" style="background:#FFF; padding:20px; border-radius:10px; display:inline-block;"></div>
+            </div>
+
+            <div id="view-scan" style="display:none;">
+                <p style="color:#aaa; font-size:0.9rem; margin-bottom:20px;">Scannez le code.</p>
+                <div id="reader" style="width:100%; height:300px; background:#000; border-radius:8px; overflow:hidden;"></div>
+                <div id="scan-feedback" style="margin-top:10px; color:var(--accent-gold); font-size:0.8rem; height:20px;"></div>
+                
+                <details style="margin-top:20px; text-align:left;">
+                    <summary style="color:#555; cursor:pointer; font-size:0.8rem;">Problème de caméra ?</summary>
+                    <textarea id="manual-paste" placeholder="Collez le code texte ici (BEERDEX:...)" style="width:100%; height:80px; background:#222; border:1px solid #444; color:#FFF; margin-top:5px; font-size:0.7rem; padding:5px;"></textarea>
+                    <button id="btn-manual-compare" class="form-input" style="padding:5px 10px; font-size:0.8rem; margin-top:5px;">Comparer</button>
+                </details>
+            </div>
+
+            <div id="view-result" style="display:none;"></div>
+        </div>
+    `;
+
+    const tabQr = wrapper.querySelector('#tab-qr');
+    const tabScan = wrapper.querySelector('#tab-scan');
+    const viewQr = wrapper.querySelector('#view-qr');
+    const viewScan = wrapper.querySelector('#view-scan');
+    const viewResult = wrapper.querySelector('#view-result');
+    let html5QrcodeScanner = null;
+
+    const switchTab = (tab) => {
+        if (tab === 'qr') {
+            tabQr.style.color = 'var(--accent-gold)'; tabQr.style.borderBottom = '2px solid var(--accent-gold)';
+            tabScan.style.color = '#666'; tabScan.style.borderBottom = 'none';
+            viewQr.style.display = 'block';
+            viewScan.style.display = 'none';
+            viewResult.style.display = 'none';
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.stop().catch(e => console.log(e));
+                html5QrcodeScanner = null;
+            }
+        } else {
+            tabScan.style.color = 'var(--accent-gold)'; tabScan.style.borderBottom = '2px solid var(--accent-gold)';
+            tabQr.style.color = '#666'; tabQr.style.borderBottom = 'none';
+            viewQr.style.display = 'none';
+            viewScan.style.display = 'block';
+            viewResult.style.display = 'none';
+            setTimeout(startScanner, 100);
+        }
+    };
+
+    tabQr.onclick = () => switchTab('qr');
+    tabScan.onclick = () => switchTab('scan');
+
+    const generateMyQR = () => {
+        const userData = Storage.getAllUserData();
+        const myIds = Object.keys(userData).filter(k => userData[k].count > 0).map(k => k.split('_')[0]);
+        const qrString = Match.generateQRData(myIds, "Ami");
+
+        const container = wrapper.querySelector('#qrcode-container');
+        container.innerHTML = '';
+        if (window.QRCode) {
+            new QRCode(container, {
+                text: qrString,
+                width: 200,
+                height: 200,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.M
+            });
+        } else {
+            container.innerHTML = "Erreur librairie QRCode";
+        }
+    };
+
+    const startScanner = () => {
+        const feedback = wrapper.querySelector('#scan-feedback');
+        feedback.textContent = "Initialisation caméra...";
+
+        if (!window.Html5Qrcode) {
+            feedback.textContent = "Erreur: Librairie QR non chargée";
+            return;
+        }
+
+        const html5QrCode = new Html5Qrcode("reader");
+        html5QrcodeScanner = html5QrCode;
+
+        const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+            feedback.textContent = "Code détecté !";
+            html5QrCode.stop().then(() => {
+                processMatch(decodedText);
+            }).catch(err => console.error("Stop failed", err));
+        };
+
+        const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+
+        html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback)
+            .catch(err => {
+                console.error("Camera Error", err);
+                feedback.textContent = "Caméra inaccessible (Permissions ?)";
+            });
+    };
+
+    const processMatch = (qrString) => {
+        const friendData = Match.parseQRData(qrString);
+        if (!friendData) {
+            alert("QR Code invalide !");
+            return;
+        }
+
+        const userData = Storage.getAllUserData();
+        const myIds = Object.keys(userData).filter(k => userData[k].count > 0).map(k => k.split('_')[0]);
+
+        const results = Match.compare(allBeers, myIds, friendData);
+        renderResult(results);
+    };
+
+    const renderResult = (results) => {
+        viewQr.style.display = 'none';
+        viewScan.style.display = 'none';
+        viewResult.style.display = 'block';
+
+        let color = '#e74c3c';
+        if (results.score > 30) color = '#f39c12';
+        if (results.score > 60) color = '#f1c40f';
+        if (results.score > 80) color = '#2ecc71';
+
+        viewResult.innerHTML = `
+            <div style="margin-bottom:20px;">
+                <h3 style="color:#FFF;">Compatibilité</h3>
+                <div style="font-size:3rem; font-family:'Russo One'; color:${color}; text-shadow:0 0 10px rgba(0,0,0,0.5);">
+                    ${results.score}%
+                </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px;">
+                <div style="background:#222; padding:10px; border-radius:8px;">
+                    <div style="font-size:1.5rem; font-weight:bold; color:#FFF;">${results.commonCount}</div>
+                    <div style="font-size:0.8rem; color:#888;">En commun</div>
+                </div>
+                 <div style="background:#222; padding:10px; border-radius:8px;">
+                    <div style="font-size:1.5rem; font-weight:bold; color:var(--accent-gold);">${results.friendTotal}</div>
+                    <div style="font-size:0.8rem; color:#888;">Total Ami</div>
+                </div>
+            </div>
+
+            ${results.commonCount > 0 ? `
+            <div style="text-align:left; margin-bottom:20px;">
+                <strong style="color:#aaa; display:block; margin-bottom:5px;">Bières en commun (Top 5)</strong>
+                <div style="background:#111; padding:10px; border-radius:8px; font-size:0.9rem;">
+                    ${results.common.slice(0, 5).map(b => `<div style="margin-bottom:2px;">🍺 ${b.title}</div>`).join('')}
+                    ${results.common.length > 5 ? `<div style="color:#666; font-style:italic;">...et ${results.common.length - 5} autres</div>` : ''}
+                </div>
+            </div>
+            ` : ''}
+
+            ${results.discovery.length > 0 ? `
+            <div style="text-align:left;">
+                <strong style="color:var(--accent-gold); display:block; margin-bottom:5px;">À découvrir (Top 3)</strong>
+                <div style="background:#111; padding:10px; border-radius:8px; font-size:0.9rem;">
+                     ${results.discovery.slice(0, 3).map(b => `<div style="margin-bottom:2px;">⭐ ${b.title}</div>`).join('')}
+                </div>
+            </div>
+            ` : ''}
+            
+            <button id="btn-restart" class="form-input text-center mt-20" style="background:#333;">Nouveau Scan</button>
+        `;
+
+        wrapper.querySelector('#btn-restart').onclick = () => switchTab('scan');
+    };
+
+    wrapper.querySelector('#btn-manual-compare').onclick = () => {
+        const txt = wrapper.querySelector('#manual-paste').value;
+        if (txt) processMatch(txt);
+    };
+
+    const close = () => {
+        if (html5QrcodeScanner) html5QrcodeScanner.stop().catch(e => console.log(e));
+        closeModal();
+    };
+    wrapper.querySelector('.close-btn').onclick = close;
+
+    openModal(wrapper);
+    generateMyQR();
 }

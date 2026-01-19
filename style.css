@@ -617,12 +617,36 @@ h3 {
 
 @keyframes slideUp {
     from {
-        transform: translate(-50%, 20px);
+        transform: translateY(20px);
         opacity: 0;
     }
 
     to {
-        transform: translate(-50%, 0);
+        transform: translateY(0);
         opacity: 1;
     }
+}
+
+/* Modal Container - Fixed & Centered */
+#modal-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(5px);
+    opacity: 1;
+    /* Default visible if no hidden class */
+    transition: opacity 0.3s ease;
+}
+
+#modal-container.hidden {
+    display: none;
+    /* Hide via display to stop interactions and ensure re-center on show */
+    opacity: 0;
 }
