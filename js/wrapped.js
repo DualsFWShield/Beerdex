@@ -21,8 +21,17 @@ function calculateStats() {
         const entry = userData[key];
         const beerId = key.split('_')[0];
 
+        // Loose equality check for ID
         let beer = allBeers.find(b => b.id == beerId);
         if (!beer) beer = customBeers.find(b => b.id == beerId);
+
+        // Fallback: Legacy data might use UPPERCASE TITLE as key
+        if (!beer) {
+            const cleanKey = beerId.toUpperCase().trim();
+            beer = allBeers.find(b => b.title.toUpperCase().trim() === cleanKey);
+            // Also check custom beers by title
+            if (!beer) beer = customBeers.find(b => b.title.toUpperCase().trim() === cleanKey);
+        }
 
         if (!beer && entry.count > 0) {
             console.warn(`[Wrapped] Beer not found for ID: ${beerId}`);
@@ -220,16 +229,16 @@ function renderStory(stats) {
 
 function handleWrappedShare(stats) {
     if (confirm("Télécharger le résumé en image ?")) {
-         const baseUrl = window.location.origin + window.location.pathname;
-         const params = new URLSearchParams({
-             action: 'share',
-             score: 'J ai bu ' + stats.totalLiters + 'L cette annee !',
-             comment: 'Top: ' + (stats.favoriteBeer ? stats.favoriteBeer.name : 'Aucune') + ' (' + (stats.favoriteBeer ? stats.favoriteBeer.count : 0) + ') - ' + stats.favoriteStyle,
-             fallback: 'true',
-             id: stats.favoriteBeer ? stats.favoriteBeer.id : '1'
-         });
-         
-         const link = baseUrl + '?' + params.toString();
-         prompt("Copiez ce lien pour partager vos stats :", link);
+        const baseUrl = window.location.origin + window.location.pathname;
+        const params = new URLSearchParams({
+            action: 'share',
+            score: 'J ai bu ' + stats.totalLiters + 'L cette annee !',
+            comment: 'Top: ' + (stats.favoriteBeer ? stats.favoriteBeer.name : 'Aucune') + ' (' + (stats.favoriteBeer ? stats.favoriteBeer.count : 0) + ') - ' + stats.favoriteStyle,
+            fallback: 'true',
+            id: stats.favoriteBeer ? stats.favoriteBeer.id : '1'
+        });
+
+        const link = baseUrl + '?' + params.toString();
+        prompt("Copiez ce lien pour partager vos stats :", link);
     }
 }
