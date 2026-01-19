@@ -199,15 +199,13 @@ export async function exportDataAdvanced(options = { includeCustom: true }) {
     // --- MEDIAN / GONATIVE BRIDGE ---
     if (window.median) {
         try {
-            // Encode safely for UTF-8
-            const base64 = btoa(unescape(encodeURIComponent(jsonString)));
-            const dataUri = `data:application/json;charset=utf-8;base64,${base64}`;
-
-            // Trigger native download
-            // Median intercepts Data URIs as downloads usually
-            window.location.href = dataUri;
-
-            showToast("Téléchargement via Bridge lancée...");
+            // User requested "share everywhere" for APKs
+            // Sharing backup JSON as TEXT via native share sheet
+            window.median.share.sharePage({
+                title: 'Backup Beerdex',
+                text: jsonString,
+                label: "Sauvegarder Données"
+            });
             return true;
         } catch (e) {
             console.error("Median Export Error", e);

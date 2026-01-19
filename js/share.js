@@ -5,6 +5,7 @@
 
 // Load branding assets
 const LOGO_PATH = "icons/logo-bnr.png";
+const FOAM_PATH = "images/foam.png";
 
 /**
  * Generates a "Polaroid style" image for a specific beer review
@@ -53,8 +54,54 @@ export async function generateBeerCard(beer, rating, comment) {
     ctx.fillRect(0, 0, width, height);
 
     // Overlay Pattern (Noise/Grain simulation for texture)
-    ctx.fillStyle = 'rgba(0,0,0,0.2)';
+    ctx.fillStyle = 'rgba(0,0,0,0.1)';
     ctx.fillRect(0, 0, width, height);
+
+    // --- DECORATION: Bubbles & Glows ---
+    ctx.save();
+    // 1. Large ambient glows
+    const drawGlow = (x, y, r, color) => {
+        const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+        g.addColorStop(0, color);
+        g.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+    };
+    drawGlow(0, 0, 800, 'rgba(255,255,255,0.1)');
+    drawGlow(width, height, 900, 'rgba(0,0,0,0.2)');
+
+    // 2. Beer Bubbles
+    for (let i = 0; i < 40; i++) {
+        const x = Math.random() * width;
+        const y = Math.random() * height;
+        const r = Math.random() * 20 + 5;
+        const opa = Math.random() * 0.1;
+
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${opa})`;
+        ctx.fill();
+
+        // Shine on bubble
+        ctx.beginPath();
+        ctx.arc(x - r / 3, y - r / 3, r / 4, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${opa + 0.1})`;
+        ctx.fill();
+    }
+
+    // 3. Beer Foam (Image)
+    try {
+        const foamImg = await loadImage(FOAM_PATH);
+        // Draw at top, full width, auto height driven by aspect ratio
+        const foamH = width * (foamImg.height / foamImg.width);
+        ctx.drawImage(foamImg, 0, -5, width, foamH); // -5 to cover very top edge edge cases
+    } catch (e) {
+        console.warn("Foam image not found, skipping");
+    }
+
+    ctx.restore();
 
     // --- 2. Polaroid / Card Container ---
     const cardMargin = 100;
@@ -172,10 +219,11 @@ export async function generateBeerCard(beer, rating, comment) {
     // Logo
     try {
         const logo = await loadImage(LOGO_PATH);
-        const logoW = 200; // Smaller branding
+        const logoW = 150; // Smaller branding to avoid overlap
         const logoH = logoW * (logo.height / logo.width);
-        // Position logo centered between card and text (Y ~1600)
-        const logoY = 1600 + 20;
+        // Position logo centered between card (1600) and footer (approx 1800)
+        // Card ends at 1600. Footer text starts around 1820-font_height.
+        const logoY = 1610;
 
         drawImageProp(ctx, logo, 0, 0, logo.width, logo.height, (width / 2) - (logoW / 2), logoY, logoW, logoH);
 
@@ -211,6 +259,26 @@ export async function generateBeerCard(beer, rating, comment) {
  * Native Web Share API wrapper
  */
 export async function shareImage(blob, title) {
+    // --- MEDIAN / GONATIVE BRIDGE ---
+    if (window.median) {
+        try {
+            // Convert Blob to Base64 Data URI
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const base64data = reader.result;
+                window.median.share.sharePage({
+                    title: title || 'My Beerdex Check-in',
+                    text: 'Regarde cette bière que je viens de déguster sur Beerdex ! 🍻',
+                    image: base64data // Data URI
+                });
+            };
+            reader.readAsDataURL(blob);
+            return;
+        } catch (e) {
+            console.error("Median Image Share Error", e);
+        }
+    }
+
     // Check support but allow blob download on desktop if share API fails?
     // User requested "Share", so we prioritize Navigator Share.
     // If it fails, maybe we can download it.

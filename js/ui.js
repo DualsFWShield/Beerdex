@@ -1387,39 +1387,24 @@ function renderTextBackupModal(jsonFull, jsonLight) {
 
     // Share Handler
     wrapper.querySelector('#btn-share-backup-text').onclick = async () => {
+        // --- MEDIAN BRIDGE ---
+        if (window.median) {
+            try {
+                window.median.share.sharePage({
+                    title: 'Backup Beerdex',
+                    text: currentJson,
+                    label: "Sauvegarder Données"
+                });
+                return;
+            } catch (e) {
+                console.error("Median Share Error", e);
+            }
+        }
+
         if (navigator.share) {
             try {
                 await navigator.share({
                     text: currentJson,
-                    title: 'Beerdex Backup'
-                });
-            } catch (e) {
-                showToast("Partage non supporté.");
-            }
-        } else {
-            showToast("Partage non supporté.");
-        }
-    };
-
-
-    // Copy Handler
-    wrapper.querySelector('#btn-copy-backup').onclick = () => {
-        const area = wrapper.querySelector('#backup-text-area');
-        area.select();
-        document.execCommand('copy'); // Legacy but reliable
-        try {
-            navigator.clipboard.writeText(jsonString);
-        } catch (e) { }
-
-        showToast("Copié dans le presse-papier !");
-    };
-
-    // Share Handler
-    wrapper.querySelector('#btn-share-backup-text').onclick = async () => {
-        if (navigator.share) {
-            try {
-                await navigator.share({
-                    text: jsonString,
                     title: 'Beerdex Backup'
                 });
             } catch (e) {

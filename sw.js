@@ -1,4 +1,4 @@
-const CACHE_NAME = 'Beerdex-v14'; // Increment to trigger update
+const CACHE_NAME = 'Beerdex-v15'; // Increment to trigger update
 const ASSETS = [
     './index.html',
     './style.css',
@@ -18,7 +18,8 @@ const ASSETS = [
     './icons/logo-bnr.png',
     './icons/192x192.png',
     './icons/512x512.png',
-    './offline.html'
+    './offline.html',
+    './images/foam.png'
 ];
 
 // Install Event
