@@ -22,8 +22,14 @@ function calculateStats() {
         const entry = userData[key];
         const beerId = key.split('_')[0]; // Handle variants if any, though usually direct ID
 
+        // Loose equality check because localStorage keys might be strings
         let beer = allBeers.find(b => b.id == beerId);
         if (!beer) beer = customBeers.find(b => b.id == beerId);
+
+        // Debug mapping issues
+        if (!beer && entry.count > 0) {
+            console.warn(`[Wrapped] Beer not found for ID: ${beerId}`);
+        }
 
         if (entry.count > 0) {
             totalBeers += entry.count;
@@ -94,9 +100,10 @@ function calculateStats() {
 }
 
 export function start() {
+    // Ensure we have fresh data
     const stats = calculateStats();
     if (stats.totalBeers === 0) {
-        window.UI.showToast("Pas assez de données pour le Wrapped ! Buvez un coup abord. 🍺");
+        window.UI.showToast("Pas assez de données pour le Wrapped ! Buvez un coup d'abord. 🍺");
         return;
     }
     renderStory(stats);
@@ -215,13 +222,15 @@ function renderStory(stats) {
             showSlide(currentSlide + 1);
         }, 5000);
 
-        // Specific Handler for Last Slide Button
+        // Specific Handler for Last Slide Button (Share)
         const shareBtn = contentDiv.querySelector('#btn-share-wrapped');
         if (shareBtn) {
             shareBtn.onclick = (e) => {
                 e.stopPropagation(); // Prevent tap
-                if (clearTimeout) clearTimeout(timer); // Stop auto advance
-                window.UI.showToast("Capturez l'écran pour partager ! 📸");
+                if (timer) clearTimeout(timer); // Stop auto advance
+
+                // Trigger Share Logic
+                handleWrappedShare(stats);
             };
         }
     };
@@ -245,4 +254,65 @@ function renderStory(stats) {
 
     // Start
     requestAnimationFrame(() => showSlide(0));
+}
+
+// Share Logic
+function handleWrappedShare(stats) {
+    if (confirm("Télécharger le résumé en image ?")) {
+        // Fallback generation (simple alert or link copy for now as we lack html2canvas)
+        // Ideally we would use Share.generateImage() if we had a generic canvas drawer
+
+        // Generate Deep Link with Stats
+        const shareData = {
+            action: 'share-wrapped',
+            l: stats.totalLiters,
+            b: stats.favoriteBeer ? stats.favoriteBeer.name : 'Rien',
+            c: stats.favoriteBeer ? stats.favoriteBeer.count : 0,
+            s: stats.favoriteStyle
+        };
+
+        // Construct URL manually to avoid huge payload
+        const baseUrl = window.location.origin + window.location.pathname;
+        const params = new URLSearchParams({
+            action: 'share', // hijack share action or create new
+            score: `J'ai bu ${stats.totalLiters}L cette année !`,
+            comment: `Top: ${stats.favoriteBeer ? stats.favoriteBeer.name : 'Aucune'} (${stats.favoriteBeer ? stats.favoriteBeer.count : 0}) - ${stats.favoriteStyle}`,
+            fallback: 'true',
+            id: stats.favoriteBeer ? stats.favoriteBeer.id : '1' // Fallback ID
+        });
+
+        const link = `${baseUrl}?${params.toString()}`;
+
+        // Prompt user
+        prompt("Copiez ce lien pour partager vos stats :", link);
+
+        // TODO: Real Image Generation implemented in Share.js
+    }
+}
+
+
+// Share Logic
+function handleWrappedShare(stats) {
+    if (confirm("T�l�charger le r�sum� en image ?")) {
+         // Fallback generation
+         const shareData = {
+             action: 'share-wrapped',
+             l: stats.totalLiters,
+             b: stats.favoriteBeer ? stats.favoriteBeer.name : 'Rien',
+             c: stats.favoriteBeer ? stats.favoriteBeer.count : 0,
+             s: stats.favoriteStyle
+         };
+         
+         const baseUrl = window.location.origin + window.location.pathname;
+         const params = new URLSearchParams({
+             action: 'share',
+             score: J'ai bu L cette ann�e !, // Fixed template literal usage
+             comment: Top:  () - , // Fixed template literal usage
+             fallback: 'true',
+             id: stats.favoriteBeer ? stats.favoriteBeer.id : '1'
+         });
+         
+         const link = ${baseUrl}?; // Fixed template literal usage
+         prompt("Copiez ce lien pour partager vos stats :", link);
+    }
 }
