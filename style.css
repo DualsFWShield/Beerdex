@@ -617,12 +617,13 @@ h3 {
 
 @keyframes slideUp {
     from {
-        transform: translateY(20px);
+        transform: translate(-50%, 20px);
+        /* Maintain X centering */
         opacity: 0;
     }
 
     to {
-        transform: translateY(0);
+        transform: translate(-50%, 0);
         opacity: 1;
     }
 }
@@ -630,19 +631,42 @@ h3 {
 /* Modal Container - Fixed & Centered */
 #modal-container {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
+    inset: 0;
+    /* Replaces top/left/width/height to avoid scrollbar overflow */
     background: rgba(0, 0, 0, 0.85);
     z-index: 10000;
     display: flex;
     justify-content: center;
     align-items: center;
+    /* Center if space allows */
     backdrop-filter: blur(5px);
     opacity: 1;
-    /* Default visible if no hidden class */
     transition: opacity 0.3s ease;
+    padding: 15px;
+    /* Prevent edge touching */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Ensure modal content handles overflow */
+.modal-content {
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    max-height: 90vh;
+    width: 100%;
+    max-width: 500px;
+    /* Limit width on desktop */
+    overflow-y: auto;
+    position: relative;
+    margin: auto;
+    /* Important for flex overflow centering */
+}
+
+/* Prevent body scroll when modal open - applied via JS */
+body.modal-open {
+    overflow: hidden;
 }
 
 #modal-container.hidden {

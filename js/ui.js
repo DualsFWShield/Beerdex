@@ -31,13 +31,17 @@ export function showToast(message) {
 
 export function closeModal() {
     modalContainer.classList.add('hidden');
+    modalContainer.setAttribute('aria-hidden', 'true');
     modalContainer.innerHTML = '';
+    document.body.classList.remove('modal-open');
 }
 
 function openModal(content) {
     modalContainer.innerHTML = '';
     modalContainer.appendChild(content);
     modalContainer.classList.remove('hidden');
+    modalContainer.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-open');
 
     // Close on click outside
     modalContainer.onclick = (e) => {
@@ -1485,10 +1489,11 @@ export function showAchievementDetails(title, desc, icon, isUnlocked) {
 
 export function renderMatchModal(allBeers) {
     const wrapper = document.createElement('div');
+    // Fix: Max-height logic for small screens, and better width
     wrapper.innerHTML = `
-        <div class="modal-content text-center" style="max-width: 90%; width: 500px; padding: 25px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                <h2 style="margin:0; font-family:'Russo One'; color:var(--accent-gold);">⚔️ Beer Match</h2>
+        <div class="modal-content text-center" style="width: min(95%, 450px); max-height: 85vh; padding: 20px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <h2 style="margin:0; font-family:'Russo One'; color:var(--accent-gold); font-size:1.5rem;">⚔️ Beer Match</h2>
                 <button type="button" class="close-btn" style="background:none; border:none; color:#fff; font-size:1.5rem; cursor:pointer;">&times;</button>
             </div>
 
@@ -1498,18 +1503,25 @@ export function renderMatchModal(allBeers) {
             </div>
 
             <div id="view-qr" style="display:block;">
-                <p style="color:#aaa; font-size:0.9rem; margin-bottom:20px;">Montrez ce code à un ami.</p>
-                <div id="qrcode-container" style="background:#FFF; padding:20px; border-radius:10px; display:inline-block;"></div>
+                <p style="color:#aaa; font-size:0.9rem; margin-bottom:15px;">Montrez ce code à un ami.</p>
+                <div id="qrcode-container" style="background:#FFF; padding:15px; border-radius:10px; display:inline-block; margin-bottom:15px;"></div>
+                
+                <!-- Text Fallback -->
+                <div style="text-align:left;">
+                    <p style="font-size:0.8rem; color:#888; margin-bottom:5px;">Code Texte (Copier si le scan échoue) :</p>
+                    <textarea id="my-qr-text" readonly style="width:100%; height:60px; background:#222; border:1px solid #444; color:#aaa; font-size:0.7rem; padding:5px; border-radius:4px; resize:none;"></textarea>
+                    <button id="btn-copy-code" class="form-input" style="padding:5px 10px; font-size:0.8rem; margin-top:5px; width:100%;">📋 Copier le code</button>
+                </div>
             </div>
 
             <div id="view-scan" style="display:none;">
-                <p style="color:#aaa; font-size:0.9rem; margin-bottom:20px;">Scannez le code.</p>
-                <div id="reader" style="width:100%; height:300px; background:#000; border-radius:8px; overflow:hidden;"></div>
+                <p style="color:#aaa; font-size:0.9rem; margin-bottom:15px;">Scannez le code.</p>
+                <div id="reader" style="width:100%; height:250px; background:#000; border-radius:8px; overflow:hidden; position:relative;"></div>
                 <div id="scan-feedback" style="margin-top:10px; color:var(--accent-gold); font-size:0.8rem; height:20px;"></div>
                 
-                <details style="margin-top:20px; text-align:left;">
+                <details style="margin-top:15px; text-align:left;">
                     <summary style="color:#555; cursor:pointer; font-size:0.8rem;">Problème de caméra ?</summary>
-                    <textarea id="manual-paste" placeholder="Collez le code texte ici (BEERDEX:...)" style="width:100%; height:80px; background:#222; border:1px solid #444; color:#FFF; margin-top:5px; font-size:0.7rem; padding:5px;"></textarea>
+                    <textarea id="manual-paste" placeholder="Collez le code texte ici (BEERDEX:...)" style="width:100%; height:60px; background:#222; border:1px solid #444; color:#FFF; margin-top:5px; font-size:0.7rem; padding:5px;"></textarea>
                     <button id="btn-manual-compare" class="form-input" style="padding:5px 10px; font-size:0.8rem; margin-top:5px;">Comparer</button>
                 </details>
             </div>
@@ -1524,6 +1536,22 @@ export function renderMatchModal(allBeers) {
     const viewScan = wrapper.querySelector('#view-scan');
     const viewResult = wrapper.querySelector('#view-result');
     let html5QrcodeScanner = null;
+    let isScanning = false;
+
+    // Stop Scanner Safely
+    const stopScanner = async () => {
+        if (!html5QrcodeScanner) return;
+        try {
+            if (html5QrcodeScanner.isScanning) {
+                await html5QrcodeScanner.stop();
+            }
+            html5QrcodeScanner.clear();
+        } catch (e) {
+            console.warn("Scanner stop warning:", e);
+        }
+        html5QrcodeScanner = null;
+        isScanning = false;
+    };
 
     const switchTab = (tab) => {
         if (tab === 'qr') {
@@ -1532,17 +1560,15 @@ export function renderMatchModal(allBeers) {
             viewQr.style.display = 'block';
             viewScan.style.display = 'none';
             viewResult.style.display = 'none';
-            if (html5QrcodeScanner) {
-                html5QrcodeScanner.stop().catch(e => console.log(e));
-                html5QrcodeScanner = null;
-            }
+            stopScanner(); // Stop if switching to QR
         } else {
             tabScan.style.color = 'var(--accent-gold)'; tabScan.style.borderBottom = '2px solid var(--accent-gold)';
             tabQr.style.color = '#666'; tabQr.style.borderBottom = 'none';
             viewQr.style.display = 'none';
             viewScan.style.display = 'block';
             viewResult.style.display = 'none';
-            setTimeout(startScanner, 100);
+            // Start scanner with slight delay for UI render
+            setTimeout(() => { if (!isScanning) startScanner(); }, 200);
         }
     };
 
@@ -1551,23 +1577,66 @@ export function renderMatchModal(allBeers) {
 
     const generateMyQR = () => {
         const userData = Storage.getAllUserData();
-        const myIds = Object.keys(userData).filter(k => userData[k].count > 0).map(k => k.split('_')[0]);
+        // Robust ID extraction: handle if userData is directly ratings or wrapper
+        const ratings = userData.ratings || userData;
+        const myIds = Object.keys(ratings).filter(k => ratings[k] && ratings[k].count > 0).map(k => k.split('_')[0]);
+
+        if (myIds.length === 0) {
+            wrapper.querySelector('#qrcode-container').innerHTML = "<p style='color:#ccc; padding:20px;'>Aucune bière notée !<br><small>Buvez d'abord... 😉</small></p>";
+            wrapper.querySelector('#my-qr-text').value = "Rien à partager.";
+            return;
+        }
+
+        if (typeof LZString === 'undefined') {
+            console.error("LZString missing");
+            wrapper.querySelector('#qrcode-container').innerHTML = "Erreur: Lib Compression manquante";
+            return;
+        }
+
         const qrString = Match.generateQRData(myIds, "Ami");
 
+        // set Text FIRST so it appears even if QR fails
+        const txtArea = wrapper.querySelector('#my-qr-text');
+        if (txtArea) txtArea.value = qrString;
+
+        // QR Code
         const container = wrapper.querySelector('#qrcode-container');
         container.innerHTML = '';
-        if (window.QRCode) {
-            new QRCode(container, {
-                text: qrString,
-                width: 200,
-                height: 200,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.M
-            });
-        } else {
-            container.innerHTML = "Erreur librairie QRCode";
-        }
+
+        // Delay slightly to ensure modal is rendered and dimensions are known
+        setTimeout(() => {
+            if (window.QRCode) {
+                try {
+                    new QRCode(container, {
+                        text: qrString,
+                        width: 180,
+                        height: 180,
+                        colorDark: "#000000",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.M
+                    });
+                } catch (e) {
+                    console.error("QR Gen Error", e);
+                    container.innerHTML = "Erreur Génération QR";
+                }
+            } else {
+                container.innerHTML = "Lib QR manquante";
+            }
+        }, 150);
+
+        const btnCopy = wrapper.querySelector('#btn-copy-code');
+        if (btnCopy) btnCopy.onclick = () => {
+            if (window.navigator && window.navigator.clipboard) {
+                txtArea.select();
+                navigator.clipboard.writeText(qrString).then(() => {
+                    showToast("Code copié !");
+                }).catch(() => showToast("Erreur copie"));
+            } else {
+                txtArea.select();
+                document.execCommand('copy');
+                showToast("Code copié (legacy)");
+            }
+        };
     };
 
     const startScanner = () => {
@@ -1584,60 +1653,67 @@ export function renderMatchModal(allBeers) {
 
         const qrCodeSuccessCallback = (decodedText, decodedResult) => {
             feedback.textContent = "Code détecté !";
-            html5QrCode.stop().then(() => {
+            stopScanner().then(() => {
                 processMatch(decodedText);
-            }).catch(err => console.error("Stop failed", err));
+            });
         };
 
-        const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+        const config = { fps: 10, qrbox: { width: 200, height: 200 } };
 
         html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback)
+            .then(() => {
+                isScanning = true;
+                feedback.textContent = "Scannez un code...";
+            })
             .catch(err => {
                 console.error("Camera Error", err);
                 feedback.textContent = "Caméra inaccessible (Permissions ?)";
+                isScanning = false;
             });
     };
 
     const processMatch = (qrString) => {
         const friendData = Match.parseQRData(qrString);
         if (!friendData) {
-            alert("QR Code invalide !");
+            alert("Code invalide !");
+            // Restart scanner if valid fail? No, easier to stay stopped.
             return;
         }
 
         const userData = Storage.getAllUserData();
-        const myIds = Object.keys(userData).filter(k => userData[k].count > 0).map(k => k.split('_')[0]);
+        const ratings = userData.ratings || userData;
+        const myIdsList = Object.keys(ratings).filter(k => ratings[k] && ratings[k].count > 0).map(k => k.split('_')[0]);
 
-        const results = Match.compare(allBeers, myIds, friendData);
-        renderResult(results);
+        const results = Match.compare(allBeers, myIdsList, friendData);
+        displayMatchResults(results);
     };
 
-    const renderResult = (results) => {
+    const displayMatchResults = (results) => {
         viewQr.style.display = 'none';
         viewScan.style.display = 'none';
         viewResult.style.display = 'block';
 
-        let color = '#e74c3c';
-        if (results.score > 30) color = '#f39c12';
-        if (results.score > 60) color = '#f1c40f';
-        if (results.score > 80) color = '#2ecc71';
+        // Hide tabs
+        tabQr.style.display = 'none';
+        tabScan.style.display = 'none';
 
         viewResult.innerHTML = `
-            <div style="margin-bottom:20px;">
-                <h3 style="color:#FFF;">Compatibilité</h3>
-                <div style="font-size:3rem; font-family:'Russo One'; color:${color}; text-shadow:0 0 10px rgba(0,0,0,0.5);">
+            <div style="text-align:center; margin-bottom:20px;">
+                <h3 style="color:var(--accent-gold); margin:0;">Match avec ${results.userName}</h3>
+                <div style="font-size:3rem; font-weight:bold; color:#FFF; margin:10px 0;">
                     ${results.score}%
                 </div>
+                <div style="color:#aaa; font-size:0.9rem;">de compatibilité</div>
             </div>
 
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px;">
                 <div style="background:#222; padding:10px; border-radius:8px;">
                     <div style="font-size:1.5rem; font-weight:bold; color:#FFF;">${results.commonCount}</div>
-                    <div style="font-size:0.8rem; color:#888;">En commun</div>
+                    <div style="font-size:0.8rem; color:#888; white-space:nowrap;">En commun</div>
                 </div>
                  <div style="background:#222; padding:10px; border-radius:8px;">
                     <div style="font-size:1.5rem; font-weight:bold; color:var(--accent-gold);">${results.friendTotal}</div>
-                    <div style="font-size:0.8rem; color:#888;">Total Ami</div>
+                    <div style="font-size:0.8rem; color:#888; white-space:nowrap;">Total Ami</div>
                 </div>
             </div>
 
@@ -1660,10 +1736,18 @@ export function renderMatchModal(allBeers) {
             </div>
             ` : ''}
             
-            <button id="btn-restart" class="form-input text-center mt-20" style="background:#333;">Nouveau Scan</button>
+            <button id="btn-restart" class="form-input text-center mt-20" style="background:#333; margin-top:20px;">Nouveau Scan</button>
         `;
 
-        wrapper.querySelector('#btn-restart').onclick = () => switchTab('scan');
+        wrapper.querySelector('#btn-restart').onclick = () => {
+            // Reset UI
+            tabQr.style.display = '';
+            tabQr.style.color = '#666'; tabQr.style.borderBottom = 'none';
+            tabScan.style.display = '';
+
+            // Switch to scan
+            switchTab('scan');
+        };
     };
 
     wrapper.querySelector('#btn-manual-compare').onclick = () => {
@@ -1672,11 +1756,13 @@ export function renderMatchModal(allBeers) {
     };
 
     const close = () => {
-        if (html5QrcodeScanner) html5QrcodeScanner.stop().catch(e => console.log(e));
+        stopScanner();
         closeModal();
     };
     wrapper.querySelector('.close-btn').onclick = close;
 
-    openModal(wrapper);
+    // INITIAL CALL
     generateMyQR();
+
+    openModal(wrapper);
 }
