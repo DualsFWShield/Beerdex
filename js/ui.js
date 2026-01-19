@@ -1003,12 +1003,7 @@ export function renderStats(allBeers, userData, container, isDiscovery = false, 
                         <div style="display:flex; flex-direction:column; gap:20px;">
                             <div>
                                 <p style="color:var(--accent-gold); font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Co-Fondateurs</p>
-                                <p style="font-size:0.9rem; color:#eee;">Dorian Storms & Noah Bruijninckx</p>
-                            </div>
-
-                            <div>
-                                <p style="color:var(--accent-gold); font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Idées supplementaires</p>
-                                <p style="font-size:0.9rem; color:#eee;">Tristan Storms & Maxance Veulemans</p>
+                                <p style="font-size:0.9rem; color:#eee;">Dorian Storms, Noah Bruijninckx, Tristan Storms & Maxance Veulemans</p>
                             </div>
                             
                             <div>
