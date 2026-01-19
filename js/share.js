@@ -259,6 +259,10 @@ export async function generateBeerCard(beer, rating, comment) {
  * Native Web Share API wrapper
  */
 export async function shareImage(blob, title) {
+    if (!blob) {
+        alert("Erreur: Image non générée (Blob invalide)");
+        return;
+    }
     // --- MEDIAN / GONATIVE BRIDGE (APK) ---
     // User requested Fullscreen Preview for APK to allow Screenshot
     if (window.median) {
@@ -285,15 +289,16 @@ export async function shareImage(blob, title) {
 }
 
 function createFullscreenPreview(blob) {
+    if (!blob) return;
     const url = URL.createObjectURL(blob);
     const overlay = document.createElement('div');
     overlay.style.position = 'fixed';
     overlay.style.top = '0';
     overlay.style.left = '0';
-    overlay.style.width = '100%';
-    overlay.style.height = '100%';
-    overlay.style.background = '#000';
-    overlay.style.zIndex = '20000';
+    overlay.style.width = '100vw';
+    overlay.style.height = '100vh';
+    overlay.style.background = 'rgba(0,0,0,0.95)';
+    overlay.style.zIndex = '2147483647'; // Max Z
     overlay.style.display = 'flex';
     overlay.style.flexDirection = 'column';
     overlay.style.alignItems = 'center';
@@ -303,23 +308,25 @@ function createFullscreenPreview(blob) {
     const img = document.createElement('img');
     img.src = url;
     img.style.maxWidth = '100%';
-    img.style.maxHeight = '90%';
+    img.style.maxHeight = '85%';
     img.style.objectFit = 'contain';
+    img.style.display = 'block';
 
     // Close Hint
     const hint = document.createElement('div');
-    hint.innerText = "Appuyez pour fermer";
+    hint.innerHTML = '<div style="font-size:2rem; margin-bottom:10px;">❌</div>Appuyez pour fermer';
     hint.style.color = '#fff';
     hint.style.marginTop = '20px';
     hint.style.fontFamily = 'sans-serif';
-    hint.style.opacity = '0.7';
+    hint.style.textAlign = 'center';
+    hint.style.cursor = 'pointer';
 
     overlay.appendChild(img);
     overlay.appendChild(hint);
 
     // Close Handler
     overlay.onclick = () => {
-        document.body.removeChild(overlay);
+        if (overlay.parentNode) document.body.removeChild(overlay);
         URL.revokeObjectURL(url);
     };
 

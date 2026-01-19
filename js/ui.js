@@ -244,8 +244,17 @@ export function renderBeerList(beers, container, filters = null, showCreatePromp
         return;
     }
 
-    const grid = document.createElement('div');
-    grid.className = 'beer-grid';
+    let grid;
+    if (isAppend) {
+        grid = container.querySelector('.beer-grid');
+    }
+
+    if (!grid) {
+        if (!isAppend) container.innerHTML = '';
+        grid = document.createElement('div');
+        grid.className = 'beer-grid';
+        container.appendChild(grid);
+    }
 
     filteredBeers.forEach((beer, index) => {
         const u = userData[beer.id];
@@ -296,8 +305,6 @@ export function renderBeerList(beers, container, filters = null, showCreatePromp
         `;
         grid.appendChild(card);
     });
-
-    container.appendChild(grid);
 }
 
 export function renderFilterModal(allBeers, activeFilters, onApply) {
