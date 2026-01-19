@@ -39,6 +39,22 @@ export function getAllConsumedBeerIds() {
     return Object.keys(data).filter(id => data[id].count > 0);
 }
 
+// --- Favorites ---
+
+export function toggleFavorite(id) {
+    const data = getAllUserData();
+    if (!data[id]) data[id] = { count: 0, history: [] }; // Init if empty
+
+    data[id].favorite = !data[id].favorite;
+    localStorage.setItem(STORAGE_KEY_RATINGS, JSON.stringify(data));
+    return data[id].favorite;
+}
+
+export function isFavorite(id) {
+    const data = getAllUserData();
+    return data[id] ? !!data[id].favorite : false;
+}
+
 // --- Custom Beers ---
 
 export function getCustomBeers() {
