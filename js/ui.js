@@ -2,7 +2,6 @@ import * as Storage from './storage.js';
 import * as Share from './share.js';
 import Match from './match.js';
 import * as Map from './map.js';
-import * as Achievements from './achievements.js';
 
 // We assume global libs: QRCode, Html5QrcodeScanner (handled via CDN)
 const QRCodeLib = window.QRCode;
@@ -168,37 +167,33 @@ export function renderBeerList(beers, container, filters = null, showCreatePromp
         }
 
         // --- Sorting ---
-        // Force Favorites to Top
-        const getFav = (id) => Storage.isFavorite(id) ? 1 : 0;
+        if (filters.sortBy && filters.sortBy !== 'default') {
+            filteredBeers.sort((a, b) => {
+                let valA, valB;
 
-        filteredBeers.sort((a, b) => {
-            // 1. Favorites First
-            const favA = getFav(a.id);
-            const favB = getFav(b.id);
-            if (favA !== favB) return favB - favA; // Descending (1 first)
+                if (filters.sortBy === 'brewery') {
+                    valA = a.brewery.toLowerCase();
+                    valB = b.brewery.toLowerCase();
+                } else if (filters.sortBy === 'alcohol') {
+                    valA = getAlc(a);
+                    valB = getAlc(b);
+                } else if (filters.sortBy === 'volume') {
+                    valA = getVol(a);
+                    valB = getVol(b);
+                } else { // Default sort by title if sortBy is not recognized but not 'default'
+                    valA = a.title.toLowerCase();
+                    valB = b.title.toLowerCase();
+                }
 
-            // 2. Secondary Sort (User Selection)
-            let valA, valB;
-            if (filters.sortBy === 'brewery') {
-                // ... (existing logic)
-
-                valA = a.brewery.toLowerCase();
-                valB = b.brewery.toLowerCase();
-            } else if (filters.sortBy === 'alcohol') {
-                valA = getAlc(a);
-                valB = getAlc(b);
-            } else if (filters.sortBy === 'volume') {
-                valA = getVol(a);
-                valB = getVol(b);
-            } else { // Default sort by title if sortBy is not recognized but not 'default'
-                valA = a.title.toLowerCase();
-                valB = b.title.toLowerCase();
-            }
-
-            if (valA < valB) return filters.sortOrder === 'desc' ? 1 : -1;
-            if (valA > valB) return filters.sortOrder === 'desc' ? -1 : 1;
-            return 0;
-        });
+                if (valA < valB) return filters.sortOrder === 'desc' ? 1 : -1;
+                if (valA > valB) return filters.sortOrder === 'desc' ? -1 : 1;
+                return 0;
+            });
+        } else {
+            // Default Sort by Title A-Z
+            filteredBeers.sort((a, b) => a.title.localeCompare(b.title));
+            if (filters.sortOrder === 'desc') filteredBeers.reverse();
+        }
 
         // Custom Beer Filter
         if (filters.onlyCustom) {
@@ -265,27 +260,22 @@ export function renderBeerList(beers, container, filters = null, showCreatePromp
         }
 
         card.innerHTML = `
-            <div style="position:relative;">
-                <svg class="check-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                </svg>
-                ${Storage.isFavorite(beer.id) ? '<div style="position:absolute; top:2px; right:2px; font-size:1.2rem;">⭐</div>' : ''}
-                <div style="width:100%; height:120px; display:flex; justify-content:center; align-items:center;">
-                    <img src="${displayImage}" alt="${beer.title}" class="beer-image" loading="${index < 10 ? 'eager' : 'lazy'}" 
-                         ${beer.removeBackground ? 'onload="removeImageBackground(this)"' : ''}
-                         onerror="if(this.src.includes('${fallbackImage}')) return; this.src='${fallbackImage}';">
-                </div>
+            <svg class="check-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <div style="width:100%; height:120px; display:flex; justify-content:center; align-items:center;">
+                <img src="${displayImage}" alt="${beer.title}" class="beer-image" loading="${index < 10 ? 'eager' : 'lazy'}" 
+                     ${beer.removeBackground ? 'onload="removeImageBackground(this)"' : ''}
+                     onerror="if(this.src.includes('${fallbackImage}')) return; this.src='${fallbackImage}';">
             </div>
             <div class="beer-info">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <h3 class="beer-title">${beer.title}</h3>
-                </div>
+                <h3 class="beer-title">${beer.title}</h3>
                 <p class="beer-brewery">${beer.brewery}</p>
                 <div style="display:flex; gap:5px; justify-content:center; margin-top:5px; color:#aaa; flex-wrap:wrap;">
                     ${abv} ${vol} ${typeBadge}
                 </div>
             </div>
-            `;
+        `;
         grid.appendChild(card);
     });
 
@@ -301,84 +291,84 @@ export function renderFilterModal(allBeers, activeFilters, onApply) {
     const breweries = ['All', ...new Set(allBeers.map(b => b.brewery).filter(Boolean))].sort();
 
     // Helpers
-    const createOptions = (list, selected) => list.map(item => `< option value = "${item}" ${item === selected ? 'selected' : ''}> ${item}</option > `).join('');
+    const createOptions = (list, selected) => list.map(item => `<option value="${item}" ${item === selected ? 'selected' : ''}>${item}</option>`).join('');
 
     wrapper.innerHTML = `
-                < h2 style = "margin-bottom:20px;" > Filtres & Tris</h2 >
-                    <form id="filter-form">
-                        <!-- Sorting -->
-                        <div class="stat-card mb-20">
-                            <h4 style="margin-bottom:10px;">Trier par</h4>
-                            <div style="display:flex; gap:10px;">
-                                <select name="sortBy" class="form-select" style="flex:2;">
-                                    <option value="default" ${activeFilters.sortBy === 'default' ? 'selected' : ''}>Défaut (Nom)</option>
-                                    <option value="brewery" ${activeFilters.sortBy === 'brewery' ? 'selected' : ''}>Brasserie</option>
-                                    <option value="alcohol" ${activeFilters.sortBy === 'alcohol' ? 'selected' : ''}>Alcool (%)</option>
-                                    <option value="volume" ${activeFilters.sortBy === 'volume' ? 'selected' : ''}>Volume</option>
-                                </select>
-                                <select name="sortOrder" class="form-select" style="flex:1;">
-                                    <option value="asc" ${activeFilters.sortOrder === 'asc' ? 'selected' : ''}>⬆️ Croissant</option>
-                                    <option value="desc" ${activeFilters.sortOrder === 'desc' ? 'selected' : ''}>⬇️ Décroissant</option>
-                                </select>
-                            </div>
-                        </div>
+        <h2 style="margin-bottom:20px;">Filtres & Tris</h2>
+        <form id="filter-form">
+            <!-- Sorting -->
+            <div class="stat-card mb-20">
+                <h4 style="margin-bottom:10px;">Trier par</h4>
+                <div style="display:flex; gap:10px;">
+                    <select name="sortBy" class="form-select" style="flex:2;">
+                        <option value="default" ${activeFilters.sortBy === 'default' ? 'selected' : ''}>Défaut (Nom)</option>
+                        <option value="brewery" ${activeFilters.sortBy === 'brewery' ? 'selected' : ''}>Brasserie</option>
+                        <option value="alcohol" ${activeFilters.sortBy === 'alcohol' ? 'selected' : ''}>Alcool (%)</option>
+                        <option value="volume" ${activeFilters.sortBy === 'volume' ? 'selected' : ''}>Volume</option>
+                    </select>
+                    <select name="sortOrder" class="form-select" style="flex:1;">
+                        <option value="asc" ${activeFilters.sortOrder === 'asc' ? 'selected' : ''}>⬆️ Croissant</option>
+                        <option value="desc" ${activeFilters.sortOrder === 'desc' ? 'selected' : ''}>⬇️ Décroissant</option>
+                    </select>
+                </div>
+            </div>
 
-                        <!-- Basic Filters -->
-                        <div class="form-group">
-                            <label class="form-label">Type</label>
-                            <select name="type" class="form-select">${createOptions(types, activeFilters.type || 'All')}</select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Brasserie</label>
-                            <select name="brewery" class="form-select">${createOptions(breweries, activeFilters.brewery || 'All')}</select>
-                        </div>
+            <!-- Basic Filters -->
+            <div class="form-group">
+                <label class="form-label">Type</label>
+                <select name="type" class="form-select">${createOptions(types, activeFilters.type || 'All')}</select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Brasserie</label>
+                <select name="brewery" class="form-select">${createOptions(breweries, activeFilters.brewery || 'All')}</select>
+            </div>
 
-                        <!-- Advanced Alcohol -->
-                        <div class="form-group" style="padding:10px; background:rgba(255,255,255,0.05); border-radius:8px;">
-                            <label class="form-label">Degré Alcool</label>
-                            <div style="display:flex; gap:10px; margin-bottom:10px;">
-                                <select id="alc-mode" name="alcMode" class="form-select">
-                                    <option value="max" ${activeFilters.alcMode === 'max' ? 'selected' : ''}>Maximum</option>
-                                    <option value="range" ${activeFilters.alcMode === 'range' ? 'selected' : ''}>Plage (Min-Max)</option>
-                                    <option value="exact" ${activeFilters.alcMode === 'exact' ? 'selected' : ''}>Exact</option>
-                                </select>
-                            </div>
-                            <div id="alc-inputs"></div>
-                        </div>
+            <!-- Advanced Alcohol -->
+            <div class="form-group" style="padding:10px; background:rgba(255,255,255,0.05); border-radius:8px;">
+                <label class="form-label">Degré Alcool</label>
+                <div style="display:flex; gap:10px; margin-bottom:10px;">
+                    <select id="alc-mode" name="alcMode" class="form-select">
+                        <option value="max" ${activeFilters.alcMode === 'max' ? 'selected' : ''}>Maximum</option>
+                        <option value="range" ${activeFilters.alcMode === 'range' ? 'selected' : ''}>Plage (Min-Max)</option>
+                        <option value="exact" ${activeFilters.alcMode === 'exact' ? 'selected' : ''}>Exact</option>
+                    </select>
+                </div>
+                <div id="alc-inputs"></div>
+            </div>
 
-                        <!-- Advanced Volume -->
-                        <div class="form-group" style="padding:10px; background:rgba(255,255,255,0.05); border-radius:8px;">
-                            <label class="form-label">Volume (ml)</label>
-                            <div style="display:flex; gap:10px; margin-bottom:10px;">
-                                <select id="vol-mode" name="volMode" class="form-select">
-                                    <option value="any" ${!activeFilters.volMode || activeFilters.volMode === 'any' ? 'selected' : ''}>Peu importe</option>
-                                    <option value="range" ${activeFilters.volMode === 'range' ? 'selected' : ''}>Plage</option>
-                                    <option value="exact" ${activeFilters.volMode === 'exact' ? 'selected' : ''}>Exact</option>
-                                </select>
-                            </div>
-                            <div id="vol-inputs"></div>
-                        </div>
+            <!-- Advanced Volume -->
+            <div class="form-group" style="padding:10px; background:rgba(255,255,255,0.05); border-radius:8px;">
+                <label class="form-label">Volume (ml)</label>
+                <div style="display:flex; gap:10px; margin-bottom:10px;">
+                    <select id="vol-mode" name="volMode" class="form-select">
+                        <option value="any" ${!activeFilters.volMode || activeFilters.volMode === 'any' ? 'selected' : ''}>Peu importe</option>
+                        <option value="range" ${activeFilters.volMode === 'range' ? 'selected' : ''}>Plage</option>
+                        <option value="exact" ${activeFilters.volMode === 'exact' ? 'selected' : ''}>Exact</option>
+                    </select>
+                </div>
+                <div id="vol-inputs"></div>
+            </div>
 
-                        <!-- Rating -->
-                        <div class="form-group">
-                            <label class="form-label">Note Minimum (<span id="rate-val">${activeFilters.minRating || 0}</span>/20)</label>
-                            <input type="range" name="minRating" class="form-input" min="0" max="20" step="1" value="${activeFilters.minRating || 0}"
-                                oninput="document.getElementById('rate-val').innerText = this.value">
-                        </div>
+            <!-- Rating -->
+             <div class="form-group">
+                <label class="form-label">Note Minimum (<span id="rate-val">${activeFilters.minRating || 0}</span>/20)</label>
+                <input type="range" name="minRating" class="form-input" min="0" max="20" step="1" value="${activeFilters.minRating || 0}" 
+                    oninput="document.getElementById('rate-val').innerText = this.value">
+            </div>
 
-                        <div class="form-group" style="padding:10px; background:rgba(255,255,255,0.05); border-radius:8px;">
-                            <label class="form-group" style="display:flex; align-items:center; gap:10px; cursor:pointer;">
-                                <input type="checkbox" name="onlyCustom" ${activeFilters.onlyCustom ? 'checked' : ''} style="width:20px; height:20px;">
-                                    <span style="font-weight:bold; color:var(--accent-gold);">Mes Créations Uniquement</span>
-                            </label>
-                        </div>
+            <div class="form-group" style="padding:10px; background:rgba(255,255,255,0.05); border-radius:8px;">
+                 <label class="form-group" style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+                    <input type="checkbox" name="onlyCustom" ${activeFilters.onlyCustom ? 'checked' : ''} style="width:20px; height:20px;">
+                    <span style="font-weight:bold; color:var(--accent-gold);">Mes Créations Uniquement</span>
+                </label>
+            </div>
 
-                        <div style="display:flex; gap:10px; margin-top:20px;">
-                            <button type="button" id="btn-reset-filters" class="form-input" style="flex:1; color:#aaa;">Réinitialiser</button>
-                            <button type="submit" class="btn-primary" style="flex:2;">Appliquer</button>
-                        </div>
-                    </form>
-            `;
+            <div style="display:flex; gap:10px; margin-top:20px;">
+                <button type="button" id="btn-reset-filters" class="form-input" style="flex:1; color:#aaa;">Réinitialiser</button>
+                <button type="submit" class="btn-primary" style="flex:2;">Appliquer</button>
+            </div>
+        </form>
+    `;
 
     // Dynamic Alcohol Input logic
     const alcContainer = wrapper.querySelector('#alc-inputs');
@@ -387,20 +377,20 @@ export function renderFilterModal(allBeers, activeFilters, onApply) {
     const renderAlcInputs = (mode) => {
         if (mode === 'max') {
             alcContainer.innerHTML = `
-                < div style = "display:flex; align-items:center; gap:10px;" >
-                    <input type="range" name="alcMax" class="form-input" min="0" max="15" step="0.5" value="${activeFilters.alcMax || 15}"
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <input type="range" name="alcMax" class="form-input" min="0" max="15" step="0.5" value="${activeFilters.alcMax || 15}" 
                         oninput="document.getElementById('alc-display-max').innerText = this.value">
-                        <span style="min-width:40px;"><span id="alc-display-max">${activeFilters.alcMax || 15}</span>%</span>
-                    </div>
+                    <span style="min-width:40px;"><span id="alc-display-max">${activeFilters.alcMax || 15}</span>%</span>
+                </div>
             `;
         } else if (mode === 'range') {
             alcContainer.innerHTML = `
-                < div style = "display:flex; gap:5px;" >
+                <div style="display:flex; gap:5px;">
                     <input type="number" name="alcMin" class="form-input" placeholder="Min" step="0.1" value="${activeFilters.alcMin || ''}">
-                        <span style="align-self:center;">à</span>
-                        <input type="number" name="alcMax" class="form-input" placeholder="Max" step="0.1" value="${activeFilters.alcMax || ''}">
-                        </div>
-                        `;
+                    <span style="align-self:center;">à</span>
+                    <input type="number" name="alcMax" class="form-input" placeholder="Max" step="0.1" value="${activeFilters.alcMax || ''}">
+                </div>
+            `;
         } else if (mode === 'exact') {
             alcContainer.innerHTML = `
                  <input type="number" name="alcExact" class="form-input" placeholder="Ex: 5.5" step="0.1" value="${activeFilters.alcExact || ''}">
@@ -468,33 +458,33 @@ export function renderBeerDetail(beer, onSave) {
 
         if (field.type === 'number') {
             return `
-                        <div class="form-group">
-                            <label class="form-label">${field.label}</label>
-                            <input type="number" class="form-input" name="${field.id}" min="${field.min}" max="${field.max}" step="${field.step}" value="${value}" placeholder="Note... (0-20)">
-                        </div>`;
+                <div class="form-group">
+                    <label class="form-label">${field.label}</label>
+                    <input type="number" class="form-input" name="${field.id}" min="${field.min}" max="${field.max}" step="${field.step}" value="${value}" placeholder="Note... (0-20)">
+                </div>`;
         } else if (field.type === 'textarea') {
             return `
-                        <div class="form-group">
-                            <label class="form-label">${field.label}</label>
-                            <textarea class="form-textarea" name="${field.id}" rows="3">${value}</textarea>
-                        </div>`;
+                <div class="form-group">
+                    <label class="form-label">${field.label}</label>
+                    <textarea class="form-textarea" name="${field.id}" rows="3">${value}</textarea>
+                </div>`;
         } else if (field.type === 'range') {
             return `
-                        <div class="form-group">
-                            <label class="form-label" style="display:flex; justify-content:space-between;">
-                                <span>${field.label}</span>
-                                <span id="val-${field.id}">${value || 0}/10</span>
-                            </label>
-                            <input type="range" class="form-input" name="${field.id}" min="0" max="10" step="1" value="${value || 0}"
-                                oninput="document.getElementById('val-${field.id}').innerText = this.value + '/10'"
-                                style="padding:0; height:40px;">
-                        </div>`;
+                <div class="form-group">
+                    <label class="form-label" style="display:flex; justify-content:space-between;">
+                        <span>${field.label}</span>
+                        <span id="val-${field.id}">${value || 0}/10</span>
+                    </label>
+                    <input type="range" class="form-input" name="${field.id}" min="0" max="10" step="1" value="${value || 0}"
+                        oninput="document.getElementById('val-${field.id}').innerText = this.value + '/10'"
+                        style="padding:0; height:40px;">
+                </div>`;
         } else if (field.type === 'checkbox') {
             return `
-                        <div class="form-group" style="display:flex; align-items:center; gap:10px; background:var(--bg-card); padding:10px; border-radius:8px;">
-                            <input type="checkbox" name="${field.id}" ${value ? 'checked' : ''} style="width:20px; height:20px;">
-                                <label class="form-label" style="margin:0;">${field.label}</label>
-                        </div>`;
+                <div class="form-group" style="display:flex; align-items:center; gap:10px; background:var(--bg-card); padding:10px; border-radius:8px;">
+                    <input type="checkbox" name="${field.id}" ${value ? 'checked' : ''} style="width:20px; height:20px;">
+                        <label class="form-label" style="margin:0;">${field.label}</label>
+                </div>`;
         }
         return '';
     }).join('');
@@ -509,30 +499,30 @@ export function renderBeerDetail(beer, onSave) {
     defaultVol = defaultVol.replace('.', ',');
 
     consumptionWrapper.innerHTML = `
-                        <h3 style="margin-bottom:10px; font-size:1rem;">Consommation</h3>
-                        <div style="font-size:2rem; font-weight:bold; color:var(--accent-gold); margin-bottom:10px;">
-                            <span id="consumption-count">${existingData.count || 0}</span> <span style="font-size:1rem; color:#666;">fois</span>
-                        </div>
+                <h3 style="margin-bottom:10px; font-size:1rem;">Consommation</h3>
+                <div style="font-size:2rem; font-weight:bold; color:var(--accent-gold); margin-bottom:10px;">
+                    <span id="consumption-count">${existingData.count || 0}</span> <span style="font-size:1rem; color:#666;">fois</span>
+                </div>
 
-                        <div class="form-group">
-                            <label class="form-label">Volume bu</label>
-                            <select id="consumption-volume" class="form-select" style="text-align:center;">
-                                <option value="${defaultVol}" selected>${defaultVol} (Défaut)</option>
-                                <option value="25cl">25cl</option>
-                                <option value="33cl">33cl</option>
-                                <option value="50cl">50cl (Pinte)</option>
-                                <option value="1L">1L</option>
-                                <option value="1.5L">1.5L</option>
-                                <option value="2L">2L</option>
-                            </select>
-                        </div>
+                <div class="form-group">
+                    <label class="form-label">Volume bu</label>
+                    <select id="consumption-volume" class="form-select" style="text-align:center;">
+                        <option value="${defaultVol}" selected>${defaultVol} (Défaut)</option>
+                        <option value="25cl">25cl</option>
+                        <option value="33cl">33cl</option>
+                        <option value="50cl">50cl (Pinte)</option>
+                        <option value="1L">1L</option>
+                        <option value="1.5L">1.5L</option>
+                        <option value="2L">2L</option>
+                    </select>
+                </div>
 
-                        <div style="display:flex; gap:10px; justify-content:center;">
-                            <button id="btn-drink" class="btn-primary" style="margin:0; background:var(--success);">+ Boire</button>
-                            <button id="btn-undrink" class="btn-primary" style="margin:0; background:var(--bg-card); border:1px solid #444; color:#aaa; width:auto;">- Annuler</button>
-                        </div>
-                        <p style="font-size:0.75rem; color:#666; margin-top:10px;">Ajoute une consommation à l'historique.</p>
-                        `;
+                <div style="display:flex; gap:10px; justify-content:center;">
+                    <button id="btn-drink" class="btn-primary" style="margin:0; background:var(--success);">+ Boire</button>
+                    <button id="btn-undrink" class="btn-primary" style="margin:0; background:var(--bg-card); border:1px solid #444; color:#aaa; width:auto;">- Annuler</button>
+                </div>
+                <p style="font-size:0.75rem; color:#666; margin-top:10px;">Ajoute une consommation à l'historique.</p>
+                `;
 
     // --- Custom Beer Actions ---
     let customActions = '';
@@ -560,54 +550,40 @@ export function renderBeerDetail(beer, onSave) {
 
     wrapper.innerHTML = `
 
-                        <div style="text-align: center; margin-bottom: 20px; position:relative;">
-                            <button id="btn-fav" style="position:absolute; top:0; right:0; background:none; border:none; font-size:1.5rem; cursor:pointer; filter:drop-shadow(0 0 5px rgba(0,0,0,0.5));">
-                                ${Storage.isFavorite(beer.id) ? '⭐' : '☆'}
-                            </button>
-
-                            <img src="${displayImage}" style="height: 150px; object-fit: contain; filter: drop-shadow(0 0 10px rgba(255,255,255,0.1));"
-                                ${beer.removeBackground ? 'onload="removeImageBackground(this)"' : ''}
-                                onerror="if(this.src.includes('${fallbackImage}')) return; this.src='${fallbackImage}';">
-                                <h2 style="margin-top: 10px; color: var(--accent-gold);">${beer.title}</h2>
-                                <p style="color: #888;">${beer.brewery} - ${beer.type}</p>
-                                <div style="display: flex; justify-content: center; gap: 15px; margin-top: 5px; font-size: 0.8rem; color: #aaa;">
-                                    <span>${beer.alcohol || '?'}</span>
-                                    <span>${beer.volume || '?'}</span>
-                                </div>
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <img src="${displayImage}" style="height: 150px; object-fit: contain; filter: drop-shadow(0 0 10px rgba(255,255,255,0.1));" 
+                         ${beer.removeBackground ? 'onload="removeImageBackground(this)"' : ''}
+                         onerror="if(this.src.includes('${fallbackImage}')) return; this.src='${fallbackImage}';">
+                        <h2 style="margin-top: 10px; color: var(--accent-gold);">${beer.title}</h2>
+                        <p style="color: #888;">${beer.brewery} - ${beer.type}</p>
+                        <div style="display: flex; justify-content: center; gap: 15px; margin-top: 5px; font-size: 0.8rem; color: #aaa;">
+                            <span>${beer.alcohol || '?'}</span>
+                            <span>${beer.volume || '?'}</span>
                         </div>
+                </div>
 
-                        ${consumptionWrapper.outerHTML}
+                ${consumptionWrapper.outerHTML}
 
-                        <details style="background:var(--bg-card); padding:10px; border-radius:12px; margin-bottom:20px;">
-                            <summary style="font-weight:bold; cursor:pointer; list-style:none;">📝 Note de dégustation ${existingData.score ? '✅' : ''}</summary>
-                            <form id="rating-form" style="margin-top:15px;">
-                                ${formFields}
-                                <button type="submit" class="btn-primary">Enregistrer la note</button>
-                            </form>
-                        </details>
+                <details style="background:var(--bg-card); padding:10px; border-radius:12px; margin-bottom:20px;">
+                    <summary style="font-weight:bold; cursor:pointer; list-style:none;">📝 Note de dégustation ${existingData.score ? '✅' : ''}</summary>
+                    <form id="rating-form" style="margin-top:15px;">
+                        ${formFields}
+                        <button type="submit" class="btn-primary">Enregistrer la note</button>
+                    </form>
+                </details>
 
-                        <div style="display:flex; gap:10px; margin-bottom:10px;">
-                            <button id="btn-share-beer" class="form-input" style="flex:1;">📤 Lien</button>
-                            <button id="btn-share-insta" class="form-input" style="flex:1; border:1px solid var(--accent-gold); color:var(--accent-gold);">📸 Story</button>
-                        </div>
+                <div style="display:flex; gap:10px; margin-bottom:10px;">
+                    <button id="btn-share-beer" class="form-input" style="flex:1;">📤 Lien</button>
+                    <button id="btn-share-insta" class="form-input" style="flex:1; border:1px solid var(--accent-gold); color:var(--accent-gold);">📸 Story</button>
+                </div>
 
-                        ${customActions}
-                        `;
+                ${customActions}
+                `;
 
     // Share Link Handler
     wrapper.querySelector('#btn-share-beer').onclick = async () => {
         showToast("Préparation du partage...");
         await Storage.shareBeer(beer);
-    };
-
-    // Favorite Handler
-    wrapper.querySelector('#btn-fav').onclick = () => {
-        const isFav = Storage.toggleFavorite(beer.id);
-        wrapper.querySelector('#btn-fav').innerText = isFav ? '⭐' : '☆';
-        // Note: Main list needs refresh if we close, but it's okay for now.
-        // Actually, we should probably trigger a refresh if we're filtering?
-        // Let's just toast
-        showToast(isFav ? "Ajouté aux favoris !" : "Retiré des favoris");
     };
 
     // Share Image Handler (Insta-Beer)
@@ -720,45 +696,45 @@ export function renderAddBeerForm(onSave, editModeBeer = null) {
     const v = (key) => editModeBeer ? (editModeBeer[key] || '') : '';
 
     wrapper.innerHTML = `
-                        <h2 style="margin-bottom: 20px;">${title}</h2>
-                        <form id="add-beer-form">
-                            <div class="form-group">
-                                <label class="form-label">Nom de la bière</label>
-                                <input type="text" class="form-input" name="title" value="${v('title')}" required>
-                            </div>
+                <h2 style="margin-bottom: 20px;">${title}</h2>
+                <form id="add-beer-form">
+                    <div class="form-group">
+                        <label class="form-label">Nom de la bière</label>
+                        <input type="text" class="form-input" name="title" value="${v('title')}" required>
+                    </div>
 
-                            <div class="form-group">
-                                <label class="form-label">Brasserie</label>
-                                <input type="text" class="form-input" name="brewery" value="${v('brewery')}" required>
-                            </div>
+                    <div class="form-group">
+                        <label class="form-label">Brasserie</label>
+                        <input type="text" class="form-input" name="brewery" value="${v('brewery')}" required>
+                    </div>
 
-                            <div class="form-group">
-                                <label class="form-label">Type (Blonde, Brune...)</label>
-                                <input type="text" class="form-input" name="type" value="${v('type')}">
-                            </div>
+                    <div class="form-group">
+                        <label class="form-label">Type (Blonde, Brune...)</label>
+                        <input type="text" class="form-input" name="type" value="${v('type')}">
+                    </div>
 
-                            <div class="form-group">
-                                <label class="form-label">Alcool (ex: 5°)</label>
-                                <input type="text" class="form-input" name="alcohol" value="${v('alcohol')}">
-                            </div>
+                    <div class="form-group">
+                        <label class="form-label">Alcool (ex: 5°)</label>
+                        <input type="text" class="form-input" name="alcohol" value="${v('alcohol')}">
+                    </div>
 
-                            <div class="form-group">
-                                <label class="form-label">Volume (ex: 33cl)</label>
-                                <input type="text" class="form-input" name="volume" value="${v('volume')}">
-                            </div>
+                    <div class="form-group">
+                        <label class="form-label">Volume (ex: 33cl)</label>
+                        <input type="text" class="form-input" name="volume" value="${v('volume')}">
+                    </div>
 
-                            <div class="form-group">
-                                <label class="form-label">Image</label>
-                                <div style="display: flex; gap: 10px; align-items: center;">
-                                    <input type="file" id="image-file-input" accept="image/*" style="display: none;">
-                                        <button type="button" class="form-input" style="width: auto;" onclick="document.getElementById('image-file-input').click()">Choisir une photo</button>
-                                        <span id="file-name" style="font-size: 0.8rem; color: #888;">${editModeBeer ? 'Image actuelle conservée' : 'Par défaut: Fût'}</span>
-                                </div>
-                            </div>
+                    <div class="form-group">
+                        <label class="form-label">Image</label>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="file" id="image-file-input" accept="image/*" style="display: none;">
+                                <button type="button" class="form-input" style="width: auto;" onclick="document.getElementById('image-file-input').click()">Choisir une photo</button>
+                                <span id="file-name" style="font-size: 0.8rem; color: #888;">${editModeBeer ? 'Image actuelle conservée' : 'Par défaut: Fût'}</span>
+                        </div>
+                    </div>
 
-                            <button type="submit" class="btn-primary">${btnText}</button>
-                        </form>
-                        `;
+                    <button type="submit" class="btn-primary">${btnText}</button>
+                </form>
+                `;
 
     let imageBase64 = editModeBeer ? editModeBeer.image : '';
 
@@ -808,123 +784,123 @@ export function renderStats(allBeers, userData, container, isDiscovery = false, 
     const totalDrunkCount = Object.values(userData).reduce((acc, curr) => acc + (curr.count || 0), 0);
 
     container.innerHTML = `
-                        <div class="text-center p-20">
-                            <!-- SVG Donut Chart -->
-                            <div style="width:160px; height:160px; margin:0 auto; position:relative;">
-                                <svg viewBox="0 0 36 36" class="circular-chart">
-                                    <path class="circle-bg"
-                                        d="M18 2.0845
+                <div class="text-center p-20">
+                    <!-- SVG Donut Chart -->
+                    <div style="width:160px; height:160px; margin:0 auto; position:relative;">
+                        <svg viewBox="0 0 36 36" class="circular-chart">
+                            <path class="circle-bg"
+                                d="M18 2.0845
                         a 15.9155 15.9155 0 0 1 0 31.831
                         a 15.9155 15.9155 0 0 1 0 -31.831"
-                                    />
-                                    <path class="circle"
-                                        stroke-dasharray="${percentage}, 100"
-                                        d="M18 2.0845
+                            />
+                            <path class="circle"
+                                stroke-dasharray="${percentage}, 100"
+                                d="M18 2.0845
                         a 15.9155 15.9155 0 0 1 0 31.831
                         a 15.9155 15.9155 0 0 1 0 -31.831"
-                                    />
-                                </svg>
-                                <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-size:1.8rem; font-weight:bold; color:var(--accent-gold);">
-                                    ${percentage}%
-                                </div>
-                            </div>
-                            <h2 class="mt-20">Statistiques</h2>
-                            <p style="color: var(--text-secondary); margin-top: 10px;">
-                                Vous avez goûté <strong style="color: #fff;">${drunkCount}</strong> bières uniques sur <strong style="color: #fff;">${totalBeers}</strong>.
-                            </p>
-                            <p style="color: var(--text-secondary); margin-top: 5px; font-size: 0.9rem;">
-                                Total consommé : <strong style="color: var(--accent-gold);">${totalDrunkCount}</strong> verres 🍺
-                            </p>
-
-                            ${renderAdvancedStats(allBeers, userData)}
-
-
-
-                            <div class="stat-card mt-20 text-center">
-                                <div id="beer-map-container" style="min-height:200px;">
-                                    <span class="spinner"></span> Chargement de la carte...
-                                </div>
-                            </div>
-
-                            <div class="stat-card mt-20 text-center">
-                                <h3>Succès 🏆</h3>
-                                <div class="mt-20">
-                                    ${renderAchievementsList()}
-                                </div>
-                            </div>
-
-                            <div class="stat-card mt-20 text-center">
-                                <h3 style="margin-bottom:10px;">Beer Match ⚔️</h3>
-                                <p style="font-size:0.8rem; color:#888; margin-bottom:15px;">Compare tes goûts avec un ami !</p>
-                                <button type="button" id="btn-match" class="form-input text-center" style="background:#222; border:1px solid var(--accent-gold); color:var(--accent-gold); cursor:pointer;">
-                                    ⚔️ Lancer un Duel
-                                </button>
-                            </div>
-
-                            <div class="stat-card mt-20 text-center">
-                                <h3>Personnalisation</h3>
-                                <p class="mb-20" style="font-size: 0.8rem; color: #888;">Adaptez le formulaire de notation à vos goûts (Sliders, Checkboxes...).</p>
-                                <button type="button" id="btn-template" class="form-input text-center" style="background: #333; color: white; border: 1px solid #444;">⚙️ Configurer la Notation</button>
-                            </div>
-
-                            <div class="stat-card mt-20 text-center">
-                                <h3>Options</h3>
-                                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:15px; background:rgba(255,255,255,0.05); padding:10px; border-radius:8px;">
-                                    <div style="text-align:left;">
-                                        <strong style="color:var(--accent-gold);">Mode Découverte</strong>
-                                        <p style="font-size:0.7rem; color:#888; margin-top:2px;">Cacher les bières non-trouvées</p>
-                                    </div>
-                                    <label class="switch">
-                                        <input type="checkbox" id="toggle-discovery" ${isDiscovery ? 'checked' : ''}>
-                                            <span class="slider round"></span>
-                                    </label>
-                                </div>
-
-                                <div style="margin-top:15px; padding-top:15px; border-top:1px solid #333;">
-                                    <button id="btn-check-update" class="form-input text-center" style="width:100%;">🔄 Vérifier les mises à jour</button>
-                                </div>
-                            </div>
-
-                            <div class="stat-card mt-20 text-center">
-                                <h3>Gestion des données</h3>
-                                <p class="mb-20" style="font-size: 0.8rem; color: #888;">Exportez vos données pour les sauvegarder ou les transférer.</p>
-                                <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                                    <button type="button" id="btn-export-full" class="form-input text-center mb-10" style="flex:1;">📥 Tout Exporter</button>
-                                    <button type="button" id="btn-export-light" class="form-input text-center mb-10" style="flex:1; font-size:0.8rem;">📥 Sans Custom</button>
-                                </div>
-                                <button type="button" id="btn-import" class="form-input text-center mt-20">📤 Importer des données</button>
-
-                                <div style="margin-top:20px; border-top:1px solid #333; padding-top:10px;">
-                                    <button type="button" id="btn-backup-text" class="form-input text-center" style="font-size:0.8rem; background:none; border:none; color:var(--accent-gold); text-decoration:underline;">
-                                        Copier ma sauvegarde (Texte)
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="stat-card mt-20 text-center" style="margin-bottom: 40px;">
-                                <h3 style="color:var(--text-secondary); font-size:1rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:15px;">Crédits</h3>
-
-                                <div style="margin-bottom:15px;">
-                                    <p style="color:var(--accent-gold); font-size:0.8rem; margin-bottom:5px;">Co-Fondateurs</p>
-                                    <p style="font-size:0.9rem;">Dorian Storms & Noah Bruijninckx</p>
-                                </div>
-
-                                <div style="margin-bottom:15px;">
-                                    <p style="color:var(--accent-gold); font-size:0.8rem; margin-bottom:5px;">Principaux Actionnaires</p>
-                                    <p style="font-size:0.9rem;">Tristan Storms & Maxance Veulemans</p>
-                                </div>
-
-                                <div>
-                                    <p style="color:var(--accent-gold); font-size:0.8rem; margin-bottom:5px;">Design & Développement</p>
-                                    <p style="font-size:0.9rem;">Noah Bruijninckx</p>
-                                </div>
-
-                                <div style="margin-top:20px; font-size:0.7rem; color:#444;">
-                                    Beerdex v2.0 &copy; 2026
-                                </div>
-                            </div>
+                            />
+                        </svg>
+                        <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-size:1.8rem; font-weight:bold; color:var(--accent-gold);">
+                            ${percentage}%
                         </div>
-                        `;
+                    </div>
+                    <h2 class="mt-20">Statistiques</h2>
+                    <p style="color: var(--text-secondary); margin-top: 10px;">
+                        Vous avez goûté <strong style="color: #fff;">${drunkCount}</strong> bières uniques sur <strong style="color: #fff;">${totalBeers}</strong>.
+                    </p>
+                     <p style="color: var(--text-secondary); margin-top: 5px; font-size: 0.9rem;">
+                        Total consommé : <strong style="color: var(--accent-gold);">${totalDrunkCount}</strong> verres 🍺
+                    </p>
+
+                    ${renderAdvancedStats(allBeers, userData)}
+
+
+
+                    <div class="stat-card mt-20 text-center">
+                        <div id="beer-map-container" style="min-height:200px;">
+                            <span class="spinner"></span> Chargement de la carte...
+                        </div>
+                    </div>
+
+                    <div class="stat-card mt-20 text-center">
+                        <h3>Succès 🏆</h3>
+                        <div class="mt-20">
+                            ${renderAchievementsList()}
+                        </div>
+                    </div>
+
+                    <div class="stat-card mt-20 text-center">
+                        <h3 style="margin-bottom:10px;">Beer Match ⚔️</h3>
+                        <p style="font-size:0.8rem; color:#888; margin-bottom:15px;">Compare tes goûts avec un ami !</p>
+                        <button type="button" id="btn-match" class="form-input text-center" style="background:#222; border:1px solid var(--accent-gold); color:var(--accent-gold); cursor:pointer;">
+                            ⚔️ Lancer un Duel
+                        </button>
+                    </div>
+
+                    <div class="stat-card mt-20 text-center">
+                        <h3>Personnalisation</h3>
+                        <p class="mb-20" style="font-size: 0.8rem; color: #888;">Adaptez le formulaire de notation à vos goûts (Sliders, Checkboxes...).</p>
+                        <button type="button" id="btn-template" class="form-input text-center" style="background: #333; color: white; border: 1px solid #444;">⚙️ Configurer la Notation</button>
+                    </div>
+
+                    <div class="stat-card mt-20 text-center">
+                        <h3>Options</h3>
+                         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:15px; background:rgba(255,255,255,0.05); padding:10px; border-radius:8px;">
+                            <div style="text-align:left;">
+                                <strong style="color:var(--accent-gold);">Mode Découverte</strong>
+                                <p style="font-size:0.7rem; color:#888; margin-top:2px;">Cacher les bières non-trouvées</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="toggle-discovery" ${isDiscovery ? 'checked' : ''}>
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        
+                         <div style="margin-top:15px; padding-top:15px; border-top:1px solid #333;">
+                            <button id="btn-check-update" class="form-input text-center" style="width:100%;">🔄 Vérifier les mises à jour</button>
+                        </div>
+                    </div>
+
+                    <div class="stat-card mt-20 text-center">
+                        <h3>Gestion des données</h3>
+                        <p class="mb-20" style="font-size: 0.8rem; color: #888;">Exportez vos données pour les sauvegarder ou les transférer.</p>
+                        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                            <button type="button" id="btn-export-full" class="form-input text-center mb-10" style="flex:1;">📥 Tout Exporter</button>
+                            <button type="button" id="btn-export-light" class="form-input text-center mb-10" style="flex:1; font-size:0.8rem;">📥 Sans Custom</button>
+                        </div>
+                        <button type="button" id="btn-import" class="form-input text-center mt-20">📤 Importer des données</button>
+                        
+                        <div style="margin-top:20px; border-top:1px solid #333; padding-top:10px;">
+                            <button type="button" id="btn-backup-text" class="form-input text-center" style="font-size:0.8rem; background:none; border:none; color:var(--accent-gold); text-decoration:underline;">
+                                Copier ma sauvegarde (Texte)
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card mt-20 text-center" style="margin-bottom: 40px;">
+                        <h3 style="color:var(--text-secondary); font-size:1rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:15px;">Crédits</h3>
+                        
+                        <div style="margin-bottom:15px;">
+                            <p style="color:var(--accent-gold); font-size:0.8rem; margin-bottom:5px;">Co-Fondateurs</p>
+                            <p style="font-size:0.9rem;">Dorian Storms & Noah Bruijninckx</p>
+                        </div>
+                        
+                        <div style="margin-bottom:15px;">
+                            <p style="color:var(--accent-gold); font-size:0.8rem; margin-bottom:5px;">Principaux Actionnaires</p>
+                            <p style="font-size:0.9rem;">Tristan Storms & Maxance Veulemans</p>
+                        </div>
+                        
+                        <div>
+                            <p style="color:var(--accent-gold); font-size:0.8rem; margin-bottom:5px;">Design & Développement</p>
+                            <p style="font-size:0.9rem;">Noah Bruijninckx</p>
+                        </div>
+                        
+                        <div style="margin-top:20px; font-size:0.7rem; color:#444;">
+                            Beerdex v2.0 &copy; 2026
+                        </div>
+                    </div>
+                </div>
+                `;
 
     // Handlers
     container.querySelector('#btn-template').onclick = () => renderTemplateEditor();
@@ -1066,150 +1042,71 @@ export function renderStats(allBeers, userData, container, isDiscovery = false, 
             };
             reader.readAsText(file);
         };
-    }
+        input.click();
+    };
 }
 
-// --- Template Editor ---
-export function renderTemplateEditor(template, refreshList) {
+function renderTemplateEditor() {
     const wrapper = document.createElement('div');
     wrapper.className = 'modal-content';
+    let template = Storage.getRatingTemplate();
 
-    // Helper to render the list of fields
-    const renderFields = () => {
-        const container = wrapper.querySelector('#template-fields-list');
-        container.innerHTML = '';
+    const refreshList = () => {
+        const listHtml = template.map((field, index) => `
+                <div style="background:rgba(0,0,0,0.3); padding:10px; margin-bottom:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <strong>${field.label}</strong> <span style="font-size:0.8rem; color:#888;">(${field.type})</span>
+                    </div>
+                    ${field.id === 'score' || field.id === 'comment' ? '' : `<button type="button" data-idx="${index}" class="icon-btn delete-field" style="color:red;">🗑️</button>`}
+                </div>
+                `).join('');
 
-        template.forEach((field, index) => {
-            const item = document.createElement('div');
-            item.className = 'template-item';
-            item.style.display = 'flex';
-            item.style.alignItems = 'center';
-            item.style.gap = '10px';
-            item.style.background = '#222';
-            item.style.padding = '10px';
-            item.style.marginBottom = '5px';
-            item.style.borderRadius = '5px';
+        wrapper.querySelector('#field-list').innerHTML = listHtml;
 
-            // Type Icon
-            let icon = '📝';
-            if (field.type === 'range') icon = '🎚️';
-            if (field.type === 'number') icon = '🔢';
-            if (field.type === 'color') icon = '🎨';
-            if (field.type === 'date') icon = '📅';
-
-            item.innerHTML = `
-                        <div style="display:flex; flex-direction:column; gap:2px;">
-                            <button class="btn-move-up" data-index="${index}" style="background:none; border:none; color:#888; font-size:0.8rem; padding:0; cursor:pointer;" ${index === 0 ? 'disabled style="opacity:0.3"' : ''}>▲</button>
-                            <button class="btn-move-down" data-index="${index}" style="background:none; border:none; color:#888; font-size:0.8rem; padding:0; cursor:pointer;" ${index === template.length - 1 ? 'disabled style="opacity:0.3"' : ''}>▼</button>
-                        </div>
-                        <div style="flex:1;">
-                            <div style="font-weight:bold; color:#fff;">${icon} ${field.label}</div>
-                            <div style="font-size:0.75rem; color:#666;">ID: ${field.id} | Type: ${field.type}</div>
-                        </div>
-                        <button class="btn-edit-field" data-index="${index}" style="background:none; border:none; font-size:1.2rem; cursor:pointer;" title="Modifier">✏️</button>
-                        <button class="btn-del-field" data-index="${index}" style="background:none; border:none; color:var(--danger); font-size:1.2rem; cursor:pointer;" title="Supprimer">🗑️</button>
-                        `;
-            container.appendChild(item);
+        wrapper.querySelectorAll('.delete-field').forEach(btn => {
+            btn.onclick = (e) => {
+                template.splice(e.target.dataset.idx, 1);
+                refreshList();
+            };
         });
-
-        // Re-attach handlers
-        wrapper.querySelectorAll('.btn-move-up').forEach(btn => btn.onclick = (e) => moveField(parseInt(e.currentTarget.dataset.index), -1));
-        wrapper.querySelectorAll('.btn-move-down').forEach(btn => btn.onclick = (e) => moveField(parseInt(e.currentTarget.dataset.index), 1));
-        wrapper.querySelectorAll('.btn-del-field').forEach(btn => btn.onclick = (e) => deleteField(parseInt(e.currentTarget.dataset.index)));
-        wrapper.querySelectorAll('.btn-edit-field').forEach(btn => btn.onclick = (e) => editField(parseInt(e.currentTarget.dataset.index)));
-    };
-
-    const moveField = (index, direction) => {
-        if (index + direction < 0 || index + direction >= template.length) return;
-        // Swap
-        const temp = template[index];
-        template[index] = template[index + direction];
-        template[index + direction] = temp;
-        renderFields();
-    };
-
-    const deleteField = (index) => {
-        if (confirm(`Supprimer le champ "${template[index].label}" ?`)) {
-            template.splice(index, 1);
-            renderFields();
-        }
-    };
-
-    const editField = (index) => {
-        const field = template[index];
-        // Simple prompt based edit for now (could be a sub-modal)
-        const newLabel = prompt("Modifier le Label :", field.label);
-        if (newLabel !== null && newLabel.trim() !== "") {
-            field.label = newLabel.trim();
-            // We keep the ID same to avoid data loss on existing ratings!
-            renderFields();
-        }
     };
 
     wrapper.innerHTML = `
-                        <h2>⚙️ Éditeur de Critères</h2>
-                        <p style="font-size:0.8rem; color:#aaa; margin-bottom:15px;">
-                            Personnalisez les critères de notation.
-                            <br>⚠️ Modifier l'ordre n'affecte pas les notes existantes.
-                        </p>
+                <h2>Configuration Notation</h2>
+                <div id="field-list" style="margin: 20px 0;"></div>
 
-                        <div id="template-fields-list" style="max-height:300px; overflow-y:auto; margin-bottom:15px; border:1px solid #333; padding:5px; border-radius:5px;"></div>
+                <div style="border-top:1px solid #333; padding-top:20px;">
+                    <h3>Ajouter un champ</h3>
+                    <div class="form-group">
+                        <input type="text" id="new-label" class="form-input" placeholder="Nom (ex: Amertume)">
+                    </div>
+                    <div class="form-group">
+                        <select id="new-type" class="form-select">
+                            <option value="range">Curseur (Slider 0-10)</option>
+                            <option value="checkbox">Case à cocher (Oui/Non)</option>
+                            <option value="textarea">Texte long</option>
+                        </select>
+                    </div>
+                    <button id="add-field" class="btn-primary" style="background:var(--bg-card); border:1px solid var(--accent-gold); color:var(--accent-gold);">+ Ajouter le champ</button>
+                </div>
 
-                        <div style="background:#222; padding:10px; border-radius:8px; margin-bottom:15px;">
-                            <h4 style="margin:0 0 10px 0; font-size:0.9rem; color:var(--accent-gold);">Ajouter un critère</h4>
-                            <div style="display:flex; gap:5px; margin-bottom:5px;">
-                                <input type="text" id="new-label" placeholder="Nom (ex: Amertume)" class="form-input" style="flex:2;">
-                                    <select id="new-type" class="form-input" style="flex:1;">
-                                        <option value="range">Slider (0-10)</option>
-                                        <option value="text">Texte</option>
-                                        <option value="number">Nombre</option>
-                                        <option value="boolean">Oui/Non</option>
-                                        <option value="date">Date</option>
-                                        <option value="color">Couleur</option>
-                                    </select>
-                            </div>
-                            <button id="add-field" class="btn-primary" style="width:100%; font-size:0.9rem;">+ Ajouter</button>
-                        </div>
+                <button id="save-template" class="btn-primary" style="margin-top:20px;">Enregistrer la configuration</button>
+                <button id="reset-template" class="form-input" style="margin-top:10px; background:none; border:none; color:red;">Réinitialiser par défaut</button>
+                `;
 
-                        <div style="display:flex; justify-content:space-between; gap:10px;">
-                            <button id="reset-template" class="btn-primary" style="background:#444; font-size:0.9rem;">Réinitialiser par défaut</button>
-                            <button id="save-template" class="btn-primary" style="background:var(--accent-gold); color:black; font-size:0.9rem;">💾 Sauvegarder</button>
-                        </div>
+    setTimeout(refreshList, 0);
 
-                        <button class="close-btn" style="position:absolute; top:10px; right:15px; background:none; border:none; color:#fff; font-size:1.5rem;">&times;</button>
-                        `;
-
-    wrapper.querySelector('.close-btn').onclick = closeModal;
-
-    // Render Initial List
-    renderFields();
-
-    // Add Field Logic
+    // Add Field
     wrapper.querySelector('#add-field').onclick = () => {
-        const labelInput = wrapper.querySelector('#new-label');
-        const label = labelInput.value;
+        const label = wrapper.querySelector('#new-label').value;
         const type = wrapper.querySelector('#new-type').value;
-
         if (label) {
-            // Generate a simpler ID ?
-            // We must ensure uniqueness
-            const idRequest = label.toLowerCase().replace(/[^a-z0-9]/g, '_');
-            let id = idRequest;
-            let counter = 1;
-            while (template.some(f => f.id === id)) {
-                id = idRequest + '_' + counter++;
-            }
-
+            const id = label.toLowerCase().replace(/[^a-z0-9]/g, '_');
             let field = { id, label, type };
             if (type === 'range') { field.min = 0; field.max = 10; field.step = 1; }
-
             template.push(field);
-            renderFields();
-            labelInput.value = '';
-
-            // Scroll to bottom
-            const listContainer = wrapper.querySelector('#template-fields-list');
-            setTimeout(() => listContainer.scrollTop = listContainer.scrollHeight, 50);
+            refreshList();
+            wrapper.querySelector('#new-label').value = '';
         }
     };
 
@@ -1218,18 +1115,14 @@ export function renderTemplateEditor(template, refreshList) {
         Storage.saveRatingTemplate(template);
         closeModal();
         showToast("Configuration sauvegardée !");
-        if (refreshList) refreshList(); // Refresh the parent modal (Rating Modal) if function provided
     };
 
     // Reset
     wrapper.querySelector('#reset-template').onclick = () => {
-        if (confirm("Revenir aux champs par défaut ? Cela écrasera votre configuration actuelle.")) {
+        if (confirm("Revenir aux champs par défaut ?")) {
             Storage.resetRatingTemplate();
             closeModal();
             showToast("Réinitialisé !");
-            // Note: user might need to reopen to see default structure if they were editing
-            // But usually this calls callback or reloads
-            if (refreshList) refreshList();
         }
     };
 
@@ -1351,34 +1244,41 @@ function renderAdvancedStats(allBeers, userData) {
     }
 
     return `
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:20px;">
-                            <div class="stat-card">
-                                <div class="stat-value">${totalLiters} L</div>
-                                <div class="stat-label">Volume Total</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-value">${alcoholLiters} L</div>
-                                <div class="stat-label">Alcool Pur</div>
-                            </div>
-                        </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:20px;">
+                    <div class="stat-card">
+                        <div class="stat-value">${totalLiters} L</div>
+                        <div class="stat-label">Volume Total</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${alcoholLiters} L</div>
+                        <div class="stat-label">Alcool Pur</div>
+                    </div>
+                </div>
 
-                        <div class="mt-20">
-                            <h4 class="ach-category-title text-center">Équivalences Volume</h4>
-                            <div class="ach-grid" style="grid-template-columns:1fr 1fr;">
-                                ${compHTML}
-                            </div>
-                        </div>
+                <div class="mt-20">
+                    <h4 class="ach-category-title text-center">Équivalences Volume</h4>
+                    <div class="ach-grid" style="grid-template-columns:1fr 1fr;">
+                        ${compHTML}
+                    </div>
+                </div>
 
-                        <div class="stat-card mt-20">
-                            <h4 class="text-center" style="color:var(--danger); font-size:0.9rem; margin-bottom:10px;">Équivalences Alcool</h4>
-                            <p class="text-center" style="font-size:0.75rem; color:#888; margin-bottom:10px;">C'est comme si vous aviez bu...</p>
-                            ${alcHTML}
-                        </div>
-                        `;
+                <div class="stat-card mt-20">
+                    <h4 class="text-center" style="color:var(--danger); font-size:0.9rem; margin-bottom:10px;">Équivalences Alcool</h4>
+                    <p class="text-center" style="font-size:0.75rem; color:#888; margin-bottom:10px;">C'est comme si vous aviez bu...</p>
+                    ${alcHTML}
+                </div>
+                `;
 }
 
 // --- Achievements Helper ---
-export function renderAchievementsList() {
+// We import dynamically or rely on global scope if needed, 
+// but since we are in a module we can just import at top or here if supported.
+// For simplicity in this file-based module structure, let's assume we import at top.
+// Wait, we need to add the import statement at the top of the file too.
+
+import * as Achievements from './achievements.js';
+
+function renderAchievementsList() {
     const all = Achievements.getAllAchievements();
     const unlockedIds = Achievements.getUnlockedAchievements();
 
@@ -1417,10 +1317,10 @@ export function renderAchievementsList() {
             const safeIcon = ach.icon.replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
             return `
-                            <div class="ach-item" style="opacity:${opacity}; filter:${filter}; position:relative; cursor:pointer;"
-                                onclick="UI.showAchievementDetails('${safeTitle}', '${safeDesc}', '${safeIcon}', ${isUnlocked})">
-                                <div class="ach-icon">${ach.icon}</div>
-                            </div>`;
+                    <div class="ach-item" style="opacity:${opacity}; filter:${filter}; position:relative; cursor:pointer;" 
+                         onclick="UI.showAchievementDetails('${safeTitle}', '${safeDesc}', '${safeIcon}', ${isUnlocked})">
+                        <div class="ach-icon">${ach.icon}</div>
+                    </div>`;
         }).join('');
 
         html += `</div>`;
@@ -1437,23 +1337,23 @@ function renderTextBackupModal(jsonFull, jsonLight) {
     let currentJson = jsonFull;
 
     wrapper.innerHTML = `
-                        <h2 style="margin-bottom:20px;">Sauvegarde Texte</h2>
-                        <p style="color:#aaa; font-size:0.9rem; margin-bottom:15px;">
-                            Si l'export fichier ne fonctionne pas (APK), copiez ce texte.
-                        </p>
+        <h2 style="margin-bottom:20px;">Sauvegarde Texte</h2>
+        <p style="color:#aaa; font-size:0.9rem; margin-bottom:15px;">
+            Si l'export fichier ne fonctionne pas (APK), copiez ce texte.
+        </p>
+        
+        <div style="display:flex; gap:10px; margin-bottom:10px;">
+            <button id="tab-full" class="btn-primary" style="padding:8px; font-size:0.8rem; flex:1; background:var(--accent-gold); color:black;">Complet</button>
+            <button id="tab-light" class="btn-primary" style="padding:8px; font-size:0.8rem; flex:1; background:var(--bg-card); border:1px solid #444; color:white;">Sans Custom</button>
+        </div>
 
-                        <div style="display:flex; gap:10px; margin-bottom:10px;">
-                            <button id="tab-full" class="btn-primary" style="padding:8px; font-size:0.8rem; flex:1; background:var(--accent-gold); color:black;">Complet</button>
-                            <button id="tab-light" class="btn-primary" style="padding:8px; font-size:0.8rem; flex:1; background:var(--bg-card); border:1px solid #444; color:white;">Sans Custom</button>
-                        </div>
-
-                        <textarea id="backup-text-area" class="form-textarea" style="height:200px; font-family:monospace; font-size:0.75rem;" readonly>${jsonFull}</textarea>
-
-                        <div style="display:flex; gap:10px; margin-top:15px;">
-                            <button id="btn-copy-backup" class="btn-primary" style="margin:0; background:var(--accent-gold);">📋 Copier</button>
-                            <button id="btn-share-backup-text" class="btn-primary" style="margin:0; background:var(--bg-card); border:1px solid #444;">📤 Partager</button>
-                        </div>
-                        `;
+        <textarea id="backup-text-area" class="form-textarea" style="height:200px; font-family:monospace; font-size:0.75rem;" readonly>${jsonFull}</textarea>
+        
+        <div style="display:flex; gap:10px; margin-top:15px;">
+            <button id="btn-copy-backup" class="btn-primary" style="margin:0; background:var(--accent-gold);">📋 Copier</button>
+            <button id="btn-share-backup-text" class="btn-primary" style="margin:0; background:var(--bg-card); border:1px solid #444;">📤 Partager</button>
+        </div>
+    `;
 
     const textarea = wrapper.querySelector('#backup-text-area');
     const tabFull = wrapper.querySelector('#tab-full');
@@ -1525,24 +1425,24 @@ export function checkAndShowWelcome() {
     const wrapper = document.createElement('div');
     wrapper.className = 'modal-content text-center';
     wrapper.innerHTML = `
-                        <div style="margin-bottom:20px; font-size:3rem;">🍻</div>
-                        <h2 style="color:var(--accent-gold); margin-bottom:15px; font-family:'Russo One', sans-serif;">Bienvenue sur Beerdex !</h2>
+        <div style="margin-bottom:20px; font-size:3rem;">🍻</div>
+        <h2 style="color:var(--accent-gold); margin-bottom:15px; font-family:'Russo One', sans-serif;">Bienvenue sur Beerdex !</h2>
+        
+        <p style="font-size:1rem; line-height:1.6; margin-bottom:20px; color:#ddd;">
+            Profitez de cette application (offerte par la maison 🎁) pour découvrir, noter et déguster les mille et une bières existantes.
+        </p>
+        
+        <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:12px; margin-bottom:25px; border:1px solid #444;">
+            <p style="font-size:0.9rem; color:#bbb; margin:0;">
+                ⚠️ <strong>Note de Sagesse :</strong><br>
+                Nous vous invitons à la <em>dégustation</em>, pas à la consommation à outrance.<br>
+                L'abus d'alcool est dangereux pour la santé.<br>
+                <strong>Dégustez avec sagesse !</strong> 🧡
+            </p>
+        </div>
 
-                        <p style="font-size:1rem; line-height:1.6; margin-bottom:20px; color:#ddd;">
-                            Profitez de cette application (offerte par la maison 🎁) pour découvrir, noter et déguster les mille et une bières existantes.
-                        </p>
-
-                        <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:12px; margin-bottom:25px; border:1px solid #444;">
-                            <p style="font-size:0.9rem; color:#bbb; margin:0;">
-                                ⚠️ <strong>Note de Sagesse :</strong><br>
-                                    Nous vous invitons à la <em>dégustation</em>, pas à la consommation à outrance.<br>
-                                        L'abus d'alcool est dangereux pour la santé.<br>
-                                            <strong>Dégustez avec sagesse !</strong> 🧡
-                                        </p>
-                                    </div>
-
-                                    <button id="btn-welcome-ok" class="btn-primary" style="width:100%; font-size:1.1rem; padding:12px;">Glou glou ! 🍺</button>
-                                    `;
+        <button id="btn-welcome-ok" class="btn-primary" style="width:100%; font-size:1.1rem; padding:12px;">Glou glou ! 🍺</button>
+    `;
 
 
     wrapper.querySelector('#btn-welcome-ok').onclick = () => {
@@ -1559,13 +1459,13 @@ export function showAchievementDetails(title, desc, icon, isUnlocked) {
     wrapper.className = 'modal-content text-center';
 
     wrapper.innerHTML = `
-                                    <div style="font-size:4rem; margin-bottom:20px; filter:${isUnlocked ? 'none' : 'grayscale(100%)'}; opacity:${isUnlocked ? '1' : '0.5'};">${icon}</div>
-                                    <h2 style="color:var(--accent-gold); margin-bottom:10px; font-family:'Russo One';">${title}</h2>
-                                    <p style="font-size:1.1rem; color:#ddd; margin-bottom:30px; line-height:1.5;">
-                                        ${desc}
-                                    </p>
-                                    <button class="btn-primary" onclick="UI.closeModal()">Fermer</button>
-                                    `;
+        <div style="font-size:4rem; margin-bottom:20px; filter:${isUnlocked ? 'none' : 'grayscale(100%)'}; opacity:${isUnlocked ? '1' : '0.5'};">${icon}</div>
+        <h2 style="color:var(--accent-gold); margin-bottom:10px; font-family:'Russo One';">${title}</h2>
+        <p style="font-size:1.1rem; color:#ddd; margin-bottom:30px; line-height:1.5;">
+            ${desc}
+        </p>
+        <button class="btn-primary" onclick="UI.closeModal()">Fermer</button>
+    `;
 
     openModal(wrapper);
 }
@@ -1576,44 +1476,44 @@ export function renderMatchModal(allBeers) {
     const wrapper = document.createElement('div');
     // Fix: Max-height logic for small screens, and better width
     wrapper.innerHTML = `
-                                    <div class="modal-content text-center" style="width: min(95%, 450px); max-height: 85vh; padding: 20px;">
-                                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                                            <h2 style="margin:0; font-family:'Russo One'; color:var(--accent-gold); font-size:1.5rem;">⚔️ Beer Match</h2>
-                                            <button type="button" class="close-btn" style="background:none; border:none; color:#fff; font-size:1.5rem; cursor:pointer;">&times;</button>
-                                        </div>
+        <div class="modal-content text-center" style="width: min(95%, 450px); max-height: 85vh; padding: 20px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <h2 style="margin:0; font-family:'Russo One'; color:var(--accent-gold); font-size:1.5rem;">⚔️ Beer Match</h2>
+                <button type="button" class="close-btn" style="background:none; border:none; color:#fff; font-size:1.5rem; cursor:pointer;">&times;</button>
+            </div>
 
-                                        <div style="display:flex; border-bottom:1px solid #333; margin-bottom:20px;">
-                                            <button id="tab-qr" style="flex:1; background:none; border:none; color:var(--accent-gold); padding:10px; border-bottom:2px solid var(--accent-gold); cursor:pointer;">Mon Code</button>
-                                            <button id="tab-scan" style="flex:1; background:none; border:none; color:#666; padding:10px; cursor:pointer;">Scanner</button>
-                                        </div>
+            <div style="display:flex; border-bottom:1px solid #333; margin-bottom:20px;">
+                <button id="tab-qr" style="flex:1; background:none; border:none; color:var(--accent-gold); padding:10px; border-bottom:2px solid var(--accent-gold); cursor:pointer;">Mon Code</button>
+                <button id="tab-scan" style="flex:1; background:none; border:none; color:#666; padding:10px; cursor:pointer;">Scanner</button>
+            </div>
 
-                                        <div id="view-qr" style="display:block;">
-                                            <p style="color:#aaa; font-size:0.9rem; margin-bottom:15px;">Montrez ce code à un ami.</p>
-                                            <div id="qrcode-container" style="background:#FFF; padding:15px; border-radius:10px; display:inline-block; margin-bottom:15px;"></div>
+            <div id="view-qr" style="display:block;">
+                <p style="color:#aaa; font-size:0.9rem; margin-bottom:15px;">Montrez ce code à un ami.</p>
+                <div id="qrcode-container" style="background:#FFF; padding:15px; border-radius:10px; display:inline-block; margin-bottom:15px;"></div>
+                
+                <!-- Text Fallback -->
+                <div style="text-align:left;">
+                    <p style="font-size:0.8rem; color:#888; margin-bottom:5px;">Code Texte (Copier si le scan échoue) :</p>
+                    <textarea id="my-qr-text" readonly style="width:100%; height:60px; background:#222; border:1px solid #444; color:#aaa; font-size:0.7rem; padding:5px; border-radius:4px; resize:none;"></textarea>
+                    <button id="btn-copy-code" class="form-input" style="padding:5px 10px; font-size:0.8rem; margin-top:5px; width:100%;">📋 Copier le code</button>
+                </div>
+            </div>
 
-                                            <!-- Text Fallback -->
-                                            <div style="text-align:left;">
-                                                <p style="font-size:0.8rem; color:#888; margin-bottom:5px;">Code Texte (Copier si le scan échoue) :</p>
-                                                <textarea id="my-qr-text" readonly style="width:100%; height:60px; background:#222; border:1px solid #444; color:#aaa; font-size:0.7rem; padding:5px; border-radius:4px; resize:none;"></textarea>
-                                                <button id="btn-copy-code" class="form-input" style="padding:5px 10px; font-size:0.8rem; margin-top:5px; width:100%;">📋 Copier le code</button>
-                                            </div>
-                                        </div>
+            <div id="view-scan" style="display:none;">
+                <p style="color:#aaa; font-size:0.9rem; margin-bottom:15px;">Scannez le code.</p>
+                <div id="reader" style="width:100%; height:250px; background:#000; border-radius:8px; overflow:hidden; position:relative;"></div>
+                <div id="scan-feedback" style="margin-top:10px; color:var(--accent-gold); font-size:0.8rem; height:20px;"></div>
+                
+                <details style="margin-top:15px; text-align:left;">
+                    <summary style="color:#555; cursor:pointer; font-size:0.8rem;">Problème de caméra ?</summary>
+                    <textarea id="manual-paste" placeholder="Collez le code texte ici (BEERDEX:...)" style="width:100%; height:60px; background:#222; border:1px solid #444; color:#FFF; margin-top:5px; font-size:0.7rem; padding:5px;"></textarea>
+                    <button id="btn-manual-compare" class="form-input" style="padding:5px 10px; font-size:0.8rem; margin-top:5px;">Comparer</button>
+                </details>
+            </div>
 
-                                        <div id="view-scan" style="display:none;">
-                                            <p style="color:#aaa; font-size:0.9rem; margin-bottom:15px;">Scannez le code.</p>
-                                            <div id="reader" style="width:100%; height:250px; background:#000; border-radius:8px; overflow:hidden; position:relative;"></div>
-                                            <div id="scan-feedback" style="margin-top:10px; color:var(--accent-gold); font-size:0.8rem; height:20px;"></div>
-
-                                            <details style="margin-top:15px; text-align:left;">
-                                                <summary style="color:#555; cursor:pointer; font-size:0.8rem;">Problème de caméra ?</summary>
-                                                <textarea id="manual-paste" placeholder="Collez le code texte ici (BEERDEX:...)" style="width:100%; height:60px; background:#222; border:1px solid #444; color:#FFF; margin-top:5px; font-size:0.7rem; padding:5px;"></textarea>
-                                                <button id="btn-manual-compare" class="form-input" style="padding:5px 10px; font-size:0.8rem; margin-top:5px;">Comparer</button>
-                                            </details>
-                                        </div>
-
-                                        <div id="view-result" style="display:none;"></div>
-                                    </div>
-                                    `;
+            <div id="view-result" style="display:none;"></div>
+        </div>
+    `;
 
     const tabQr = wrapper.querySelector('#tab-qr');
     const tabScan = wrapper.querySelector('#tab-scan');
@@ -1783,26 +1683,26 @@ export function renderMatchModal(allBeers) {
         tabScan.style.display = 'none';
 
         viewResult.innerHTML = `
-                                    <div style="text-align:center; margin-bottom:20px;">
-                                        <h3 style="color:var(--accent-gold); margin:0;">Match avec ${results.userName}</h3>
-                                        <div style="font-size:3rem; font-weight:bold; color:#FFF; margin:10px 0;">
-                                            ${results.score}%
-                                        </div>
-                                        <div style="color:#aaa; font-size:0.9rem;">de compatibilité</div>
-                                    </div>
+            <div style="text-align:center; margin-bottom:20px;">
+                <h3 style="color:var(--accent-gold); margin:0;">Match avec ${results.userName}</h3>
+                <div style="font-size:3rem; font-weight:bold; color:#FFF; margin:10px 0;">
+                    ${results.score}%
+                </div>
+                <div style="color:#aaa; font-size:0.9rem;">de compatibilité</div>
+            </div>
 
-                                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px;">
-                                        <div style="background:#222; padding:10px; border-radius:8px;">
-                                            <div style="font-size:1.5rem; font-weight:bold; color:#FFF;">${results.commonCount}</div>
-                                            <div style="font-size:0.8rem; color:#888; white-space:nowrap;">En commun</div>
-                                        </div>
-                                        <div style="background:#222; padding:10px; border-radius:8px;">
-                                            <div style="font-size:1.5rem; font-weight:bold; color:var(--accent-gold);">${results.friendTotal}</div>
-                                            <div style="font-size:0.8rem; color:#888; white-space:nowrap;">Total Ami</div>
-                                        </div>
-                                    </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px;">
+                <div style="background:#222; padding:10px; border-radius:8px;">
+                    <div style="font-size:1.5rem; font-weight:bold; color:#FFF;">${results.commonCount}</div>
+                    <div style="font-size:0.8rem; color:#888; white-space:nowrap;">En commun</div>
+                </div>
+                 <div style="background:#222; padding:10px; border-radius:8px;">
+                    <div style="font-size:1.5rem; font-weight:bold; color:var(--accent-gold);">${results.friendTotal}</div>
+                    <div style="font-size:0.8rem; color:#888; white-space:nowrap;">Total Ami</div>
+                </div>
+            </div>
 
-                                    ${results.commonCount > 0 ? `
+            ${results.commonCount > 0 ? `
             <div style="text-align:left; margin-bottom:20px;">
                 <strong style="color:#aaa; display:block; margin-bottom:5px;">Bières en commun (Top 5)</strong>
                 <div style="background:#111; padding:10px; border-radius:8px; font-size:0.9rem;">
@@ -1812,7 +1712,7 @@ export function renderMatchModal(allBeers) {
             </div>
             ` : ''}
 
-                                    ${results.discovery.length > 0 ? `
+            ${results.discovery.length > 0 ? `
             <div style="text-align:left;">
                 <strong style="color:var(--accent-gold); display:block; margin-bottom:5px;">À découvrir (Top 3)</strong>
                 <div style="background:#111; padding:10px; border-radius:8px; font-size:0.9rem;">
@@ -1820,9 +1720,9 @@ export function renderMatchModal(allBeers) {
                 </div>
             </div>
             ` : ''}
-
-                                    <button id="btn-restart" class="form-input text-center mt-20" style="background:#333; margin-top:20px;">Nouveau Scan</button>
-                                    `;
+            
+            <button id="btn-restart" class="form-input text-center mt-20" style="background:#333; margin-top:20px;">Nouveau Scan</button>
+        `;
 
         wrapper.querySelector('#btn-restart').onclick = () => {
             // Reset UI
