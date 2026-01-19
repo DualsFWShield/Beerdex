@@ -176,13 +176,16 @@ export function checkAchievements(allBeers) {
     };
 
     const userIds = Object.keys(userData);
-    stats.uniqueCount = userIds.length;
+    // Correctly filter unique count for consumed beers only
+    stats.uniqueCount = userIds.filter(id => (userData[id].count || 0) > 0).length;
 
     userIds.forEach(id => {
         const u = userData[id];
+        const isConsumed = (u.count || 0) > 0;
+
         stats.totalCount += (u.count || 0);
 
-        // Rating Stats
+        // Rating Stats (Independent of consumption count, but requires score)
         if (u.score !== undefined && u.score !== '') {
             stats.ratedCount++;
             const s = parseFloat(u.score);
@@ -193,8 +196,11 @@ export function checkAchievements(allBeers) {
             if (s > 18) stats.highRatingCount++;
         }
 
-        // Custom Stats
-        if (id.startsWith('CUSTOM_')) {
+        // Custom Stats - Check if consumed? 
+        // "Homebrewer" says "Créer". But here we scan user data. 
+        // If favorited but not drunk, it shouldn't probably count as "consumed" custom beer?
+        // Let's enforce consumption for consistency in "stats" object.
+        if (isConsumed && id.startsWith('CUSTOM_')) {
             stats.hasCustomBeer = true;
             stats.customCount++;
             const cBeer = allBeers.find(b => b.id === id);
@@ -210,31 +216,33 @@ export function checkAchievements(allBeers) {
             });
         }
 
-        // Beer Data Stats
-        const beer = allBeers.find(b => b.id === id);
-        if (beer) {
-            // Alcohol
-            if (beer.alcohol) {
-                const deg = parseFloat(beer.alcohol.replace(/[^0-9.]/g, ''));
-                if (!isNaN(deg)) {
-                    stats.degrees.push(deg);
-                    if (deg > stats.maxDegree) stats.maxDegree = deg;
-                    if (deg < stats.minDegree) stats.minDegree = deg;
-                    if (deg > 8) stats.strongCount++;
+        // Beer Data Stats - REQUIRE CONSUMPTION
+        if (isConsumed) {
+            const beer = allBeers.find(b => b.id === id);
+            if (beer) {
+                // Alcohol
+                if (beer.alcohol) {
+                    const deg = parseFloat(beer.alcohol.replace(/[^0-9.]/g, ''));
+                    if (!isNaN(deg)) {
+                        stats.degrees.push(deg);
+                        if (deg > stats.maxDegree) stats.maxDegree = deg;
+                        if (deg < stats.minDegree) stats.minDegree = deg;
+                        if (deg > 8) stats.strongCount++;
+                    }
+                } else {
+                    stats.hasGlitch = true;
                 }
-            } else {
-                stats.hasGlitch = true;
-            }
 
-            // Type
-            if (beer.type) stats.drunkTypes.push(beer.type);
+                // Type
+                if (beer.type) stats.drunkTypes.push(beer.type);
 
-            // Name
-            if (beer.title) {
-                const len = beer.title.length;
-                if (len > stats.maxNameLength) stats.maxNameLength = len;
-                if (len < stats.minNameLength) stats.minNameLength = len;
-                stats.firstLetters.add(beer.title.charAt(0).toUpperCase());
+                // Name
+                if (beer.title) {
+                    const len = beer.title.length;
+                    if (len > stats.maxNameLength) stats.maxNameLength = len;
+                    if (len < stats.minNameLength) stats.minNameLength = len;
+                    stats.firstLetters.add(beer.title.charAt(0).toUpperCase());
+                }
             }
         }
     });

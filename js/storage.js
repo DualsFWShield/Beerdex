@@ -39,6 +39,35 @@ export function getAllConsumedBeerIds() {
     return Object.keys(data).filter(id => data[id].count > 0);
 }
 
+// --- Favorites ---
+
+export function isFavorite(id) {
+    const data = getAllUserData();
+    return data[id] && data[id].favorite === true;
+}
+
+export function toggleFavorite(id) {
+    const data = getAllUserData();
+    if (!data[id]) data[id] = { count: 0, history: [] }; // Init if empty
+
+    data[id].favorite = !data[id].favorite;
+    localStorage.setItem(STORAGE_KEY_RATINGS, JSON.stringify(data));
+    return data[id].favorite;
+}
+
+export function sortBeers(beers) {
+    const data = getAllUserData();
+    return beers.sort((a, b) => {
+        // 1. Favorites First
+        const favA = data[a.id] && data[a.id].favorite ? 1 : 0;
+        const favB = data[b.id] && data[b.id].favorite ? 1 : 0;
+        if (favA !== favB) return favB - favA;
+
+        // 2. Alphabetical
+        return a.title.localeCompare(b.title);
+    });
+}
+
 // --- Custom Beers ---
 
 export function getCustomBeers() {

@@ -294,24 +294,28 @@ function applyFilters(beers, filters) {
 
     // Custom
     if (filters.onlyCustom) result = result.filter(b => String(b.id).startsWith('CUSTOM_'));
+    if (filters.onlyFavorites) result = result.filter(b => Storage.isFavorite(b.id));
 
     // Sorting
-    if (filters.sortBy && filters.sortBy !== 'default') {
-        result.sort((a, b) => {
-            let valA, valB;
-            if (filters.sortBy === 'brewery') { valA = a.brewery.toLowerCase(); valB = b.brewery.toLowerCase(); }
-            else if (filters.sortBy === 'alcohol') { valA = getAlc(a); valB = getAlc(b); }
-            else if (filters.sortBy === 'volume') { valA = getVol(a); valB = getVol(b); }
-            else { valA = a.title.toLowerCase(); valB = b.title.toLowerCase(); }
+    result.sort((a, b) => {
+        // ALWAYS Pin Favorites to Top (unless ignored)
+        if (!filters.ignoreFavorites) {
+            const favA = Storage.isFavorite(a.id) ? 1 : 0;
+            const favB = Storage.isFavorite(b.id) ? 1 : 0;
+            if (favA !== favB) return favB - favA;
+        }
 
-            if (valA < valB) return filters.sortOrder === 'desc' ? 1 : -1;
-            if (valA > valB) return filters.sortOrder === 'desc' ? -1 : 1;
-            return 0;
-        });
-    } else {
-        result.sort((a, b) => a.title.localeCompare(b.title));
-        if (filters.sortOrder === 'desc') result.reverse();
-    }
+        // Secondary Sort
+        let valA, valB;
+        if (filters.sortBy === 'brewery') { valA = a.brewery.toLowerCase(); valB = b.brewery.toLowerCase(); }
+        else if (filters.sortBy === 'alcohol') { valA = getAlc(a); valB = getAlc(b); }
+        else if (filters.sortBy === 'volume') { valA = getVol(a); valB = getVol(b); }
+        else { valA = a.title.toLowerCase(); valB = b.title.toLowerCase(); } // Default to Title
+
+        if (valA < valB) return filters.sortOrder === 'desc' ? 1 : -1;
+        if (valA > valB) return filters.sortOrder === 'desc' ? -1 : 1;
+        return 0;
+    });
 
     return result;
 }

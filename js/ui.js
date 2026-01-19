@@ -167,37 +167,51 @@ export function renderBeerList(beers, container, filters = null, showCreatePromp
         }
 
         // --- Sorting ---
-        if (filters.sortBy && filters.sortBy !== 'default') {
-            filteredBeers.sort((a, b) => {
-                let valA, valB;
+        // Create unified sort function
+        const sortFunc = (a, b) => {
+            // 1. Favorites First (unless ignored)
+            if (!filters.ignoreFavorites) {
+                const favA = Storage.isFavorite(a.id) ? 1 : 0;
+                const favB = Storage.isFavorite(b.id) ? 1 : 0;
+                if (favA !== favB) return favB - favA;
+            }
 
-                if (filters.sortBy === 'brewery') {
-                    valA = a.brewery.toLowerCase();
-                    valB = b.brewery.toLowerCase();
-                } else if (filters.sortBy === 'alcohol') {
-                    valA = getAlc(a);
-                    valB = getAlc(b);
-                } else if (filters.sortBy === 'volume') {
-                    valA = getVol(a);
-                    valB = getVol(b);
-                } else { // Default sort by title if sortBy is not recognized but not 'default'
-                    valA = a.title.toLowerCase();
-                    valB = b.title.toLowerCase();
-                }
+            // 2. Secondary Sort
+            let valA, valB;
+            if (filters.sortBy === 'brewery') {
+                valA = a.brewery.toLowerCase();
+                valB = b.brewery.toLowerCase();
+            } else if (filters.sortBy === 'alcohol') {
+                valA = parseFloat((a.alcohol || '0').replace('%', '').replace('°', '')) || 0;
+                valB = parseFloat((b.alcohol || '0').replace('%', '').replace('°', '')) || 0;
+            } else if (filters.sortBy === 'volume') {
+                // Helper for volume (copied from logic elsewhere or simplified)
+                const getV = (bb) => {
+                    const str = (bb.volume || '').toLowerCase();
+                    if (str.includes('l') && !str.includes('ml') && !str.includes('cl')) return parseFloat(str) * 1000;
+                    if (str.includes('cl')) return parseFloat(str) * 10;
+                    return parseFloat(str) || 330;
+                };
+                valA = getV(a);
+                valB = getV(b);
+            } else {
+                valA = a.title.toLowerCase();
+                valB = b.title.toLowerCase();
+            }
 
-                if (valA < valB) return filters.sortOrder === 'desc' ? 1 : -1;
-                if (valA > valB) return filters.sortOrder === 'desc' ? -1 : 1;
-                return 0;
-            });
-        } else {
-            // Default Sort by Title A-Z
-            filteredBeers.sort((a, b) => a.title.localeCompare(b.title));
-            if (filters.sortOrder === 'desc') filteredBeers.reverse();
-        }
+            if (valA < valB) return filters.sortOrder === 'desc' ? 1 : -1;
+            if (valA > valB) return filters.sortOrder === 'desc' ? -1 : 1;
+            return 0;
+        };
+
+        filteredBeers.sort(sortFunc);
 
         // Custom Beer Filter
         if (filters.onlyCustom) {
             filteredBeers = filteredBeers.filter(b => String(b.id).startsWith('CUSTOM_'));
+        }
+        if (filters.onlyFavorites) {
+            filteredBeers = filteredBeers.filter(b => Storage.isFavorite(b.id));
         }
     }
 
@@ -234,7 +248,8 @@ export function renderBeerList(beers, container, filters = null, showCreatePromp
     grid.className = 'beer-grid';
 
     filteredBeers.forEach((beer, index) => {
-        const isDrunk = userData[beer.id] ? true : false;
+        const u = userData[beer.id];
+        const isDrunk = u && u.count > 0;
         const card = document.createElement('div');
         card.className = `beer-card ${isDrunk ? 'drunk' : ''}`;
         card.dataset.id = beer.id;
@@ -259,7 +274,10 @@ export function renderBeerList(beers, container, filters = null, showCreatePromp
             displayImage = fallbackImage;
         }
 
+        const isFavorite = Storage.isFavorite(beer.id);
+
         card.innerHTML = `
+            ${isFavorite ? '<div style="position:absolute; top:5px; left:5px; z-index:2; font-size:1.2rem; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5));">⭐</div>' : ''}
             <svg class="check-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                 <polyline points="20 6 9 17 4 12"></polyline>
             </svg>
@@ -301,7 +319,7 @@ export function renderFilterModal(allBeers, activeFilters, onApply) {
                 <h4 style="margin-bottom:10px;">Trier par</h4>
                 <div style="display:flex; gap:10px;">
                     <select name="sortBy" class="form-select" style="flex:2;">
-                        <option value="default" ${activeFilters.sortBy === 'default' ? 'selected' : ''}>Défaut (Nom)</option>
+                        <option value="default" ${activeFilters.sortBy === 'default' ? 'selected' : ''}>Défaut (Favoris > Nom)</option>
                         <option value="brewery" ${activeFilters.sortBy === 'brewery' ? 'selected' : ''}>Brasserie</option>
                         <option value="alcohol" ${activeFilters.sortBy === 'alcohol' ? 'selected' : ''}>Alcool (%)</option>
                         <option value="volume" ${activeFilters.sortBy === 'volume' ? 'selected' : ''}>Volume</option>
@@ -310,6 +328,17 @@ export function renderFilterModal(allBeers, activeFilters, onApply) {
                         <option value="asc" ${activeFilters.sortOrder === 'asc' ? 'selected' : ''}>⬆️ Croissant</option>
                         <option value="desc" ${activeFilters.sortOrder === 'desc' ? 'selected' : ''}>⬇️ Décroissant</option>
                     </select>
+                </div>
+                
+                <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px;">
+                     <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:8px 12px; border-radius:8px;">
+                        <label for="onlyFavorites" style="font-size:0.9rem; margin:0;">⭐ Favoris Uniquement</label>
+                        <input type="checkbox" name="onlyFavorites" id="onlyFavorites" ${activeFilters.onlyFavorites ? 'checked' : ''} style="width:20px; height:20px;">
+                    </div>
+                     <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:8px 12px; border-radius:8px;">
+                        <label for="ignoreFavorites" style="font-size:0.9rem; margin:0; color:#aaa;">🚫 Ignorer le tri favoris</label>
+                        <input type="checkbox" name="ignoreFavorites" id="ignoreFavorites" ${activeFilters.ignoreFavorites ? 'checked' : ''} style="width:20px; height:20px;">
+                    </div>
                 </div>
             </div>
 
@@ -548,7 +577,15 @@ export function renderBeerDetail(beer, onSave) {
         displayImage = fallbackImage;
     }
 
+    const isFav = Storage.isFavorite(beer.id);
+
     wrapper.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    <button id="btn-toggle-fav" style="background:none; border:none; font-size:1.8rem; cursor:pointer;">
+                        ${isFav ? '⭐' : '🤍'}
+                    </button>
+                    <button id="btn-close-modal" style="background:none; border:none; color:#fff; font-size:1.8rem; cursor:pointer;">&times;</button>
+                </div>
 
                 <div style="text-align: center; margin-bottom: 20px;">
                     <img src="${displayImage}" style="height: 150px; object-fit: contain; filter: drop-shadow(0 0 10px rgba(255,255,255,0.1));" 
@@ -579,6 +616,23 @@ export function renderBeerDetail(beer, onSave) {
 
                 ${customActions}
                 `;
+
+    // Close Modal Handler
+    wrapper.querySelector('#btn-close-modal').onclick = () => {
+        closeModal();
+    };
+
+    // Toggle Favorite Handler
+    const btnFav = wrapper.querySelector('#btn-toggle-fav');
+    btnFav.onclick = () => {
+        const isNowFav = Storage.toggleFavorite(beer.id);
+        btnFav.innerHTML = isNowFav ? '⭐' : '🤍';
+
+        // Trigger save callback to update list if needed? 
+        // Or just let user refresh manually. 
+        // Achievements check might not be needed for favs, but consistent state is good.
+        if (onSave) onSave(null);
+    };
 
     // Share Link Handler
     wrapper.querySelector('#btn-share-beer').onclick = async () => {
@@ -778,7 +832,8 @@ export function renderAddBeerForm(onSave, editModeBeer = null) {
 
 export function renderStats(allBeers, userData, container, isDiscovery = false, discoveryCallback = null) {
     const totalBeers = allBeers.length;
-    const drunkCount = Object.keys(userData).length;
+    // Fix: Filter keys where count > 0
+    const drunkCount = Object.values(userData).filter(u => (u.count || 0) > 0).length;
     const percentage = Math.round((drunkCount / totalBeers) * 100) || 0;
 
     const totalDrunkCount = Object.values(userData).reduce((acc, curr) => acc + (curr.count || 0), 0);
@@ -919,8 +974,10 @@ export function renderStats(allBeers, userData, container, isDiscovery = false, 
             // Extract core ID
             const coreId = ratingKey.split('_')[0];
             const beer = allBeers.find(b => b.id == coreId || b.id == ratingKey);
-            if (beer) {
-                history.push({ beer: beer, rating: ratings[ratingKey] });
+            const userRating = ratings[ratingKey];
+            // Fix: Map should only show consumed beers
+            if (beer && userRating && (userRating.count || 0) > 0) {
+                history.push({ beer: beer, rating: userRating });
             }
         });
 
@@ -985,37 +1042,8 @@ export function renderStats(allBeers, userData, container, isDiscovery = false, 
     btnPasteImport.style.border = '1px dashed var(--accent-gold)';
     btnPasteImport.style.color = 'var(--accent-gold)';
 
-    btnPasteImport.onclick = async () => {
-        try {
-            const text = await navigator.clipboard.readText();
-            if (text && (text.startsWith('{') || text.startsWith('['))) {
-                if (confirm("Importer les données du presse-papier ? (Les données existantes ne seront pas écrasées)")) {
-                    if (Storage.importData(text)) {
-                        showToast("Importation réussie !");
-                        setTimeout(() => location.reload(), 1500);
-                    } else {
-                        showToast("Format invalide.");
-                    }
-                }
-            } else {
-                // Fallback prompt if clipboard read fails or is empty
-                const manual = prompt("Collez le JSON de sauvegarde ici :");
-                if (manual) {
-                    if (Storage.importData(manual)) {
-                        showToast("Importation réussie !");
-                        setTimeout(() => location.reload(), 1500);
-                    } else {
-                        showToast("Format invalide.");
-                    }
-                }
-            }
-        } catch (e) {
-            const manual = prompt("Impossible de lire le presse-papier. Collez le JSON ici :");
-            if (manual && Storage.importData(manual)) {
-                showToast("Importation réussie !");
-                setTimeout(() => location.reload(), 1500);
-            }
-        }
+    btnPasteImport.onclick = () => {
+        renderImportModal();
     };
 
     // Insert before the file import button or replace it? 
@@ -1054,19 +1082,79 @@ function renderTemplateEditor() {
     const refreshList = () => {
         const listHtml = template.map((field, index) => `
                 <div style="background:rgba(0,0,0,0.3); padding:10px; margin-bottom:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
-                    <div>
-                        <strong>${field.label}</strong> <span style="font-size:0.8rem; color:#888;">(${field.type})</span>
+                    <div style="display:flex; align-items:center; gap:10px; flex:1;">
+                        <div style="display:flex; flex-direction:column; gap:2px;">
+                            ${index > 0 ? `<button type="button" data-idx="${index}" class="icon-btn mv-up" style="font-size:0.8rem; padding:0;">⬆️</button>` : '<div style="height:15px; width:15px;"></div>'}
+                            ${index < template.length - 1 ? `<button type="button" data-idx="${index}" class="icon-btn mv-down" style="font-size:0.8rem; padding:0;">⬇️</button>` : '<div style="height:15px; width:15px;"></div>'}
+                        </div>
+                        <div>
+                            <strong>${field.label}</strong> <span style="font-size:0.8rem; color:#888;">(${field.type})</span>
+                        </div>
                     </div>
-                    ${field.id === 'score' || field.id === 'comment' ? '' : `<button type="button" data-idx="${index}" class="icon-btn delete-field" style="color:red;">🗑️</button>`}
+                    <div style="display:flex; gap:10px;">
+                        <button type="button" data-idx="${index}" class="icon-btn edit-field">✏️</button>
+                        ${field.id === 'score' || field.id === 'comment' ? '' : `<button type="button" data-idx="${index}" class="icon-btn delete-field" style="color:red;">🗑️</button>`}
+                    </div>
                 </div>
                 `).join('');
 
         wrapper.querySelector('#field-list').innerHTML = listHtml;
 
+        // Attach Handlers
         wrapper.querySelectorAll('.delete-field').forEach(btn => {
             btn.onclick = (e) => {
-                template.splice(e.target.dataset.idx, 1);
-                refreshList();
+                if (confirm("Supprimer ce champ ?")) {
+                    template.splice(e.target.dataset.idx, 1);
+                    refreshList();
+                }
+            };
+        });
+
+        wrapper.querySelectorAll('.mv-up').forEach(btn => {
+            btn.onclick = (e) => {
+                // target might be inner element if not careful, but button has no children here
+                const idx = parseInt(e.target.dataset.idx);
+                if (idx > 0) {
+                    [template[idx], template[idx - 1]] = [template[idx - 1], template[idx]];
+                    refreshList();
+                }
+            };
+        });
+
+        wrapper.querySelectorAll('.mv-down').forEach(btn => {
+            btn.onclick = (e) => {
+                const idx = parseInt(e.target.dataset.idx);
+                if (idx < template.length - 1) {
+                    [template[idx], template[idx + 1]] = [template[idx + 1], template[idx]];
+                    refreshList();
+                }
+            };
+        });
+
+        wrapper.querySelectorAll('.edit-field').forEach(btn => {
+            btn.onclick = (e) => {
+                const idx = parseInt(e.target.dataset.idx);
+                const field = template[idx];
+
+                // Simple Prompt-based edit for now to avoid nested complex modals
+                const newLabel = prompt("Nouveau nom :", field.label);
+                if (newLabel !== null && newLabel.trim() !== "") {
+                    field.label = newLabel.trim();
+                    // Optional: Allow changing type? 
+                    // Switching type might break existing data display if format changes drastically?
+                    // Actually data is stored by ID. ID should theoretically stay same to link to old data.
+                    // But if user repurposes "Amertume" (range) to "Amertume" (text), old value '7' becomes text '7'. 
+                    // It's mostly fine.
+                    // Let's stick to label edit or advanced edit?
+                    // User asked "modifier/supprimer". Modification implies Label fix or Type fix.
+                    const newType = prompt("Nouveau Type (range/checkbox/textarea/number) :", field.type);
+                    if (['range', 'checkbox', 'textarea', 'number'].includes(newType)) {
+                        field.type = newType;
+                        // Reset defaults if needed
+                        if (newType === 'range') { field.min = 0; field.max = 10; field.step = 1; }
+                    }
+                    refreshList();
+                }
             };
         });
     };
@@ -1748,6 +1836,67 @@ export function renderMatchModal(allBeers) {
 
     // INITIAL CALL
     generateMyQR();
+
+    openModal(wrapper);
+}
+
+// Fixed Import Modal
+export function renderImportModal() {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'modal-content';
+    // Ensure Flex Column for layout stability
+    wrapper.style.display = 'flex';
+    wrapper.style.flexDirection = 'column';
+    wrapper.style.height = 'auto';
+    wrapper.style.maxHeight = '80vh';
+
+    wrapper.innerHTML = `
+        <h2 style="margin-bottom:15px; flex-shrink:0;">Importer des données</h2>
+        <p style="color:#aaa; font-size:0.9rem; margin-bottom:10px; flex-shrink:0;">
+            Collez le texte JSON de sauvegarde ci-dessous.
+        </p>
+
+        <textarea id="import-area" class="form-textarea" style="flex:1; min-height:150px; font-family:monospace; font-size:0.75rem; margin-bottom:15px; resize:none;" placeholder='{"beerdex_ratings":...}'></textarea>
+        
+        <div style="display:flex; gap:10px; flex-shrink:0;">
+            <button id="btn-do-import" class="btn-primary" style="margin:0; background:var(--accent-gold);">Importer</button>
+            <button id="btn-paste-clipboard" class="btn-primary" style="margin:0; background:var(--bg-card); border:1px solid #444;">📋 Coller</button>
+        </div>
+    `;
+
+    const textarea = wrapper.querySelector('#import-area');
+
+    // Auto-Focus
+    setTimeout(() => textarea.focus(), 100);
+
+    // Paste Button
+    wrapper.querySelector('#btn-paste-clipboard').onclick = async () => {
+        try {
+            const text = await navigator.clipboard.readText();
+            if (text) textarea.value = text;
+            else showToast("Presse-papier vide ou inaccessible");
+        } catch (e) {
+            showToast("Accès presse-papier refusé. Collez manuellement.");
+            textarea.focus();
+        }
+    };
+
+    // Import Button
+    wrapper.querySelector('#btn-do-import').onclick = () => {
+        const text = textarea.value;
+        if (!text.trim()) {
+            showToast("Veuillez coller des données.");
+            return;
+        }
+
+        if (Storage.importData(text)) {
+            closeModal();
+            showToast("Importation réussie !");
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            showToast("Format invalide.");
+        }
+    };
 
     openModal(wrapper);
 }

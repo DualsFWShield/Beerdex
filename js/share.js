@@ -259,52 +259,71 @@ export async function generateBeerCard(beer, rating, comment) {
  * Native Web Share API wrapper
  */
 export async function shareImage(blob, title) {
-    // --- MEDIAN / GONATIVE BRIDGE ---
+    // --- MEDIAN / GONATIVE BRIDGE (APK) ---
+    // User requested Fullscreen Preview for APK to allow Screenshot
     if (window.median) {
-        try {
-            // Convert Blob to Base64 Data URI
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                const base64data = reader.result;
-                window.median.share.sharePage({
-                    title: title || 'My Beerdex Check-in',
-                    text: 'Regarde cette bière que je viens de déguster sur Beerdex ! 🍻',
-                    image: base64data // Data URI
-                });
-            };
-            reader.readAsDataURL(blob);
-            return;
-        } catch (e) {
-            console.error("Median Image Share Error", e);
-        }
+        createFullscreenPreview(blob);
+        return;
     }
 
-    // Check support but allow blob download on desktop if share API fails?
-    // User requested "Share", so we prioritize Navigator Share.
-    // If it fails, maybe we can download it.
-
-    const file = new File([blob], 'beerdex-share.png', { type: 'image/png' });
-    const shareData = {
-        title: title || 'My Beerdex Check-in',
-        text: 'Regarde cette bière que je viens de déguster sur Beerdex ! 🍻',
-        files: [file]
-    };
-
-    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share(shareData);
-    } else {
-        // Fallback: Download for Desktop testing
+    // --- GENERIC WEB / DESKTOP ---
+    // User requested "Classic Download" restored
+    // Try download first.
+    try {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'beerdex-story.png';
+        a.download = `beerdex-${Date.now()}.png`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-
-        throw new Error('Web Share non supporté : Image téléchargée !');
+    } catch (e) {
+        console.error("Download failed, trying preview", e);
+        createFullscreenPreview(blob);
     }
+}
+
+function createFullscreenPreview(blob) {
+    const url = URL.createObjectURL(blob);
+    const overlay = document.createElement('div');
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.background = '#000';
+    overlay.style.zIndex = '20000';
+    overlay.style.display = 'flex';
+    overlay.style.flexDirection = 'column';
+    overlay.style.alignItems = 'center';
+    overlay.style.justifyContent = 'center';
+
+    // Image
+    const img = document.createElement('img');
+    img.src = url;
+    img.style.maxWidth = '100%';
+    img.style.maxHeight = '90%';
+    img.style.objectFit = 'contain';
+
+    // Close Hint
+    const hint = document.createElement('div');
+    hint.innerText = "Appuyez pour fermer";
+    hint.style.color = '#fff';
+    hint.style.marginTop = '20px';
+    hint.style.fontFamily = 'sans-serif';
+    hint.style.opacity = '0.7';
+
+    overlay.appendChild(img);
+    overlay.appendChild(hint);
+
+    // Close Handler
+    overlay.onclick = () => {
+        document.body.removeChild(overlay);
+        URL.revokeObjectURL(url);
+    };
+
+    document.body.appendChild(overlay);
 }
 
 // --- Helpers ---
