@@ -934,6 +934,7 @@ body.modal-open {
 .animate-bounce {
     animation: bounce 2s infinite;
 }
+
 /* --- Chart Styles --- */
 .chart-container {
     width: 160px;
@@ -964,5 +965,96 @@ body.modal-open {
 
     .chart-percentage {
         font-size: 3rem;
+    }
+}
+
+/* --- PC Layout Optimization --- */
+@media (min-width: 768px) {
+
+    /* Widen App */
+    #app {
+        max-width: 1200px !important;
+        border-left: 1px solid #222;
+        border-right: 1px solid #222;
+        box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Responsive Grid */
+    .beer-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)) !important;
+    }
+
+    /* Dock Navigation */
+    .bottom-nav {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 400px;
+        border-radius: 30px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        padding-bottom: 0;
+    }
+
+    /* Search Bar Width */
+    .search-bar {
+        max-width: 1200px;
+        left: 50%;
+        transform: translateX(-50%);
+        right: auto;
+        width: 100%;
+    }
+}
+/* --- PC Layout Optimization (Full Width Override) --- */
+@media (min-width: 768px) {
+    #app {
+        max-width: 100% !important;
+        border: none;
+        box-shadow: none;
+    }
+    .beer-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)) !important;
+        padding: 0 40px;
+    }
+    .search-bar {
+        max-width: 100% !important;
+        left: 0;
+        transform: none;
+        width: 100%;
+        padding: 10px 40px;
+        right: 0;
+    }
+}
+
+/* --- Stats & Settings Specifics (PC) --- */
+@media (min-width: 768px) {
+    /* Center Stats/Settings Content */
+    #main-content > .text-center.p-20 {
+        max-width: 900px;
+        margin: 0 auto;
+        display: grid;
+        gap: 20px;
+    }
+
+    /* Settings Buttons - Prevent Mega Stretch */
+    .btn-primary {
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Map Aspect Ratio */
+    #beer-map-container svg {
+        max-height: 600px;
+    }
+
+    /* Fix weird left alignment in Settings titles */
+    .stat-card h4 {
+        text-align: center !important;
+    }
+
+    .stat-card {
+        padding: 30px;
     }
 }
