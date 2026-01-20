@@ -24,6 +24,13 @@ export function start(allBeersCallback) {
 
     const params = new URLSearchParams(window.location.search);
     const action = params.get('action');
+    const mode = params.get('mode');
+
+    // Handle specific modes that might coexist or replace actions
+    if (mode === 'wrapped_share') {
+        handleWrappedShare(params);
+        return;
+    }
 
     if (!action) return;
 
@@ -54,6 +61,60 @@ export function start(allBeersCallback) {
             break;
         default:
             console.warn(`[API] Unknown action: ${action}`);
+    }
+}
+
+/**
+ * Handle Wrapped Share Mode
+ * Reconstructs stats from URL and generates/downloads the image.
+ */
+async function handleWrappedShare(params) {
+    console.log("[API] Handling Wrapped Share...");
+    UI.showToast("Génération du Wrapped partagé...", "info");
+
+    try {
+        // Reconstruct Stats
+        const stats = {
+            totalLiters: params.get('total_liters'),
+            totalBeers: parseInt(params.get('total_count') || 0),
+            uniqueBeers: params.get('total_count'),
+            favoriteStyle: params.get('fav_style') || 'Inconnu',
+            favoriteBeer: null,
+            equivalence: { label: "Hydratation maximale", val: params.get('total_liters') }
+        };
+
+        // Reconstruct Equivalence Logic
+        const l = parseFloat(stats.totalLiters);
+        const nbBottles = Math.round(l * 1000 / 500);
+        stats.equivalence = { label: nbBottles + " Bouteilles d'eau", val: l };
+
+        let favBeer = null;
+        if (params.get('fav_name')) {
+            favBeer = {
+                name: params.get('fav_name'),
+                title: params.get('fav_name'),
+                count: params.get('fav_count'),
+                image: params.get('fav_image')
+            };
+            stats.favoriteBeer = favBeer;
+        }
+
+        const year = params.get('year');
+
+        // Generate Image
+        const blob = await Share.generateWrappedCard(stats, favBeer, year);
+
+        // Download / Preview
+        // Pass null for apiLink to avoid recursion/clutter in consumer view
+        Share.shareImage(blob, `Beerdex Wrapped ${year || new Date().getFullYear()}`, null);
+
+        // Clean URL to prevent re-triggering on reload
+        cleanURL();
+        UI.showToast("Wrapped téléchargé !", "success");
+
+    } catch (e) {
+        console.error("Wrapped generation failed", e);
+        UI.showToast("Erreur lors de la génération du partage", "error");
     }
 }
 
@@ -139,7 +200,13 @@ function handleExport(scope, ids, mode) {
 async function handleShare(beerId, scoreOverride, commentOverride, isFallback) {
     setTimeout(async () => {
         const allBeers = _allBeersProvider ? _allBeersProvider() : [];
-        const beer = allBeers.find(b => b.id == beerId);
+        let beer = allBeers.find(b => b.id == beerId);
+
+        // Fallback: Check by Title for legacy shares
+        if (!beer) {
+            const cleanKey = String(beerId).toUpperCase().trim();
+            beer = allBeers.find(b => b.title.toUpperCase().trim() === cleanKey);
+        }
 
         if (!beer) {
             UI.showToast("Bière introuvable pour partage", "error");
@@ -192,14 +259,16 @@ async function handleShare(beerId, scoreOverride, commentOverride, isFallback) {
 
 function cleanURL() {
     const url = new URL(window.location);
-    url.searchParams.delete('action');
-    url.searchParams.delete('data');
-    url.searchParams.delete('id');
-    url.searchParams.delete('score');
-    url.searchParams.delete('comment');
-    url.searchParams.delete('scope');
-    url.searchParams.delete('mode');
-    url.searchParams.delete('ids');
-    url.searchParams.delete('fallback');
+    // Standard API params
+    const keysToRemove = [
+        'action', 'data', 'id', 'score', 'comment', 'scope', 'mode',
+        'ids', 'fallback', 'download', 'lang',
+        // Wrapped Share API params
+        'total_liters', 'total_count', 'year',
+        'fav_name', 'fav_count', 'fav_image', 'fav_style'
+    ];
+
+    keysToRemove.forEach(key => url.searchParams.delete(key));
+
     history.replaceState(null, '', url.pathname + url.search);
 }

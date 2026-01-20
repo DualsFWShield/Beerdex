@@ -256,23 +256,172 @@ export async function generateBeerCard(beer, rating, comment) {
 }
 
 /**
+ * Generates a "Wrapped Summary" stats card (Infographic Style)
+ * Distinct from the Beer Card
+ */
+export async function generateWrappedCard(stats, favoriteBeer, year) {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const width = 1080;
+    const height = 1920;
+    canvas.width = width;
+    canvas.height = height;
+
+    const displayYear = year || new Date().getFullYear();
+
+    // --- 1. Background (Premium Dark) ---
+    const grd = ctx.createLinearGradient(0, 0, width, height);
+    grd.addColorStop(0, '#0f0c29');
+    grd.addColorStop(0.5, '#302b63');
+    grd.addColorStop(1, '#24243e');
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, width, height);
+
+    // Noise/Texture
+    ctx.fillStyle = 'rgba(255,255,255,0.03)';
+    for (let i = 0; i < 5000; i++) {
+        ctx.fillRect(Math.random() * width, Math.random() * height, 2, 2);
+    }
+
+    // --- 2. Header ---
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#FFC000'; // Gold
+    ctx.font = 'bold 120px "Russo One", sans-serif';
+    ctx.fillText("WRAPPED", width / 2, 170); // Moved UP
+
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = '300 40px "Outfit", sans-serif';
+    ctx.letterSpacing = "10px";
+    ctx.fillText(`${displayYear} EDITION`, width / 2, 230); // Moved UP
+
+    // --- 3. Stats Grid (Bento Style) ---
+    const statsY = 290; // Moved UP
+    const statsH = 280;
+
+    const drawCard = (x, y, w, h, title, value, sub) => {
+        // Card Bg
+        ctx.fillStyle = 'rgba(255,255,255,0.05)';
+        drawRoundedRect(ctx, x, y, w, h, 30, 'rgba(255,255,255,0.05)');
+        // Border
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+        ctx.stroke();
+
+        // Content
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#AAAAAA';
+        ctx.font = 'bold 26px "Outfit", sans-serif';
+        ctx.fillText(title.toUpperCase(), x + w / 2, y + 60);
+
+        ctx.fillStyle = '#FFC000';
+        ctx.font = 'bold 80px "Russo One", sans-serif';
+        ctx.fillText(value, x + w / 2, y + 150);
+
+        if (sub) {
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'italic 24px "Outfit", sans-serif';
+            ctx.fillText(sub, x + w / 2, y + 210);
+        }
+    };
+
+    // Liters Card
+    drawCard(80, statsY, 440, statsH, "Volume Total", stats.totalLiters + "L", stats.equivalence.label.split(' ')[0] + " Bouteilles d'eau");
+
+    // Unique Beers Card
+    drawCard(560, statsY, 440, statsH, "Découvertes", stats.uniqueBeers, "Bières Uniques");
+
+    // --- 4. Favorite Beer Spotlight ---
+    const spotY = 640; // Moved UP
+    const spotH = 550;
+
+    // Glow
+    const g = ctx.createRadialGradient(width / 2, spotY + 250, 0, width / 2, spotY + 250, 400);
+    g.addColorStop(0, 'rgba(255, 192, 0, 0.15)');
+    g.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, spotY, width, spotH);
+
+    ctx.fillStyle = '#FFC000';
+    ctx.font = 'bold 36px "Outfit", sans-serif';
+    ctx.fillText("TOP BIÈRE", width / 2, spotY);
+
+    // Image
+    if (favoriteBeer && favoriteBeer.image) {
+        try {
+            const img = await loadImage(favoriteBeer.image);
+            const imgH = 460; // Slightly larger
+            const imgW = imgH * (img.width / img.height);
+
+            ctx.save();
+            ctx.shadowColor = "rgba(0,0,0,0.5)";
+            ctx.shadowBlur = 30;
+            ctx.shadowOffsetY = 20;
+            drawImageProp(ctx, img, 0, 0, img.width, img.height, (width / 2) - (imgW / 2), spotY + 40, imgW, imgH);
+            ctx.restore();
+        } catch (e) { /* Ignore */ }
+    }
+
+    // Name
+    const textY = spotY + 580; // Moved DOWN to avoid overlap with bottle
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = 'bold 55px "Russo One", sans-serif';
+    fitText(ctx, favoriteBeer ? favoriteBeer.title || favoriteBeer.name : "Aucune", width / 2, textY, 900, 55);
+
+    ctx.fillStyle = '#AAAAAA';
+    ctx.font = '28px "Outfit", sans-serif';
+    ctx.fillText(`Bue ${stats.favoriteBeer ? stats.favoriteBeer.count : 0} fois`, width / 2, textY + 70);
+
+
+    // --- 5. Favorite Style (Bottom Wide Card) ---
+    // Moved up to center better between Top Beer and Footer
+    const styleCardY = 1340;
+    drawCard(80, styleCardY, 920, 220, "Style Préféré", stats.favoriteStyle, "Vous avez du goût !");
+
+    // --- 6. Footer ---
+    const footerY = height - 100;
+
+    // Logo
+    try {
+        const logo = await loadImage(LOGO_PATH);
+        const logoW = 100;
+        const logoH = logoW * (logo.height / logo.width);
+        // Draw logo centered
+        drawImageProp(ctx, logo, 0, 0, logo.width, logo.height, (width / 2) - (logoW / 2), footerY - 200, logoW, logoH);
+    } catch (e) {
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = 'bold 50px "Russo One", sans-serif';
+        ctx.fillText("BEERDEX", width / 2, footerY - 150);
+    }
+
+    // URL
+    ctx.fillStyle = '#FFC000';
+    ctx.font = 'bold 36px "Russo One", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText("beerdex.dualsfwshield.be", width / 2, footerY - 40);
+
+    // Tagline
+    ctx.fillStyle = 'rgba(255,255,255,0.7)';
+    ctx.font = 'italic 26px "Outfit", sans-serif';
+    ctx.fillText("Disponible sur Android et iOS", width / 2, footerY + 10);
+
+    return new Promise(resolve => {
+        canvas.toBlob(blob => {
+            resolve(blob);
+        }, 'image/png', 0.95);
+    });
+}
+
+/**
  * Native Web Share API wrapper
  */
-export async function shareImage(blob, title) {
+export async function shareImage(blob, title, apiLink = null) {
     if (!blob) {
         alert("Erreur: Image non générée (Blob invalide)");
         return;
     }
-    // --- MEDIAN / GONATIVE BRIDGE (APK) ---
-    // User requested Fullscreen Preview for APK to allow Screenshot
-    if (window.median) {
-        createFullscreenPreview(blob);
-        return;
-    }
 
-    // --- GENERIC WEB / DESKTOP ---
-    // User requested "Classic Download" restored
-    // Try download first.
+    // 1. Force Download (Desktop/Mobile)
     try {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -281,55 +430,84 @@ export async function shareImage(blob, title) {
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        // keep url alive for preview
     } catch (e) {
-        console.error("Download failed, trying preview", e);
-        createFullscreenPreview(blob);
+        console.warn("Download failed, proceeding to preview", e);
     }
+
+    // 2. Show Preview (with API Link if provided)
+    createFullscreenPreview(blob, apiLink);
 }
 
-function createFullscreenPreview(blob) {
+export function createFullscreenPreview(blob, apiLink) {
     if (!blob) return;
     const url = URL.createObjectURL(blob);
     const overlay = document.createElement('div');
-    overlay.style.position = 'fixed';
-    overlay.style.top = '0';
-    overlay.style.left = '0';
-    overlay.style.width = '100vw';
-    overlay.style.height = '100vh';
+    overlay.className = 'story-overlay'; // Re-use story styling for consistent look
     overlay.style.background = 'rgba(0,0,0,0.95)';
-    overlay.style.zIndex = '2147483647'; // Max Z
+    overlay.style.zIndex = '2147483647';
     overlay.style.display = 'flex';
     overlay.style.flexDirection = 'column';
     overlay.style.alignItems = 'center';
     overlay.style.justifyContent = 'center';
+    overlay.style.padding = '20px';
 
     // Image
     const img = document.createElement('img');
     img.src = url;
     img.style.maxWidth = '100%';
-    img.style.maxHeight = '85%';
+    img.style.maxHeight = apiLink ? '60%' : '85%'; // Reduce height if link is shown
     img.style.objectFit = 'contain';
     img.style.display = 'block';
+    img.style.borderRadius = '12px';
+    img.style.boxShadow = '0 10px 30px rgba(0,0,0,0.5)';
+
+    overlay.appendChild(img);
+
+    // API Link Section
+    if (apiLink) {
+        const linkContainer = document.createElement('div');
+        linkContainer.style.width = '100%';
+        linkContainer.style.maxWidth = '600px';
+        linkContainer.style.marginTop = '20px';
+        linkContainer.style.textAlign = 'left';
+
+        const label = document.createElement('div');
+        label.innerHTML = '🔗 <strong>API Link</strong> (Generation)';
+        label.style.color = '#FFC000';
+        label.style.marginBottom = '5px';
+        label.style.fontSize = '0.9rem';
+
+        const textarea = document.createElement('textarea');
+        textarea.value = apiLink;
+        textarea.readOnly = true;
+        textarea.style.width = '100%';
+        textarea.style.height = '80px';
+        textarea.style.background = '#222';
+        textarea.style.color = '#aaa';
+        textarea.style.border = '1px solid #444';
+        textarea.style.borderRadius = '8px';
+        textarea.style.padding = '10px';
+        textarea.style.fontSize = '0.8rem';
+        textarea.onclick = () => textarea.select();
+
+        linkContainer.appendChild(label);
+        linkContainer.appendChild(textarea);
+        overlay.appendChild(linkContainer);
+    }
 
     // Close Hint
     const hint = document.createElement('div');
-    hint.innerHTML = '<div style="font-size:2rem; margin-bottom:10px;">❌</div>Appuyez pour fermer';
+    hint.innerHTML = '<div style="font-size:2rem; margin-bottom:10px;">✖️</div>Fermer';
     hint.style.color = '#fff';
     hint.style.marginTop = '20px';
-    hint.style.fontFamily = 'sans-serif';
-    hint.style.textAlign = 'center';
     hint.style.cursor = 'pointer';
-
-    overlay.appendChild(img);
-    overlay.appendChild(hint);
-
-    // Close Handler
-    overlay.onclick = () => {
-        if (overlay.parentNode) document.body.removeChild(overlay);
+    hint.onclick = () => {
+        document.body.removeChild(overlay);
         URL.revokeObjectURL(url);
     };
 
+    overlay.appendChild(hint);
     document.body.appendChild(overlay);
 }
 

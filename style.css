@@ -384,13 +384,30 @@ h3 {
     width: 100%;
     padding: 14px;
     background: var(--accent-gold);
-    color: black;
+    color: var(--text-on-primary, #000000);
     border: none;
     border-radius: 12px;
     font-weight: 700;
     font-size: 1rem;
     cursor: pointer;
     margin-top: var(--spacing-md);
+}
+
+/* Text Color Utilities */
+.text-white {
+    color: #ffffff !important;
+}
+
+.text-black {
+    color: #000000 !important;
+}
+
+.text-gold {
+    color: var(--accent-gold) !important;
+}
+
+.text-danger {
+    color: var(--danger) !important;
 }
 
 /* Search Bar */
@@ -1006,6 +1023,7 @@ body.modal-open {
         width: 100%;
     }
 }
+
 /* --- PC Layout Optimization (Full Width Override) --- */
 @media (min-width: 768px) {
     #app {
@@ -1013,10 +1031,12 @@ body.modal-open {
         border: none;
         box-shadow: none;
     }
+
     .beer-grid {
         grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)) !important;
         padding: 0 40px;
     }
+
     .search-bar {
         max-width: 100% !important;
         left: 0;
@@ -1029,8 +1049,9 @@ body.modal-open {
 
 /* --- Stats & Settings Specifics (PC) --- */
 @media (min-width: 768px) {
+
     /* Center Stats/Settings Content */
-    #main-content > .text-center.p-20 {
+    #main-content>.text-center.p-20 {
         max-width: 900px;
         margin: 0 auto;
         display: grid;
@@ -1057,4 +1078,99 @@ body.modal-open {
     .stat-card {
         padding: 30px;
     }
+}
+
+/* Wrapped Story Styles (Appended for Z-Index Fix) */
+.story-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background: #000;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.story-content {
+    position: relative;
+    z-index: 20;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    pointer-events: none;
+}
+
+.story-content>* {
+    pointer-events: none;
+}
+
+/* Default text non-clickable */
+.story-content button,
+.story-content a {
+    pointer-events: auto;
+}
+
+/* Buttons clickable */
+.story-tap-left {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    z-index: 10;
+}
+
+.story-tap-right {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    z-index: 10;
+}
+
+.story-close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 30;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: #fff;
+    cursor: pointer;
+}
+
+.story-progress-container {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    width: 100%;
+    padding: 0 10px;
+    display: flex;
+    gap: 4px;
+    z-index: 30;
+}
+
+.story-progress-bar {
+    flex: 1;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.story-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: #fff;
+    transition: width 0.1s linear;
 }

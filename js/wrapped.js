@@ -43,7 +43,7 @@ function calculateStats() {
                 name: beer ? beer.title : 'Bière Mystère',
                 count: entry.count,
                 image: beer ? beer.image : null,
-                id: beerId
+                id: beer ? beer.id : beerId
             });
 
             if (entry.history) {
@@ -58,9 +58,13 @@ function calculateStats() {
                 totalVolumeMl += entry.count * 330;
             }
 
-            if (beer && beer.style) {
-                const style = beer.style.split('-')[0].trim();
-                styles[style] = (styles[style] || 0) + entry.count;
+            // User requested Type (fallback to Style)
+            const rawType = beer ? (beer.type || beer.style) : null;
+            if (rawType) {
+                const type = rawType.split('-')[0].trim();
+                styles[type] = (styles[type] || 0) + entry.count;
+            } else if (beer) {
+                console.warn(`[Wrapped] Beer found but NO TYPE/STYLE: ${beer.title} (ID: ${beerId})`);
             }
         }
     });
@@ -69,10 +73,18 @@ function calculateStats() {
     const favoriteBeer = topBeers.length > 0 ? topBeers[0] : null;
 
     const sortedStyles = Object.entries(styles).sort((a, b) => b[1] - a[1]);
-    const favoriteStyle = sortedStyles.length > 0 ? sortedStyles[0][0] : 'Inconnu';
+
+    // Support multiple winners for Favorite Type
+    let favoriteStyle = 'Inconnu';
+    if (sortedStyles.length > 0) {
+        const maxCount = sortedStyles[0][1];
+        const winners = sortedStyles.filter(s => s[1] === maxCount).map(s => s[0]);
+        favoriteStyle = winners.join(' & ');
+    }
 
     const totalLiters = Math.round(totalVolumeMl / 1000);
-    let equivalence = { label: "Bouteilles d'eau", val: totalLiters };
+    const nbBottles = Math.round(totalVolumeMl / 500);
+    let equivalence = { label: nbBottles + " bouteilles d'eau de 500ml", val: totalLiters };
 
     const eqList = [
         { limit: 50, label: "Un petit aquarium " },
@@ -120,14 +132,14 @@ function renderStory(stats) {
             content: `
                 <div class="story-stat-label animate-fade-in">Vous avez bu</div>
                 <div class="story-big-number animate-scale-up">${stats.totalLiters} <span style="font-size:2rem">Litres</span></div>
-                <div class="story-stat-sub animate-slide-up" style="animation-delay:0.3s">Soit environ...</div>
+                <div class="story-stat-sub animate-slide-up" style="animation-delay:0.3s">Soit environ</div>
                 <div class="story-fun-fact animate-pop-in" style="animation-delay:0.6s">${stats.equivalence.label}</div>
             `
         },
         stats.favoriteBeer ? {
             bg: 'linear-gradient(135deg, #4b1d1d 0%, #1a0505 100%)',
             content: `
-                <div class="story-stat-label animate-fade-in">Votre coup de </div>
+                <div class="story-stat-label animate-fade-in">Votre coup de ❤️</div>
                 ${stats.favoriteBeer.image ? `<img src="${stats.favoriteBeer.image}" class="story-beer-img animate-rotate-in">` : '<div style="font-size:5rem"></div>'}
                 <div class="story-beer-name animate-slide-up">${stats.favoriteBeer.name}</div>
                 <div class="story-stat-sub">Bue ${stats.favoriteBeer.count} fois</div>
@@ -136,7 +148,7 @@ function renderStory(stats) {
         {
             bg: 'linear-gradient(135deg, #5D4037 0%, #3E2723 100%)',
             content: `
-                <div class="story-stat-label animate-fade-in">Votre style préféré</div>
+                <div class="story-stat-label animate-fade-in">Votre type préféré</div>
                 <div class="story-big-text animate-pop-in" style="color:var(--accent-gold);">${stats.favoriteStyle}</div>
                 <div class="story-stat-sub animate-slide-up">Vous avez du goût !</div>
             `
@@ -145,7 +157,7 @@ function renderStory(stats) {
             bg: 'linear-gradient(135deg, #000000 0%, #111 100%)',
             content: `
                 <div class="story-title animate-pop-in">Merci !</div>
-                <div class="story-stat-sub" style="margin-top:20px;">À la vôtre </div>
+                <div class="story-stat-sub" style="margin-top:20px;">Et rappelez-vous, une bonne bière se déguste avec sagesse.</div>
                 <button id="btn-share-wrapped" class="btn-primary animate-slide-up" style="margin-top:40px; background:var(--accent-gold); color:black;">Partager</button>
             `
         }
@@ -227,18 +239,73 @@ function renderStory(stats) {
     requestAnimationFrame(() => showSlide(0));
 }
 
-function handleWrappedShare(stats) {
-    if (confirm("Télécharger le résumé en image ?")) {
-        const baseUrl = window.location.origin + window.location.pathname;
-        const params = new URLSearchParams({
-            action: 'share',
-            score: 'J ai bu ' + stats.totalLiters + 'L cette annee !',
-            comment: 'Top: ' + (stats.favoriteBeer ? stats.favoriteBeer.name : 'Aucune') + ' (' + (stats.favoriteBeer ? stats.favoriteBeer.count : 0) + ') - ' + stats.favoriteStyle,
-            fallback: 'true',
-            id: stats.favoriteBeer ? stats.favoriteBeer.id : '1'
-        });
+async function handleWrappedShare(stats) {
+    const shareBtn = document.getElementById('btn-share-wrapped');
+    if (shareBtn) shareBtn.textContent = "Génération...";
 
-        const link = baseUrl + '?' + params.toString();
-        prompt("Copiez ce lien pour partager vos stats :", link);
+    try {
+        const allBeers = _allBeersProvider ? _allBeersProvider() : [];
+        let beer = null;
+
+        if (stats.favoriteBeer) {
+            beer = allBeers.find(b => b.id == stats.favoriteBeer.id);
+            if (!beer) {
+                // Fallback by title
+                const cleanKey = stats.favoriteBeer.name.toUpperCase().trim();
+                beer = allBeers.find(b => b.title.toUpperCase().trim() === cleanKey);
+            }
+        }
+
+        // Use a default beer if none found (generic placeholder logic could go here, but for now we need a beer)
+        if (!beer) {
+            // Try to find ANY beer to serve as background/template if favorite is missing
+            beer = allBeers[0];
+        }
+
+        // Check for generateWrappedCard (new design) or fallback to generateBeerCard
+        if (window.Share && (window.Share.generateWrappedCard || window.Share.generateBeerCard) && beer) {
+
+            let blob;
+            if (window.Share.generateWrappedCard) {
+                // New Premium Design
+                blob = await window.Share.generateWrappedCard(stats, beer);
+            } else {
+                // Fallback to old design
+                const lines = [
+                    `🏆 Mon Beerdex Wrapped 🏆`,
+                    `🍺 Consommation : ${stats.totalLiters} Litres !`,
+                    `❤️ Top : ${stats.favoriteBeer ? stats.favoriteBeer.name : 'Aucune'} (${stats.favoriteBeer ? stats.favoriteBeer.count : 0} fois)`,
+                    `🏅 Style : ${stats.favoriteStyle}`
+                ];
+                const comment = lines.join('\n');
+                blob = await window.Share.generateBeerCard(beer, 10, comment);
+            }
+
+            await window.Share.shareImage(blob, "Mon Beerdex Wrapped 2025");
+
+            // Mock API generation URL
+            const baseUrl = window.location.origin + window.location.pathname;
+            const apiUrl = new URL(baseUrl);
+            apiUrl.searchParams.set("mode", "wrapped_share"); // Trigger flag
+            apiUrl.searchParams.set("year", new Date().getFullYear());
+            apiUrl.searchParams.set("total_liters", stats.totalLiters);
+            apiUrl.searchParams.set("total_count", stats.totalBeers);
+            if (stats.favoriteBeer) {
+                apiUrl.searchParams.set("fav_name", stats.favoriteBeer.name);
+                apiUrl.searchParams.set("fav_count", stats.favoriteBeer.count);
+                apiUrl.searchParams.set("fav_image", stats.favoriteBeer.image || '');
+            }
+            apiUrl.searchParams.set("fav_style", stats.favoriteStyle);
+
+            await window.Share.shareImage(blob, `Mon Beerdex Wrapped ${new Date().getFullYear()}`, apiUrl.toString());
+
+            if (shareBtn) shareBtn.textContent = "Partager";
+        } else {
+            alert("Impossible de générer l'image (Module Share manquant)");
+        }
+    } catch (e) {
+        console.error("Wrapped Share Error:", e);
+        alert("Erreur lors du partage : " + e.message);
+        if (shareBtn) shareBtn.textContent = "Erreur ⚠️";
     }
 }

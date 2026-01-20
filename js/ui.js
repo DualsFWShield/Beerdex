@@ -940,7 +940,7 @@ export function renderStats(allBeers, userData, container, isDiscovery = false, 
                             </label>
                         </div>
 
-                         <button type="button" id="btn-template" class="btn-primary" style="background:#222; border:1px solid #444; width:100%; margin:0;">
+                         <button type="button" id="btn-template" class="btn-primary text-white" style="background:#222; border:1px solid #444; width:100%; margin:0;">
                             ⚙️ Configurer la Notation
                         </button>
                     </div>
@@ -966,7 +966,7 @@ export function renderStats(allBeers, userData, container, isDiscovery = false, 
                     <div class="stat-card mt-20">
                         <h4 style="border-bottom:1px solid #333; padding-bottom:10px; margin-bottom:15px; text-align:left;">🛠️ Système</h4>
 
-                        <button id="btn-check-update" class="btn-primary" style="background:#222; border:1px solid #444; width:100%; margin-bottom:15px;">
+                        <button id="btn-check-update" class="btn-primary text-white" style="background:#222; border:1px solid #444; width:100%; margin-bottom:15px;">
                             🔄 Vérifier les Mises à jour
                         </button>
                         
@@ -1477,7 +1477,7 @@ export function checkAndShowWelcome() {
     const wrapper = document.createElement('div');
     wrapper.className = 'modal-content text-center';
     wrapper.innerHTML = `
-        < div style = "margin-bottom:20px; font-size:3rem;" >🍻</div >
+        <div style="margin-bottom:20px; font-size:3rem;">🍻</div>
         <h2 style="color:var(--accent-gold); margin-bottom:15px; font-family:'Russo One', sans-serif;">Bienvenue sur Beerdex !</h2>
         
         <p style="font-size:1rem; line-height:1.6; margin-bottom:20px; color:#ddd;">

@@ -47,7 +47,6 @@ async function init() {
         setupEventListeners();
 
         // Check Welcome
-        // Check Welcome
         UI.checkAndShowWelcome();
 
         // --- API AUTO-ACTION CHECK ---
