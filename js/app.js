@@ -46,6 +46,9 @@ async function init() {
         // Setup Event Listeners
         setupEventListeners();
 
+        // Check for Achievements on Load (Syncs import/offline data)
+        Achievements.checkAchievements(state.beers);
+
         // Check Welcome
         UI.checkAndShowWelcome();
 
