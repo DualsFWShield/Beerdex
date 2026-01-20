@@ -1045,14 +1045,32 @@ export function renderStats(allBeers, userData, container, isDiscovery = false, 
     }
 
     // System
-    container.querySelector('#btn-check-update').onclick = () => {
+    // System
+    container.querySelector('#btn-check-update').onclick = async () => {
         if ('serviceWorker' in navigator) {
-            showToast("Recherche de mises à jour...");
-            navigator.serviceWorker.ready.then(registration => {
-                registration.update().then(() => {
-                    setTimeout(() => showToast("Vérification terminée."), 2000);
-                });
-            });
+            showToast("Forçage de la mise à jour...", "info");
+
+            try {
+                // 1. Unregister all SWs
+                const registrations = await navigator.serviceWorker.getRegistrations();
+                for (let registration of registrations) {
+                    await registration.unregister();
+                }
+
+                // 2. Clear All Caches
+                const cacheKeys = await caches.keys();
+                await Promise.all(cacheKeys.map(key => caches.delete(key)));
+
+                // 3. Reload to fetch fresh
+                showToast("Caches vidés. Redémarrage...", "success");
+                setTimeout(() => {
+                    window.location.reload(true); // Force reload from server
+                }, 1500);
+
+            } catch (e) {
+                console.error("Update failed", e);
+                showToast("Erreur mise à jour: " + e.message);
+            }
         } else {
             showToast("Service Worker non supporté.");
         }
