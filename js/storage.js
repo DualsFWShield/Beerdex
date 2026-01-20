@@ -288,7 +288,26 @@ export async function exportDataAdvanced(options = { scope: 'all' }) {
     const jsonString = JSON.stringify(exportObj);
     const filename = `beerdex_${scope}_${new Date().toISOString().slice(0, 10)}.json`;
 
-    // File System Access API (Desktop)
+    // Preparation
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const file = new File([blob], filename, { type: 'application/json' });
+
+    // 1. Force Download (Priority for APK/Desktop)
+    try {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        // We don't revoke immediately in case we need it, but here it's fine
+        // URL.revokeObjectURL(url); 
+    } catch (e) {
+        console.warn("Force download failed", e);
+    }
+
+    // File System Access API (Desktop specific, optional now)
     if (window.showSaveFilePicker) {
         try {
             const handle = await window.showSaveFilePicker({
@@ -301,29 +320,12 @@ export async function exportDataAdvanced(options = { scope: 'all' }) {
             return (exportObj.ratings ? Object.keys(exportObj.ratings).length : 0) + (exportObj.customBeers ? exportObj.customBeers.length : 0);
         } catch (err) {
             console.warn("Save cancelled or failed", err);
-            return 0;
+            // Don't return 0 here, let it fall through to share if user cancelled picker but might want share?
+            // Actually usually picker cancel means cancel.
         }
     }
 
-    // --- MEDIAN / GONATIVE BRIDGE ---
-    if (window.median) {
-        try {
-            window.median.share.sharePage({
-                title: 'Backup Beerdex',
-                text: jsonString,
-                label: "Sauvegarder Données"
-            });
-            return (exportObj.ratings ? Object.keys(exportObj.ratings).length : 0) + (exportObj.customBeers ? exportObj.customBeers.length : 0);
-        } catch (e) {
-            console.error("Median Export Error", e);
-        }
-    }
-
-    // Preparation for Share/Download
-    const blob = new Blob([jsonString], { type: 'application/json' });
-    const file = new File([blob], filename, { type: 'application/json' });
-
-    // Web Share API Level 2 (Mobile / APK Watcher)
+    // Web Share API Level 2 (Mobile)
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
         try {
             await navigator.share({
@@ -331,21 +333,11 @@ export async function exportDataAdvanced(options = { scope: 'all' }) {
                 title: 'Export Beerdex',
                 text: 'Voici un export de données Beerdex.'
             });
-            return (exportObj.ratings ? Object.keys(exportObj.ratings).length : 0) + (exportObj.customBeers ? exportObj.customBeers.length : 0);
         } catch (err) {
-            if (err.name !== 'AbortError') console.warn("Share failed, trying download fallback", err);
+            if (err.name !== 'AbortError') console.warn("Share failed", err);
         }
     }
 
-    // Fallback: Classic Download Link
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
     return (exportObj.ratings ? Object.keys(exportObj.ratings).length : 0) + (exportObj.customBeers ? exportObj.customBeers.length : 0);
 }
 
