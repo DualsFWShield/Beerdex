@@ -294,7 +294,7 @@ async function handleWrappedShare(stats) {
                 blob = await window.Share.generateBeerCard(beer, 10, comment);
             }
 
-            await window.Share.shareImage(blob, "Mon Beerdex Wrapped 2025");
+
 
             // Mock API generation URL
             const baseUrl = window.location.origin + window.location.pathname;
