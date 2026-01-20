@@ -314,8 +314,8 @@ export async function generateWrappedCard(stats, favoriteBeer, year) {
         ctx.fillText(title.toUpperCase(), x + w / 2, y + 60);
 
         ctx.fillStyle = '#FFC000';
-        ctx.font = 'bold 80px "Russo One", sans-serif';
-        ctx.fillText(value, x + w / 2, y + 150);
+        // Auto-fit text for long style names (e.g. mixed types)
+        fitText(ctx, value, x + w / 2, y + 150, w - 40, 80);
 
         if (sub) {
             ctx.fillStyle = '#FFFFFF';
