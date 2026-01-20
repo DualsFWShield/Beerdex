@@ -39,12 +39,14 @@ function calculateStats() {
 
         if (entry.count > 0) {
             totalBeers += entry.count;
-            topBeers.push({
-                name: beer ? beer.title : 'Bière Mystère',
-                count: entry.count,
-                image: beer ? beer.image : null,
-                id: beer ? beer.id : beerId
-            });
+            if (beer) {
+                topBeers.push({
+                    name: beer.title,
+                    count: entry.count,
+                    image: beer.image,
+                    id: beer.id
+                });
+            }
 
             if (entry.history) {
                 entry.history.forEach(h => {
@@ -254,12 +256,23 @@ async function handleWrappedShare(stats) {
                 const cleanKey = stats.favoriteBeer.name.toUpperCase().trim();
                 beer = allBeers.find(b => b.title.toUpperCase().trim() === cleanKey);
             }
+
+            // Fix: If still not found, DO NOT default to allBeers[0].
+            // Use the info we have in stats (Ghost Beer)
+            if (!beer) {
+                beer = {
+                    id: stats.favoriteBeer.id,
+                    title: stats.favoriteBeer.name || "Bière Archivée",
+                    name: stats.favoriteBeer.name || "Bière Archivée",
+                    image: null, // Use default in generation
+                    style: 'Inconnu'
+                };
+            }
         }
 
-        // Use a default beer if none found (generic placeholder logic could go here, but for now we need a beer)
+        // Use a default beer ONLY if really no stats (empty profile)
         if (!beer) {
-            // Try to find ANY beer to serve as background/template if favorite is missing
-            beer = allBeers[0];
+            beer = allBeers[0] || { title: 'Beerdex', name: 'Beerdex', image: null };
         }
 
         // Check for generateWrappedCard (new design) or fallback to generateBeerCard
