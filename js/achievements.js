@@ -285,10 +285,8 @@ export function checkAchievements(allBeers) {
 
         // Notify for NEW unlocks only
         if (newUnlocks.length > 0) {
-            newUnlocks.forEach((ach, index) => {
-                setTimeout(() => {
-                    showToast(`🏆 Succès : ${ach.title}`);
-                }, index * 1000);
+            newUnlocks.forEach(ach => {
+                showToast(`🏆 Succès : ${ach.title}`);
             });
         }
     }

@@ -270,15 +270,6 @@
     "image": "images/beer/be/leffe-brune-33cl.png"
   },
   {
-    "title": "Straffe Hendrik Quadrupel 11",
-    "brewery": "De Halve Maan",
-    "type": "Brune",
-    "volume": "0.33 L",
-    "alcohol": "11°",
-    "id": "STRAFFE_HENDRIK_QUADRUPEL_11_BRUNE_0.33",
-    "image": "images/beer/be/straffe-hendrik-quadrupel-11-33cl.png"
-  },
-  {
     "title": "Mongozo Banana",
     "brewery": "Huyghe",
     "type": "Blonde",
@@ -1060,15 +1051,6 @@
     "alcohol": "9°",
     "id": "HERCULE_STOUT_BIERE_0.33",
     "image": "images/beer/be/hercule-stout-33cl.png"
-  },
-  {
-    "title": "Straffe Hendrik 9 Triple",
-    "brewery": "De Halve Maan",
-    "type": "Blonde",
-    "volume": "0.33 L",
-    "alcohol": "9°",
-    "id": "STRAFFE_HENDRIK_9_TRIPLE_BLONDE_0.33",
-    "image": "images/beer/be/straffe-hendrik-9-triple-33cl.png"
   },
   {
     "title": "Vlierbeek Grand Cru",

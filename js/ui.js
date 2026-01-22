@@ -10,8 +10,21 @@ const Html5Qrcode = window.Html5Qrcode;
 // Helpers
 const modalContainer = document.getElementById('modal-container');
 
-export function showToast(message) {
-    // Simple toast implementation
+// Toast Queue
+const toastQueue = [];
+let isToastActive = false;
+
+export function showToast(message, type = 'default') {
+    toastQueue.push({ message, type });
+    processToastQueue();
+}
+
+function processToastQueue() {
+    if (isToastActive || toastQueue.length === 0) return;
+
+    isToastActive = true;
+    const { message, type } = toastQueue.shift();
+
     const toast = document.createElement('div');
     toast.style.position = 'fixed';
     toast.style.bottom = '80px';
@@ -25,8 +38,29 @@ export function showToast(message) {
     toast.style.zIndex = '1000';
     toast.style.boxShadow = '0 5px 15px rgba(0,0,0,0.3)';
     toast.innerText = message;
+
     document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 3000);
+
+    // Initial Animation
+    toast.animate([
+        { transform: 'translateX(-50%) translateY(20px)', opacity: 0 },
+        { transform: 'translateX(-50%) translateY(0)', opacity: 1 }
+    ], { duration: 300, easing: 'ease-out' });
+
+    setTimeout(() => {
+        // Exit Animation
+        const anim = toast.animate([
+            { transform: 'translateX(-50%) translateY(0)', opacity: 1 },
+            { transform: 'translateX(-50%) translateY(20px)', opacity: 0 }
+        ], { duration: 300, easing: 'ease-in' });
+
+        anim.onfinish = () => {
+            toast.remove();
+            isToastActive = false;
+            // Small buffer between toasts
+            setTimeout(processToastQueue, 300);
+        };
+    }, 3000);
 }
 
 export function closeModal() {
@@ -1511,14 +1545,31 @@ export function checkAndShowWelcome() {
             </p>
         </div>
 
+        <div class="form-group" style="display:flex; align-items:center; gap:10px; justify-content:center; margin-bottom:20px; background:rgba(0,0,0,0.2); padding:10px; border-radius:8px;">
+            <input type="checkbox" id="check-discovery-intro" style="width:20px; height:20px;">
+            <label for="check-discovery-intro" style="font-size:0.9rem; color:#eee; cursor:pointer;">
+                Activer le <strong>Mode Découverte</strong> ? <br>
+                <span style="font-size:0.75rem; color:#aaa;">(Cache les bières tant qu'elles ne sont pas cherchées)</span>
+            </label>
+        </div>
+
         <button id="btn-welcome-ok" class="btn-primary" style="width:100%; font-size:1.1rem; padding:12px;">Glou glou ! 🍺</button>
     `;
 
 
     wrapper.querySelector('#btn-welcome-ok').onclick = () => {
+        const isDiscovery = wrapper.querySelector('#check-discovery-intro').checked;
+        if (isDiscovery) {
+            Storage.savePreference('discoveryMode', true);
+        }
         localStorage.setItem(HAS_SEEN_KEY, 'true');
+
         document.getElementById('modal-container').classList.add('hidden');
         document.getElementById('modal-container').innerHTML = ''; // Clear
+
+        if (isDiscovery) {
+            location.reload();
+        }
     };
 
     openModal(wrapper);
