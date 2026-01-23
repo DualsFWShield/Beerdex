@@ -73,11 +73,20 @@ export async function renderMapWithData(container, historyWithBreweries) {
     console.log("Map Debug: Loaded Brewery Data", Array.isArray(breweryData), breweryData.length);
 
     let matchCount = 0;
+    let unmatchedCount = 0;
+
+    // Debug: Track unmatched breweries to help user/dev
+    const unmatchedBreweries = new Set();
+
     historyWithBreweries.forEach(item => {
         const brewName = (item.beer.brewery || "").toLowerCase();
-        const beerName = item.beer.name;
+        // FIX: Use .title instead of .name
+        const beerName = item.beer.title;
 
-        if (!brewName) return;
+        if (!brewName) {
+            unmatchedCount++;
+            return;
+        }
 
         let foundCode = null;
 
@@ -85,12 +94,16 @@ export async function renderMapWithData(container, historyWithBreweries) {
         // We look for a known brewery name inside the user's brewery string
         const match = breweryData.find(b => {
             // Robust match: Check if data entry has province AND if names match
+            // Also handle partial matches better if needed
             return b.province && b.province.length === 3 && brewName.includes(b.name.toLowerCase());
         });
 
         if (match) {
             foundCode = match.province;
             matchCount++;
+        } else {
+            unmatchedCount++;
+            unmatchedBreweries.add(item.beer.brewery);
         }
 
         if (foundCode && stats[foundCode]) {
@@ -99,7 +112,10 @@ export async function renderMapWithData(container, historyWithBreweries) {
         }
     });
 
-    console.log(`Map Debug: Matched ${matchCount} beers to provinces.`);
+    console.log(`Map Debug: Matched ${matchCount} beers. Unmatched: ${unmatchedCount}.`);
+    if (unmatchedBreweries.size > 0) {
+        console.warn("Map Debug: Unmatched Breweries:", Array.from(unmatchedBreweries));
+    }
     console.log("Map Debug: Stats", stats);
 
     container.innerHTML = `
