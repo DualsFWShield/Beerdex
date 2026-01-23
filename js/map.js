@@ -180,15 +180,24 @@ function applyHeatmap(svg, stats, tooltip) {
         const showTooltip = (e) => {
             el.style.filter = 'brightness(1.2) drop-shadow(0 0 5px rgba(255,255,255,0.3))';
 
-            // Smart positioning relative to mouse or center? 
-            // Center is safe, but mouse is better if map is large.
-            // Sticking to Center (as per HTML structure) is safer for mobile.
+            // Convert Set to Array and limit display
+            const beerList = Array.from(data.beers);
+            const displayedBeers = beerList.slice(0, 5);
+            const remaining = beerList.length - 5;
+
+            let listHtml = displayedBeers.map(b => `<div style="text-align:left; font-size:0.85em;">• ${b}</div>`).join('');
+            if (remaining > 0) {
+                listHtml += `<div style="text-align:left; font-size:0.8em; color:#aaa; margin-top:3px;">+ ${remaining} autres...</div>`;
+            }
 
             tooltip.innerHTML = `
                 <div style="text-align:center;">
                     <strong style="color:var(--accent-gold); font-family:'Russo One'; font-size:1.1em;">${name}</strong>
-                    <div style="margin-top:4px; font-size:0.9em; color:#ddd;">
+                    <div style="margin-top:4px; font-size:0.9em; color:#ddd; margin-bottom:5px;">
                         ${count} bière${count > 1 ? 's' : ''} unique${count > 1 ? 's' : ''}
+                    </div>
+                    <div style="border-top:1px solid #444; padding-top:5px; margin-top:5px;">
+                        ${listHtml}
                     </div>
                 </div>
              `;
