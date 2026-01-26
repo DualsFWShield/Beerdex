@@ -2,6 +2,7 @@ import * as Storage from './storage.js';
 import * as Share from './share.js';
 import Match from './match.js';
 import * as Map from './map.js';
+import { calculateRarity } from './autoRarity.js';
 
 // We assume global libs: QRCode, Html5QrcodeScanner (handled via CDN)
 const QRCodeLib = window.QRCode;
@@ -85,34 +86,130 @@ function openModal(content) {
 
 // --- Renders ---
 
-// Helper to remove white background from images
+// Helper to remove white background from images using flood fill from corners
+// Helper to remove white background from images using flood fill from corners with edge feathering
+// Helper to remove background using 'Magic Wand' style flood fill (color distance)
 window.removeImageBackground = function (img) {
     if (img.dataset.processed) return;
 
-    // Security check for cross-origin (though local files should be fine)
     try {
         const canvas = document.createElement('canvas');
-        canvas.width = img.naturalWidth;
-        canvas.height = img.naturalHeight;
+        const width = img.naturalWidth;
+        const height = img.naturalHeight;
+        canvas.width = width;
+        canvas.height = height;
         const ctx = canvas.getContext('2d');
 
         ctx.drawImage(img, 0, 0);
 
-        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const imgData = ctx.getImageData(0, 0, width, height);
         const data = imgData.data;
-        const threshold = 230; // Sensitivity for white detection
+
+        // Settings for Magic Wand
+        const tolerance = 20; // Allow slight variations in background color
+        const toleranceSq = tolerance * tolerance;
+        const featherRadius = 2; // Smooth edges
+
+        // 1. Get Reference Color from Top-Left Corner
+        const bgR = data[0];
+        const bgG = data[1];
+        const bgB = data[2];
+
+        // Helper: Calculate Euclidean color distance squared
+        const colorDistSq = (r1, g1, b1, r2, g2, b2) => {
+            return (r1 - r2) ** 2 + (g1 - g2) ** 2 + (b1 - b2) ** 2;
+        };
+
+        // Mask: 0 = Keep, 1 = Remove
+        const toRemove = new Uint8Array(width * height);
+
+        // Helper to check if pixel matches background reference within tolerance
+        const isBackground = (idx) => {
+            const r = data[idx];
+            const g = data[idx + 1];
+            const b = data[idx + 2];
+            return colorDistSq(r, g, b, bgR, bgG, bgB) <= toleranceSq;
+        };
+
+        // 2. Flood Fill from corners
+        const floodFill = (startX, startY) => {
+            const stack = [[startX, startY]];
+
+            while (stack.length > 0) {
+                const [x, y] = stack.pop();
+
+                if (x < 0 || x >= width || y < 0 || y >= height) continue;
+
+                const idx = y * width + x;
+                if (toRemove[idx]) continue; // Already marked
+
+                const dataIdx = idx * 4;
+
+                // If this pixel matches the background color (tolerance)
+                if (isBackground(dataIdx)) {
+                    toRemove[idx] = 1;
+
+                    stack.push([x + 1, y]);
+                    stack.push([x - 1, y]);
+                    stack.push([x, y + 1]);
+                    stack.push([x, y - 1]);
+                }
+            }
+        };
+
+        // Trigger fill from corners if they match the background reference
+        floodFill(0, 0);
+
+        // Check other corners
+        const checkAndFill = (x, y) => {
+            const idx = (y * width + x) * 4;
+            if (isBackground(idx)) floodFill(x, y);
+        };
+        checkAndFill(width - 1, 0);
+        checkAndFill(0, height - 1);
+        checkAndFill(width - 1, height - 1);
+
+        // 3. Apply Alpha with Distance-Based Feathering
         let hasChanges = false;
 
-        for (let i = 0; i < data.length; i += 4) {
-            const r = data[i];
-            const g = data[i + 1];
-            const b = data[i + 2];
+        for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+                const idx = y * width + x;
+                const dataIdx = idx * 4;
 
-            // Check if pixel is white-ish
-            if (r > threshold && g > threshold && b > threshold) {
-                // Set alpha to 0 (Transparent)
-                data[i + 3] = 0;
-                hasChanges = true;
+                if (toRemove[idx]) {
+                    data[dataIdx + 3] = 0; // Fully transparent
+                    hasChanges = true;
+                    continue;
+                }
+
+                // Check unremoved pixels for proximity to removed pixels (Feathering)
+                let minDistance = featherRadius + 1;
+                let foundRemoved = false;
+
+                // Search neighborhood
+                for (let dy = -featherRadius; dy <= featherRadius; dy++) {
+                    for (let dx = -featherRadius; dx <= featherRadius; dx++) {
+                        const nx = x + dx;
+                        const ny = y + dy;
+                        if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
+                            if (toRemove[ny * width + nx]) {
+                                const dist = Math.sqrt(dx * dx + dy * dy);
+                                if (dist < minDistance) {
+                                    minDistance = dist;
+                                    foundRemoved = true;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (foundRemoved && minDistance <= featherRadius) {
+                    // Smooth transition: 0 distance = 0 alpha (removed), Radius distance = 255 alpha
+                    const alpha = Math.floor((minDistance / featherRadius) * 255);
+                    data[dataIdx + 3] = Math.min(data[dataIdx + 3], alpha);
+                    hasChanges = true;
+                }
             }
         }
 
@@ -122,7 +219,7 @@ window.removeImageBackground = function (img) {
             img.dataset.processed = "true";
         }
     } catch (e) {
-        // Silent fail (CORS or other issue)
+        // Silent fail
     }
 };
 
@@ -200,6 +297,34 @@ export function renderBeerList(beers, container, filters = null, showCreatePromp
             });
         }
 
+        // --- NEW FILTERS ---
+        // Production Volume
+        if (filters.production_volume && filters.production_volume !== 'All') {
+            filteredBeers = filteredBeers.filter(b => b.production_volume === filters.production_volume);
+        }
+
+        // Distribution
+        if (filters.distribution && filters.distribution !== 'All') {
+            filteredBeers = filteredBeers.filter(b => b.distribution === filters.distribution);
+        }
+
+        // Barrel Aged
+        if (filters.barrel_aged) {
+            filteredBeers = filteredBeers.filter(b => b.barrel_aged === true);
+        }
+
+        // Community Rating
+        if (filters.community_rating !== undefined && filters.community_rating !== '') {
+            const minCommR = parseFloat(filters.community_rating);
+            filteredBeers = filteredBeers.filter(b => (b.community_rating || 0) >= minCommR);
+        }
+
+        // Ingredients
+        if (filters.ingredients) {
+            const kw = filters.ingredients.toLowerCase();
+            filteredBeers = filteredBeers.filter(b => (b.ingredients || '').toLowerCase().includes(kw));
+        }
+
         // --- Sorting ---
         // Create unified sort function
         const sortFunc = (a, b) => {
@@ -228,6 +353,13 @@ export function renderBeerList(beers, container, filters = null, showCreatePromp
                 };
                 valA = getV(a);
                 valB = getV(b);
+            } else if (filters.sortBy === 'rarity') {
+                const ranks = { 'base': 0, 'commun': 1, 'rare': 2, 'super_rare': 3, 'epique': 4, 'mythique': 5, 'legendaire': 6, 'ultra_legendaire': 7 };
+                valA = ranks[a.rarity || 'base'] || 0;
+                valB = ranks[b.rarity || 'base'] || 0;
+            } else if (filters.sortBy === 'community_rating') {
+                valA = a.community_rating || 0;
+                valB = b.community_rating || 0;
             } else {
                 valA = a.title.toLowerCase();
                 valB = b.title.toLowerCase();
@@ -246,6 +378,15 @@ export function renderBeerList(beers, container, filters = null, showCreatePromp
         }
         if (filters.onlyFavorites) {
             filteredBeers = filteredBeers.filter(b => Storage.isFavorite(b.id));
+        }
+
+        // Rarity Filter
+        if (filters.rarity && filters.rarity.length > 0) {
+            // If user checked "Unknown/Base", handle it
+            filteredBeers = filteredBeers.filter(b => {
+                const r = b.rarity || 'base';
+                return filters.rarity.includes(r);
+            });
         }
     }
 
@@ -296,6 +437,34 @@ export function renderBeerList(beers, container, filters = null, showCreatePromp
         const card = document.createElement('div');
         card.className = `beer-card ${isDrunk ? 'drunk' : ''}`;
         card.dataset.id = beer.id;
+
+        // Apply Rarity Border
+        // Logic: Reveal if Drunk OR if Setting "Reveal Rarity" is ON
+        const revealRarity = isDrunk || Storage.getPreference('revealRarity', false);
+
+        if (revealRarity && beer.rarity && beer.rarity !== 'base') {
+            // Fallback to CSS variable or hardcoded lookup if var() doesn't work well inline
+            card.style.borderColor = `var(--rarity-${beer.rarity})`;
+
+            // Make border slightly thicker for high rarities?
+            if (beer.rarity === 'super_rare' || beer.rarity === 'epique') card.style.borderWidth = '2px';
+            if (beer.rarity === 'mythique' || beer.rarity === 'legendaire') card.style.borderWidth = '3px';
+
+            if (beer.rarity === 'ultra_legendaire') {
+                // Use class for constant animation instead of inline styles
+                card.classList.add('card-anim-ultra_legendary');
+            }
+        } else {
+            // Locked / Neutral State
+            card.style.borderColor = 'var(--border-color)';
+        }
+
+        if (beer.isSeasonal) {
+            // Add a small seasonal indicator if needed
+            if (!beer.rarity || beer.rarity === 'base') {
+                card.style.borderColor = 'var(--rarity-seasonal)';
+            }
+        }
 
         // Stats Badges
         const abv = beer.alcohol ? `<span style="background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px; font-size:0.7rem;">${beer.alcohol}</span>` : '';
@@ -348,6 +517,8 @@ export function renderFilterModal(allBeers, activeFilters, onApply) {
     // Extract unique values
     const types = ['All', ...new Set(allBeers.map(b => b.type).filter(Boolean))].sort();
     const breweries = ['All', ...new Set(allBeers.map(b => b.brewery).filter(Boolean))].sort();
+    const prodVolumes = ['All', ...new Set(allBeers.map(b => b.production_volume).filter(Boolean))].sort();
+    const distributions = ['All', ...new Set(allBeers.map(b => b.distribution).filter(Boolean))].sort();
 
     // Helpers
     const createOptions = (list, selected) => list.map(item => `<option value="${item}" ${item === selected ? 'selected' : ''}>${item}</option>`).join('');
@@ -364,6 +535,8 @@ export function renderFilterModal(allBeers, activeFilters, onApply) {
                         <option value="brewery" ${activeFilters.sortBy === 'brewery' ? 'selected' : ''}>Brasserie</option>
                         <option value="alcohol" ${activeFilters.sortBy === 'alcohol' ? 'selected' : ''}>Alcool (%)</option>
                         <option value="volume" ${activeFilters.sortBy === 'volume' ? 'selected' : ''}>Volume</option>
+                        <option value="rarity" ${activeFilters.sortBy === 'rarity' ? 'selected' : ''}>Rareté</option>
+                        <option value="community_rating" ${activeFilters.sortBy === 'community_rating' ? 'selected' : ''}>Note Communauté</option>
                     </select>
                     <select name="sortOrder" class="form-select" style="flex:1;">
                         <option value="asc" ${activeFilters.sortOrder === 'asc' ? 'selected' : ''}>⬆️ Croissant</option>
@@ -380,6 +553,61 @@ export function renderFilterModal(allBeers, activeFilters, onApply) {
                         <label for="ignoreFavorites" style="font-size:0.9rem; margin:0; color:#aaa;">🚫 Ignorer le tri favoris</label>
                         <input type="checkbox" name="ignoreFavorites" id="ignoreFavorites" ${activeFilters.ignoreFavorites ? 'checked' : ''} style="width:20px; height:20px;">
                     </div>
+                </div>
+            </div>
+
+            <!-- Rarity Filter -->
+            <div class="stat-card mb-20">
+                <h4 style="margin-bottom:10px;">Rareté</h4>
+                <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                    ${['base', 'commun', 'rare', 'super_rare', 'epique', 'mythique', 'legendaire', 'ultra_legendaire'].map(r => `
+                        <label style="display:flex; align-items:center; gap:6px; background:rgba(255,255,255,0.05); padding:5px 10px; border-radius:15px; cursor:pointer; border:1px solid var(--rarity-${r});">
+                            <input type="checkbox" class="cb-rarity" value="${r}" ${activeFilters.rarity && activeFilters.rarity.includes(r) ? 'checked' : ''}>
+                            <span style="font-size:0.8rem; text-transform:capitalize; color:#fff;">${r.replace(/_/g, ' ')}</span>
+                        </label>
+                    `).join('')}
+                </div>
+            </div>
+
+            <!-- New Filters: Attributes -->
+            <div class="stat-card mb-20">
+                <h4 style="margin-bottom:10px;">Attributs</h4>
+                
+                <div class="form-group">
+                    <label class="form-label">Volume Production</label>
+                    <select name="production_volume" class="form-select">${createOptions(prodVolumes, activeFilters.production_volume || 'All')}</select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Distribution</label>
+                    <select name="distribution" class="form-select">${createOptions(distributions, activeFilters.distribution || 'All')}</select>
+                </div>
+
+                <div class="form-group" style="padding:10px; background:rgba(255,255,255,0.05); border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+                    <label for="barrel_aged" style="font-size:0.9rem; margin:0;">🪵 Vieillie en fût</label>
+                    <input type="checkbox" name="barrel_aged" id="barrel_aged" ${activeFilters.barrel_aged ? 'checked' : ''} style="width:20px; height:20px;">
+                </div>
+
+                <div class="form-group" style="margin-top:10px;">
+                    <label class="form-label">Ingrédients (Recherche)</label>
+                    <input type="text" name="ingredients" class="form-input" placeholder="Ex: Coriandre, Cerise..." value="${activeFilters.ingredients || ''}">
+                </div>
+            </div>
+
+            <!-- New Filters: Ratings -->
+             <div class="stat-card mb-20">
+                <h4 style="margin-bottom:10px;">Notes</h4>
+                
+                 <div class="form-group">
+                    <label class="form-label">Note Perso Min (<span id="rate-val">${activeFilters.minRating || 0}</span>/20)</label>
+                    <input type="range" name="minRating" class="form-input" min="0" max="20" step="1" value="${activeFilters.minRating || 0}" 
+                        oninput="document.getElementById('rate-val').innerText = this.value">
+                </div>
+
+                 <div class="form-group">
+                    <label class="form-label">Note Communauté Min (<span id="comm-rate-val">${activeFilters.community_rating || 0}</span>/5)</label>
+                    <input type="range" name="community_rating" class="form-input" min="0" max="5" step="0.1" value="${activeFilters.community_rating || 0}" 
+                        oninput="document.getElementById('comm-rate-val').innerText = this.value">
                 </div>
             </div>
 
@@ -417,13 +645,6 @@ export function renderFilterModal(allBeers, activeFilters, onApply) {
                     </select>
                 </div>
                 <div id="vol-inputs"></div>
-            </div>
-
-            <!-- Rating -->
-             <div class="form-group">
-                <label class="form-label">Note Minimum (<span id="rate-val">${activeFilters.minRating || 0}</span>/20)</label>
-                <input type="range" name="minRating" class="form-input" min="0" max="20" step="1" value="${activeFilters.minRating || 0}" 
-                    oninput="document.getElementById('rate-val').innerText = this.value">
             </div>
 
             <div class="form-group" style="padding:10px; background:rgba(255,255,255,0.05); border-radius:8px;">
@@ -504,7 +725,18 @@ export function renderFilterModal(allBeers, activeFilters, onApply) {
     wrapper.querySelector('form').onsubmit = (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
+
+        // Collect Rarity Checkboxes manually
+        const rarity = [];
+        wrapper.querySelectorAll('.cb-rarity:checked').forEach(cb => rarity.push(cb.value));
+
         const filters = Object.fromEntries(formData.entries());
+        filters.onlyFavorites = formData.get('onlyFavorites') === 'on';
+        filters.ignoreFavorites = formData.get('ignoreFavorites') === 'on';
+        filters.onlyCustom = formData.get('onlyCustom') === 'on';
+        filters.barrel_aged = formData.get('barrel_aged') === 'on';
+        filters.rarity = rarity;
+
         onApply(filters);
         closeModal();
     };
@@ -539,14 +771,19 @@ export function renderBeerDetail(beer, onSave) {
                     <textarea class="form-textarea" name="${field.id}" rows="3">${value}</textarea>
                 </div>`;
         } else if (field.type === 'range') {
+            const min = field.min !== undefined ? field.min : 0;
+            const max = field.max !== undefined ? field.max : 10;
+            const step = field.step !== undefined ? field.step : 1;
+            const displayVal = value !== '' ? value : min;
+
             return `
                 <div class="form-group">
                     <label class="form-label" style="display:flex; justify-content:space-between;">
                         <span>${field.label}</span>
-                        <span id="val-${field.id}">${value || 0}/10</span>
+                        <span id="val-${field.id}">${displayVal}/${max}</span>
                     </label>
-                    <input type="range" class="form-input" name="${field.id}" min="0" max="10" step="1" value="${value || 0}"
-                        oninput="document.getElementById('val-${field.id}').innerText = this.value + '/10'"
+                    <input type="range" class="form-input" name="${field.id}" min="${min}" max="${max}" step="${step}" value="${displayVal}"
+                        oninput="document.getElementById('val-${field.id}').innerText = this.value + '/${max}'"
                         style="padding:0; height:40px;">
                 </div>`;
         } else if (field.type === 'checkbox') {
@@ -605,6 +842,44 @@ export function renderBeerDetail(beer, onSave) {
         `;
     }
 
+    // --- Rarity Logic Definition ---
+    // Moved logic here: Reveal state is now tied to consumption (count > 0)
+    const initRarityLogic = (forceReveal = false) => {
+        const rarityContainer = wrapper.querySelector('#rarity-badge-container');
+        if (!rarityContainer) return;
+
+        // Determine if unlocked: Drunk at least once OR forceReveal triggered
+        const isUnlocked = existingData.count > 0 || forceReveal;
+
+        const renderBadge = () => {
+            rarityContainer.innerHTML = '';
+
+            if (beer.rarity && beer.rarity !== 'base') {
+                if (isUnlocked) {
+                    const badge = document.createElement('div');
+                    badge.className = `rarity-badge rarity-${beer.rarity} anim-${beer.rarity}`;
+                    badge.innerText = beer.rarity.replace('_', ' ');
+                    rarityContainer.appendChild(badge);
+                } else {
+                    const hiddenBadge = document.createElement('div');
+                    hiddenBadge.className = 'rarity-badge rarity-hidden';
+                    hiddenBadge.innerText = '???';
+                    // No click handler anymore, must drink to unlock
+                    rarityContainer.appendChild(hiddenBadge);
+                }
+            }
+
+            if (beer.isSeasonal) {
+                const seasonBadge = document.createElement('div');
+                seasonBadge.className = 'rarity-badge rarity-saisonniere';
+                seasonBadge.innerHTML = '🍂 Saisonnière';
+                rarityContainer.appendChild(seasonBadge);
+            }
+        };
+
+        renderBadge();
+    };
+
     // Image Fallback Logic
     const isKeg = (vol) => {
         if (!vol) return false;
@@ -638,7 +913,21 @@ export function renderBeerDetail(beer, onSave) {
                             <span>${beer.alcohol || '?'}</span>
                             <span>${beer.volume || '?'}</span>
                         </div>
+                        <div id="rarity-badge-container" style="margin-top:10px; display:flex; justify-content:center; gap:5px; flex-wrap:wrap;">
+                            <!-- Auto-injected by JS logic below -->
+                        </div>
                 </div>
+
+                <details style="background:var(--bg-card); padding:10px; border-radius:12px; margin-bottom:15px;">
+                    <summary style="font-weight:bold; cursor:pointer; list-style:none;">📊 Infos détaillées</summary>
+                    <div style="margin-top:10px; display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:0.85rem;">
+                        ${beer.production_volume ? `<div><span style="color:#888;">Production:</span> ${beer.production_volume}</div>` : ''}
+                        ${beer.distribution ? `<div><span style="color:#888;">Distribution:</span> ${beer.distribution}</div>` : ''}
+                        ${beer.barrel_aged !== undefined ? `<div><span style="color:#888;">Barrel Aged:</span> ${beer.barrel_aged ? '✅ Oui' : '❌ Non'}</div>` : ''}
+                        ${beer.community_rating ? `<div><span style="color:#888;">Note Communauté:</span> ⭐ ${beer.community_rating}/5</div>` : ''}
+                        ${beer.ingredients ? `<div style="grid-column:span 2;"><span style="color:#888;">Ingrédients:</span> ${beer.ingredients}</div>` : ''}
+                    </div>
+                </details>
 
                 ${consumptionWrapper.outerHTML}
 
@@ -660,6 +949,9 @@ export function renderBeerDetail(beer, onSave) {
 
                 ${customActions}
                 `;
+
+    // Initialize Rarity Logic *after* HTML is in DOM
+    initRarityLogic();
 
     // Close Modal Handler
     wrapper.querySelector('#btn-close-modal').onclick = () => {
@@ -723,30 +1015,142 @@ export function renderBeerDetail(beer, onSave) {
 
     // Re-binding Logic for Consumption
     wrapper.querySelector('#btn-drink').onclick = async () => {
+        const wasLocked = !existingData.count || existingData.count === 0;
+
         const vol = wrapper.querySelector('#consumption-volume').value;
         const newData = Storage.addConsumption(beer.id, vol);
+
+        // Update local object reference for immediate UI updates relying on it
+        existingData.count = newData.count;
         wrapper.querySelector('#consumption-count').innerText = newData.count;
 
-        // Dynamic Import for Achievements to avoid circular dependency issues if any,
-        // or just rely on global/window if we attach it there?
-        // Better: We need to check achievements here. 
-        // Since UI doesn't import Achievements, we might need to pass a callback or dispatch an event.
-        // For simplicity, let's dispatch a custom event that App.js listens to?
-        // Or just import it here.
-        const Achievements = await import('./achievements.js');
-        // We need 'allBeers' to calculate stats correctly. 
-        // We can pass a callback to renderBeerDetail?
-        // Let's dispatch event for cleaner architecture.
-        window.dispatchEvent(new CustomEvent('beerdex-action'));
-
         showToast(`🍻 Glou Glou ! (+${vol})`);
+
+        // Reveal Sequence if FIRST TIME
+        if (wasLocked && beer.rarity && beer.rarity !== 'base') {
+            // Create Overlay
+            const overlay = document.createElement('div');
+            overlay.className = 'reveal-overlay';
+
+            // Create Canvas for Particles
+            const canvas = document.createElement('canvas');
+            canvas.style.cssText = 'position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;';
+
+            // Get Rarity Color
+            const rarityColors = {
+                'commun': '#2ecc71',
+                'rare': '#3498db',
+                'super_rare': '#00bcd4',
+                'epique': '#9b59b6',
+                'mythique': '#e74c3c',
+                'legendaire': '#f39c12',
+                'ultra_legendaire': '#ff00cc'
+            };
+            const particleColor = rarityColors[beer.rarity] || '#FFC000';
+
+            overlay.innerHTML = `
+                <div class="reveal-card" style="border: 4px solid ${particleColor}; box-shadow: 0 0 50px ${particleColor};">
+                    <span style="font-size: 4rem; animation: rarity-shake 0.1s infinite;">🍺</span>
+                </div>
+            `;
+            overlay.appendChild(canvas);
+            document.body.appendChild(overlay);
+
+            // Particle System
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            const particles = [];
+            const particleCount = beer.rarity === 'ultra_legendaire' ? 300 : (beer.rarity === 'legendaire' ? 200 : 100);
+
+            class Particle {
+                constructor() {
+                    this.x = canvas.width / 2;
+                    this.y = canvas.height / 2;
+                    this.size = Math.random() * 8 + 2;
+                    this.speedX = (Math.random() - 0.5) * 20;
+                    this.speedY = (Math.random() - 0.5) * 20;
+                    this.color = particleColor;
+                    this.alpha = 1;
+                }
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    this.alpha -= 0.015;
+                    this.size *= 0.98;
+                }
+                draw() {
+                    ctx.globalAlpha = this.alpha;
+                    ctx.fillStyle = this.color;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            function spawnParticles() {
+                for (let i = 0; i < particleCount; i++) {
+                    particles.push(new Particle());
+                }
+            }
+
+            function animateParticles() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                for (let i = particles.length - 1; i >= 0; i--) {
+                    particles[i].update();
+                    particles[i].draw();
+                    if (particles[i].alpha <= 0) particles.splice(i, 1);
+                }
+                if (particles.length > 0) requestAnimationFrame(animateParticles);
+            }
+
+            // Trigger explosion after delay (sync with card animation)
+            setTimeout(() => {
+                spawnParticles();
+                animateParticles();
+            }, 1500); // Explode mid-shake
+
+            // Wait for full animation then reveal
+            setTimeout(() => {
+                overlay.remove();
+
+                // Show Rarity Badge
+                initRarityLogic(true); // Force reveal update
+
+                // Animate Badge
+                const badge = wrapper.querySelector(`.rarity-${beer.rarity}`);
+                if (badge) {
+                    badge.animate([
+                        { transform: 'scale(0) rotate(-180deg)', filter: 'brightness(3)' },
+                        { transform: 'scale(2.5) rotate(10deg)', filter: 'brightness(2)' },
+                        { transform: 'scale(1) rotate(0deg)', filter: 'brightness(1)' }
+                    ], { duration: 1000, easing: 'cubic-bezier(0.175, 0.885, 0.32, 1.275)' });
+                }
+
+                // Play Sound (placeholder)
+                // const audio = new Audio('sounds/reveal.mp3'); audio.play();
+
+            }, 3000); // Sync with CSS animation length
+        } else {
+            // Normal update just in case
+            initRarityLogic();
+        }
+
+        const Achievements = await import('./achievements.js');
+        window.dispatchEvent(new CustomEvent('beerdex-action'));
     };
 
     wrapper.querySelector('#btn-undrink').onclick = () => {
         const newData = Storage.removeConsumption(beer.id);
         if (newData) {
+            existingData.count = newData.count; // Update ref
             wrapper.querySelector('#consumption-count').innerText = newData.count;
             showToast("Consommation annulée.");
+
+            // Re-lock if count back to 0
+            if (newData.count === 0) {
+                initRarityLogic(); // Will see count=0 and hide it
+            }
         }
     };
 
@@ -822,6 +1226,37 @@ export function renderAddBeerForm(onSave, editModeBeer = null) {
                     </div>
 
                     <div class="form-group">
+                        <label class="form-label">Province / Région</label>
+                        <select class="form-select" name="province">
+                            <option value="">-- Non spécifié --</option>
+                            <optgroup label="🇧🇪 Belgique - Flandre">
+                                <option value="ANT" ${v('province') === 'ANT' ? 'selected' : ''}>Anvers (ANT)</option>
+                                <option value="OVL" ${v('province') === 'OVL' ? 'selected' : ''}>Flandre Orientale (OVL)</option>
+                                <option value="WVL" ${v('province') === 'WVL' ? 'selected' : ''}>Flandre Occidentale (WVL)</option>
+                                <option value="VBR" ${v('province') === 'VBR' ? 'selected' : ''}>Brabant Flamand (VBR)</option>
+                                <option value="LIM" ${v('province') === 'LIM' ? 'selected' : ''}>Limbourg (LIM)</option>
+                            </optgroup>
+                            <optgroup label="🇧🇪 Belgique - Wallonie">
+                                <option value="HAI" ${v('province') === 'HAI' ? 'selected' : ''}>Hainaut (HAI)</option>
+                                <option value="NAM" ${v('province') === 'NAM' ? 'selected' : ''}>Namur (NAM)</option>
+                                <option value="LIE" ${v('province') === 'LIE' ? 'selected' : ''}>Liège (LIE)</option>
+                                <option value="LUX" ${v('province') === 'LUX' ? 'selected' : ''}>Luxembourg (LUX)</option>
+                                <option value="WBR" ${v('province') === 'WBR' ? 'selected' : ''}>Brabant Wallon (WBR)</option>
+                            </optgroup>
+                            <optgroup label="🇧🇪 Belgique - Bruxelles">
+                                <option value="BRU" ${v('province') === 'BRU' ? 'selected' : ''}>Bruxelles (BRU)</option>
+                            </optgroup>
+                            <optgroup label="🌍 Autres">
+                                <option value="FR" ${v('province') === 'FR' ? 'selected' : ''}>France (FR)</option>
+                                <option value="NL" ${v('province') === 'NL' ? 'selected' : ''}>Pays-Bas (NL)</option>
+                                <option value="DE" ${v('province') === 'DE' ? 'selected' : ''}>Allemagne (DE)</option>
+                                <option value="US" ${v('province') === 'US' ? 'selected' : ''}>États-Unis (US)</option>
+                                <option value="OTHER" ${v('province') === 'OTHER' ? 'selected' : ''}>Autre</option>
+                            </optgroup>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
                         <label class="form-label">Type (Blonde, Brune...)</label>
                         <input type="text" class="form-input" name="type" value="${v('type')}">
                     </div>
@@ -834,6 +1269,58 @@ export function renderAddBeerForm(onSave, editModeBeer = null) {
                     <div class="form-group">
                         <label class="form-label">Volume (ex: 33cl)</label>
                         <input type="text" class="form-input" name="volume" value="${v('volume')}">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Distribution</label>
+                        <select class="form-select" name="distribution">
+                            <option value="1" ${v('distribution') === 'Partout' ? 'selected' : ''}>Partout (1 pt)</option>
+                            <option value="2" ${v('distribution') === 'Supermarché' ? 'selected' : ''}>Supermarché (2 pts)</option>
+                            <option value="3" ${v('distribution') === 'Cavistes' ? 'selected' : ''}>Cavistes (3 pts)</option>
+                            <option value="4" ${v('distribution') === 'Cavistes spécialisés' ? 'selected' : ''}>Cavistes spécialisés (4 pts)</option>
+                            <option value="5" ${v('distribution') === 'À la brasserie' ? 'selected' : ''}>À la brasserie uniquement (5 pts)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Disponibilité</label>
+                        <select class="form-select" name="availability">
+                            <option value="1">Permanente (1 pt)</option>
+                            <option value="2">Saisonnière (2 pts)</option>
+                            <option value="3">Édition limitée (3 pts)</option>
+                            <option value="4">Batch unique (4 pts)</option>
+                            <option value="5">Unique à vie (5 pts)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Ingrédients / Notes</label>
+                        <input type="text" class="form-input" name="ingredients" value="${v('ingredients') || ''}" placeholder="ex: Barrel Aged, Houblons Citra...">
+                    </div>
+
+                    <div class="form-group" style="display:flex; align-items:center; gap:10px; margin-bottom:15px;">
+                        <input type="checkbox" name="barrel_aged" id="barrel_aged" ${v('barrel_aged') ? 'checked' : ''} style="width:20px; height:20px;">
+                        <label for="barrel_aged" style="font-size:0.9rem; margin:0;">Vieillie en fût (Barrel Aged)</label>
+                    </div>
+
+                        <label class="form-label">Rareté</label>
+                        <div style="display:flex; gap:10px; margin-bottom:10px;">
+                            <select class="form-select" name="rarity" style="flex:1;">
+                                <option value="" selected>-- Auto --</option>
+                                <option value="base" ${v('rarity') === 'base' ? 'selected' : ''}>Base (Gris)</option>
+                                <option value="commun" ${v('rarity') === 'commun' ? 'selected' : ''}>Commun (Vert)</option>
+                                <option value="rare" ${v('rarity') === 'rare' ? 'selected' : ''}>Rare (Bleu)</option>
+                                <option value="super_rare" ${v('rarity') === 'super_rare' ? 'selected' : ''}>Super Rare (Cyan)</option>
+                                <option value="epique" ${v('rarity') === 'epique' ? 'selected' : ''}>Épique (Violet)</option>
+                                <option value="mythique" ${v('rarity') === 'mythique' ? 'selected' : ''}>Mythique (Rouge)</option>
+                                <option value="legendaire" ${v('rarity') === 'legendaire' ? 'selected' : ''}>Légendaire (Orange)</option>
+                                <option value="ultra_legendaire" ${v('rarity') === 'ultra_legendaire' ? 'selected' : ''}>Ultra Légendaire (Gradient)</option>
+                            </select>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <input type="checkbox" name="isSeasonal" id="isSeasonal" ${v('isSeasonal') ? 'checked' : ''} style="width:20px; height:20px;">
+                            <label for="isSeasonal" style="font-size:0.9rem; margin:0;">Saisonnière / Évènementielle</label>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -864,17 +1351,63 @@ export function renderAddBeerForm(onSave, editModeBeer = null) {
         }
     };
 
+    // Point-Based Rarity Calculation
+    const calculatePointRarity = (distributionPts, typePts, availabilityPts, barrelAged) => {
+        let score = parseInt(distributionPts) + parseInt(typePts) + parseInt(availabilityPts);
+        if (barrelAged) score += 2; // Bonus for barrel aged
+
+        // Score: 3-4 = Base, 5-6 = Commun, 7-8 = Rare, 9-10 = Super Rare, 11-12 = Epique, 13-14 = Mythique, 15+ = Légendaire
+        if (score <= 4) return 'base';
+        if (score <= 6) return 'commun';
+        if (score <= 8) return 'rare';
+        if (score <= 10) return 'super_rare';
+        if (score <= 12) return 'epique';
+        if (score <= 14) return 'mythique';
+        return 'legendaire';
+    };
+
+    // Type Points Mapping
+    const getTypePts = (type) => {
+        const t = (type || '').toLowerCase();
+        if (t.match(/pils|lager/)) return 1;
+        if (t.match(/blonde|blanche|pils/)) return 1;
+        if (t.match(/ipa|stout|porter|saison|tripel|dubbel|double|quadrupel/)) return 2;
+        if (t.match(/sour|gose|berliner|wild|farmhouse|framboise|brut/)) return 3;
+        if (t.match(/gueuze|lambic|kriek|barrel aged|vieillie|barrique|ba |bourbon|cognac|whisky|rum/)) return 4;
+        return 2; // Default
+    };
+
     wrapper.querySelector('form').onsubmit = (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
+
+        const distributionPts = formData.get('distribution');
+        const availabilityPts = formData.get('availability');
+        const barrelAged = formData.get('barrel_aged') === 'on';
+        const typePts = getTypePts(formData.get('type'));
+
+        // Distribution label mapping
+        const distLabels = { '1': 'Partout', '2': 'Supermarché', '3': 'Cavistes', '4': 'Cavistes spécialisés', '5': 'À la brasserie' };
+
+        // Auto-calculate rarity if not manually selected
+        let selectedRarity = formData.get('rarity');
+        if (!selectedRarity || selectedRarity === '') {
+            selectedRarity = calculatePointRarity(distributionPts, typePts, availabilityPts, barrelAged);
+        }
 
         const newBeer = {
             id: editModeBeer ? editModeBeer.id : 'CUSTOM_' + Date.now(),
             title: formData.get('title'),
             brewery: formData.get('brewery'),
+            province: formData.get('province') || '',
             type: formData.get('type') || 'Inconnu',
             alcohol: formData.get('alcohol'),
             volume: formData.get('volume'),
+            distribution: distLabels[distributionPts] || 'Inconnu',
+            barrel_aged: barrelAged,
+            ingredients: formData.get('ingredients'),
+            rarity: selectedRarity,
+            isSeasonal: formData.get('isSeasonal') === 'on',
             image: imageBase64 || 'images/beer/FUT.jpg'
         };
 
@@ -889,7 +1422,7 @@ export function renderAddBeerForm(onSave, editModeBeer = null) {
     openModal(wrapper);
 }
 
-export function renderStats(allBeers, userData, container, isDiscovery = false, discoveryCallback = null) {
+export function renderStats(allBeers, userData, container) {
     const totalBeers = allBeers.length;
     // Fix: Filter keys where count > 0
     const drunkCount = Object.values(userData).filter(u => (u.count || 0) > 0).length;
@@ -934,7 +1467,7 @@ export function renderStats(allBeers, userData, container, isDiscovery = false, 
                         </div>
                     </div>
 
-                    <div class="stat-card mt-20 text-center">
+                    <div id="card-achievements" class="stat-card mt-20 text-center">
                         <h3 style="margin-bottom:15px;">Succès 🏆</h3>
                         ${renderAchievementsList()}
                     </div>
@@ -955,122 +1488,12 @@ export function renderStats(allBeers, userData, container, isDiscovery = false, 
                             ▶️ Lancer la Story
                         </button>
                     </div>
-
-                    <!-- UNIFIED SETTINGS UI -->
-                    <h2 class="mt-40 mb-20 text-center" style="font-family:'Russo One'; color:var(--accent-gold);">Paramètres & Données</h2>
-
-                    <!-- 1. Interface -->
-                    <div class="stat-card">
-                        <h4 style="border-bottom:1px solid #333; padding-bottom:10px; margin-bottom:15px; text-align:left;">🎨 Interface</h4>
-                        
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                            <div style="text-align:left;">
-                                <strong>Mode Découverte</strong>
-                                <p style="font-size:0.75rem; color:#888;">Masquer les bières non trouvées</p>
-                            </div>
-                            <label class="switch">
-                                <input type="checkbox" id="toggle-discovery" ${isDiscovery ? 'checked' : ''}>
-                                <span class="slider round"></span>
-                            </label>
-                        </div>
-
-                         <button type="button" id="btn-template" class="btn-primary text-white" style="background:#222; border:1px solid #444; width:100%; margin:0;">
-                            ⚙️ Configurer la Notation
-                        </button>
-                    </div>
-
-                    <!-- 2. Data Management -->
-                    <div class="stat-card mt-20">
-                        <h4 style="border-bottom:1px solid #333; padding-bottom:10px; margin-bottom:15px; text-align:left;">💾 Données</h4>
-
-                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
-                            <button id="btn-backup" class="btn-primary" style="background:var(--accent-gold); color:black; margin:0;">
-                                ☁️ Sauvegarder
-                            </button>
-                            <button id="btn-restore" class="btn-primary" style="background:#222; border:1px solid var(--accent-gold); color:var(--accent-gold); margin:0;">
-                                📥 Restaurer
-                            </button>
-                        </div>
-                        <p style="font-size:0.75rem; color:#666; text-align:center;">
-                            Gérez vos exports fichiers ou liens de partage.
-                        </p>
-                    </div>
-
-                    <!-- 3. System -->
-                    <div class="stat-card mt-20">
-                        <h4 style="border-bottom:1px solid #333; padding-bottom:10px; margin-bottom:15px; text-align:left;">🛠️ Système</h4>
-
-                        <button id="btn-check-update" class="btn-primary text-white" style="background:#222; border:1px solid #444; width:100%; margin-bottom:15px;">
-                            🔄 Vérifier les Mises à jour
-                        </button>
-                        
-                        <details style="border-top:1px solid #333; padding-top:10px;">
-                            <summary style="cursor:pointer; color:#888; font-size:0.8rem; text-align:left;">Zone de Danger</summary>
-                            <div style="margin-top:15px;">
-                                <h5 style="color:#aaa; font-size:0.75rem; margin-bottom:5px; text-align:left;">Réinitialisation Partielle</h5>
-                                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:15px;">
-                                    <button id="btn-reset-ratings" class="btn-primary" style="background:#331; color:#fa0; border:1px solid #540; font-size:0.7rem; padding:8px;">
-                                        Note Uniqt.
-                                    </button>
-                                    <button id="btn-reset-custom" class="btn-primary" style="background:#331; color:#fa0; border:1px solid #540; font-size:0.7rem; padding:8px;">
-                                        Bières Perso
-                                    </button>
-                                    <button id="btn-reset-history" class="btn-primary" style="background:#331; color:#fa0; border:1px solid #540; font-size:0.7rem; padding:8px;">
-                                        Historique
-                                    </button>
-                                     <button id="btn-reset-fav" class="btn-primary" style="background:#331; color:#fa0; border:1px solid #540; font-size:0.7rem; padding:8px;">
-                                        Favoris
-                                    </button>
-                                </div>
-
-                                <h5 style="color:red; font-size:0.75rem; margin-bottom:5px; text-align:left;">Réinitialisation Totale</h5>
-                                <button id="btn-reset-app" class="btn-primary" style="background:rgba(255,0,0,0.1); color:red; border:1px solid red; width:100%;">
-                                    ☠️ RESET APPLICATION
-                                </button>
-                            </div>
-                        </details>
-                    </div>
-                   
-                    <div class="mt-40 text-center" style="margin-bottom: 60px;">
-                        <h3 style="color:var(--text-secondary); font-size:0.8rem; text-transform:uppercase; letter-spacing:2px; margin-bottom:25px;">Crédits</h3>
-                        
-                        <div style="display:flex; flex-direction:column; gap:20px;">
-                            <div>
-                                <p style="color:var(--accent-gold); font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Co-Fondateurs</p>
-                                <p style="font-size:0.9rem; color:#eee;">Dorian Storms, Noah Bruijninckx, Tristan Storms & Maxance Veulemans</p>
-                            </div>
-                            
-                            <div>
-                                <p style="color:var(--accent-gold); font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Design & Code</p>
-                                <p style="font-size:0.9rem; color:#eee;">Noah Bruijninckx</p>
-                            </div>
-                        </div>
-                        
-                        <div style="margin-top:30px; font-size:0.7rem; color:#444; border-top:1px solid #222; padding-top:15px; width:50%; margin-left:auto; margin-right:auto;">
-                            Beerdex v2.0 &copy; 2026
-                        </div>
-                    </div>
                 </div>
                 `;
-
-    // --- Handlers ---
-
-    // Config
-    container.querySelector('#btn-template').onclick = () => renderTemplateEditor();
-
-    if (discoveryCallback) {
-        container.querySelector('#toggle-discovery').onchange = (e) => {
-            discoveryCallback(e.target.checked);
-        };
-    }
 
     // Match
     const btnMatch = container.querySelector('#btn-match');
     if (btnMatch) btnMatch.onclick = () => renderMatchModal(allBeers);
-
-    // Data
-    container.querySelector('#btn-backup').onclick = () => renderExportModal();
-    container.querySelector('#btn-restore').onclick = () => renderImportModal();
 
     // Wrapped
     const btnWrapped = container.querySelector('#btn-open-wrapped');
@@ -1078,27 +1501,229 @@ export function renderStats(allBeers, userData, container, isDiscovery = false, 
         btnWrapped.onclick = () => window.Wrapped.start();
     }
 
-    // System
+    // Init Map
+    setTimeout(() => {
+        const history = [];
+        const ratings = userData || {};
+        Object.keys(ratings).forEach(ratingKey => {
+            const coreId = ratingKey.split('_')[0];
+            const beer = allBeers.find(b => b.id == coreId || b.id == ratingKey);
+            const userRating = ratings[ratingKey];
+            if (beer && userRating && (userRating.count || 0) > 0) {
+                history.push({ beer: beer, rating: userRating });
+            }
+        });
+
+        const mapContainer = container.querySelector('#beer-map-container');
+        if (mapContainer) Map.renderMapWithData(mapContainer, history);
+    }, 100);
+}
+
+export function renderSettings(allBeers, userData, container, isDiscovery = false, discoveryCallback = null) {
+    container.innerHTML = `
+        <div class="text-center p-20">
+            <h2 class="mb-20" style="font-family:'Russo One'; color:var(--accent-gold);">Paramètres & Données</h2>
+
+            <!-- 1. Interface -->
+            <div class="stat-card">
+                <h4 style="border-bottom:1px solid #333; padding-bottom:10px; margin-bottom:15px; text-align:left;">🎨 Interface</h4>
+                
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    <div style="text-align:left;">
+                        <strong style="color:var(--text-primary); display:block; margin-bottom:4px;">Mode Découverte</strong>
+                        <span style="font-size:0.8rem; color:#888;">Masquer les bières non trouvées</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="toggle-discovery" ${isDiscovery ? 'checked' : ''}>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                     <button type="button" id="btn-template" class="btn-primary text-white" style="background:#222; border:1px solid #444; width:100%; margin:0;">
+                        ⚙️ Configurer Notation
+                    </button>
+                </div>
+                
+                <div style="margin-top:15px; border-top:1px solid #333; padding-top:15px;">
+                     <h5 style="color:#aaa; font-size:0.8rem; margin-bottom:10px; text-align:left;">Modèles de Notation</h5>
+                     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+                        <button id="btn-preset-default" class="form-input" style="font-size:0.8rem; padding:8px; ${Storage.getPreference('activePreset') === 'default' ? 'border:1px solid var(--accent-gold); color:var(--accent-gold); box-shadow:0 0 5px rgba(255,192,0,0.3);' : ''}">Standard</button>
+                        <button id="btn-preset-tristan" class="form-input" style="font-size:0.8rem; padding:8px; ${Storage.getPreference('activePreset') === 'tristan' ? 'border:1px solid var(--accent-gold); color:var(--accent-gold); box-shadow:0 0 5px rgba(255,192,0,0.3);' : ''}">Tristan</button>
+                        <button id="btn-preset-noah" class="form-input" style="font-size:0.8rem; padding:8px; grid-column:span 2; ${Storage.getPreference('activePreset') === 'noah' ? 'border:1px solid var(--accent-gold); color:var(--accent-gold); box-shadow:0 0 5px rgba(255,192,0,0.3);' : ''}">Noah</button>
+                     </div>
+                </div>
+            </div>
+
+            <!-- 2. Rareté (New) -->
+            <div class="stat-card mt-20">
+                <h4 style="border-bottom:1px solid #333; padding-bottom:10px; margin-bottom:15px; text-align:left;">💎 Rareté</h4>
+                
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    <div style="text-align:left;">
+                        <strong style="color:var(--text-primary); display:block; margin-bottom:4px;">Révéler les Raretés</strong>
+                        <span style="font-size:0.8rem; color:#888;">Voir la rareté même si la bière n'est pas bue (Spoil !)</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="check-reveal-rarity" ${Storage.getPreference('revealRarity', false) ? 'checked' : ''}>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 3. Données -->
+            <div class="stat-card mt-20">
+                <h4 style="border-bottom:1px solid #333; padding-bottom:10px; margin-bottom:15px; text-align:left;">💾 Données</h4>
+
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
+                    <button id="btn-manage-export" class="btn-primary" style="background:var(--accent-gold); color:black; margin:0;">
+                         ☁️ Sauvegarder
+                    </button>
+                    <button id="btn-manage-import" class="btn-primary" style="background:#222; border:1px solid var(--accent-gold); color:var(--accent-gold); margin:0;">
+                         📥 Restaurer
+                    </button>
+                </div>
+                <p style="font-size:0.75rem; color:#666; text-align:center;">
+                    Gérez vos exports fichiers ou liens de partage.
+                </p>
+            </div>
+
+            <!-- 3. System -->
+            <div class="stat-card mt-20">
+                <h4 style="border-bottom:1px solid #333; padding-bottom:10px; margin-bottom:15px; text-align:left;">🛠️ Système</h4>
+
+                <button id="btn-check-update" class="btn-primary text-white" style="background:#222; border:1px solid #444; width:100%; margin-bottom:15px;">
+                    🔄 Vérifier les Mises à jour
+                </button>
+
+                <button id="btn-restart-tuto" class="btn-primary text-white" style="background:#222; border:1px solid #444; width:100%; margin-bottom:15px;">
+                    🎓 Refaire le Tutoriel
+                </button>
+                
+                <details style="border-top:1px solid #333; padding-top:10px;">
+                    <summary style="cursor:pointer; color:#888; font-size:0.8rem; text-align:left;">Zone de Danger</summary>
+                    <div style="margin-top:15px;">
+                        <h5 style="color:#aaa; font-size:0.75rem; margin-bottom:5px; text-align:left;">Réinitialisation Partielle</h5>
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:15px;">
+                            <button id="btn-reset-ratings" class="btn-primary" style="background:#331; color:#fa0; border:1px solid #540; font-size:0.7rem; padding:8px;">
+                                Note Uniqt.
+                            </button>
+                            <button id="btn-reset-custom" class="btn-primary" style="background:#331; color:#fa0; border:1px solid #540; font-size:0.7rem; padding:8px;">
+                                Bières Perso
+                            </button>
+                            <button id="btn-reset-history" class="btn-primary" style="background:#331; color:#fa0; border:1px solid #540; font-size:0.7rem; padding:8px;">
+                                Historique
+                            </button>
+                             <button id="btn-reset-fav" class="btn-primary" style="background:#331; color:#fa0; border:1px solid #540; font-size:0.7rem; padding:8px;">
+                                Favoris
+                            </button>
+                        </div>
+
+                        <h5 style="color:red; font-size:0.75rem; margin-bottom:5px; text-align:left;">Réinitialisation Totale</h5>
+                        <button id="btn-reset-app" class="btn-primary" style="background:rgba(255,0,0,0.1); color:red; border:1px solid red; width:100%;">
+                            ☠️ RESET APPLICATION
+                        </button>
+                    </div>
+                </details>
+            </div>
+           
+            <div class="mt-40 text-center" style="margin-bottom: 60px;">
+                <h3 style="color:var(--text-secondary); font-size:0.8rem; text-transform:uppercase; letter-spacing:2px; margin-bottom:25px;">Crédits</h3>
+                
+                <div style="display:flex; flex-direction:column; gap:20px;">
+                    <div>
+                        <p style="color:var(--accent-gold); font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Co-Fondateurs</p>
+                        <p style="font-size:0.9rem; color:#eee;">Dorian Storms, Noah Bruijninckx, Tristan Storms & Maxance Veulemans</p>
+                    </div>
+                    
+                    <div>
+                        <p style="color:var(--accent-gold); font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Design & Code</p>
+                        <p style="font-size:0.9rem; color:#eee;">Noah Bruijninckx</p>
+                    </div>
+                </div>
+                
+                <div style="margin-top:30px; font-size:0.7rem; color:#444; border-top:1px solid #222; padding-top:15px; width:50%; margin-left:auto; margin-right:auto;">
+                    Beerdex v2.0 &copy; 2026
+                </div>
+            </div>
+        </div>
+    `;
+
+    // --- Handlers ---
+
+    // Config
+    container.querySelector('#btn-template').onclick = () => renderTemplateEditor();
+
+    container.querySelector('#btn-preset-default').onclick = () => {
+        if (confirm("Appliquer le modèle Standard (Note + Commentaire) ?")) {
+            Storage.resetRatingTemplate();
+            Storage.savePreference('activePreset', 'default');
+            showToast("Modèle Standard appliqué !");
+            container.querySelector('#btn-preset-default').style = 'border:1px solid var(--accent-gold); color:var(--accent-gold); box-shadow:0 0 5px rgba(255,192,0,0.3); padding:8px; font-size:0.8rem;';
+            renderSettings(allBeers, userData, container, isDiscovery, discoveryCallback); // Re-render to update UI state cleanly
+        }
+    };
+
+    container.querySelector('#btn-preset-tristan').onclick = () => {
+        if (confirm("Appliquer le modèle 'Tristan' ?\nCela changera les champs de notation.")) {
+            applyTristanPreset();
+            showToast("Modèle Tristan appliqué !");
+            renderSettings(allBeers, userData, container, isDiscovery, discoveryCallback);
+        }
+    };
+
+    container.querySelector('#btn-preset-noah').onclick = () => {
+        if (confirm("Appliquer le modèle 'Noah' ?\nCela changera les champs de notation.")) {
+            applyNoahPreset();
+            showToast("Modèle Noah appliqué !");
+            renderSettings(allBeers, userData, container, isDiscovery, discoveryCallback);
+        }
+    };
+
+    if (discoveryCallback) {
+        container.querySelector('#toggle-discovery').onchange = (e) => {
+            discoveryCallback(e.target.checked);
+        };
+    }
+
+    // --- Bindings ---
+
+    // Reveal Rarity
+    const checkRarity = container.querySelector('#check-reveal-rarity');
+    if (checkRarity) {
+        checkRarity.onchange = (e) => {
+            Storage.savePreference('revealRarity', e.target.checked);
+            showToast("Paramètre enregistré !");
+            // Reload to update cards immediately? Or just toast.
+            // Cards won't update until re-render. User likely visits settings then goes back.
+        };
+    }
+
+    container.querySelector('#btn-manage-import').onclick = () => renderImportModal();
+    container.querySelector('#btn-manage-export').onclick = () => renderExportModal();
+
+    // Bind new Reset Buttons (Zone de Danger)
+    container.querySelector('#btn-reset-app').onclick = () => renderResetModal();
+    container.querySelector('#btn-reset-ratings').onclick = () => { if (confirm("Supprimer uniquement vos notes ?\n(Vos bières custom restent)")) { Storage.clearRatings(); showToast("Notes supprimées"); renderSettings(allBeers, userData, container, isDiscovery, discoveryCallback); } };
+    container.querySelector('#btn-reset-custom').onclick = () => { if (confirm("Supprimer vos bières personnalisées ?")) { Storage.clearCustomBeers(); showToast("Bières perso supprimées"); renderSettings(allBeers, userData, container, isDiscovery, discoveryCallback); } };
+    container.querySelector('#btn-reset-history').onclick = () => { if (confirm("Supprimer l'historique de dégustation ?")) { Storage.clearHistory(); showToast("Historique supprimé"); } };
+    container.querySelector('#btn-reset-fav').onclick = () => { if (confirm("Supprimer vos favoris ?")) { Storage.clearFavorites(); showToast("Favoris supprimés"); } };
+
     // System
     container.querySelector('#btn-check-update').onclick = async () => {
         if ('serviceWorker' in navigator) {
             showToast("Forçage de la mise à jour...", "info");
 
             try {
-                // 1. Unregister all SWs
                 const registrations = await navigator.serviceWorker.getRegistrations();
                 for (let registration of registrations) {
                     await registration.unregister();
                 }
-
-                // 2. Clear All Caches
                 const cacheKeys = await caches.keys();
                 await Promise.all(cacheKeys.map(key => caches.delete(key)));
-
-                // 3. Reload to fetch fresh
                 showToast("Caches vidés. Redémarrage...", "success");
                 setTimeout(() => {
-                    window.location.reload(true); // Force reload from server
+                    window.location.reload(true);
                 }, 1500);
 
             } catch (e) {
@@ -1108,6 +1733,17 @@ export function renderStats(allBeers, userData, container, isDiscovery = false, 
         } else {
             showToast("Service Worker non supporté.");
         }
+    };
+
+    container.querySelector('#btn-restart-tuto').onclick = () => {
+        // Go to Home first
+        const homeBtn = document.querySelector('.nav-item[data-view="home"]');
+        if (homeBtn) homeBtn.click();
+
+        // Wait for view transition
+        setTimeout(() => {
+            TutorialSystem.start();
+        }, 500);
     };
 
     // Granular Resets
@@ -1159,23 +1795,6 @@ export function renderStats(allBeers, userData, container, isDiscovery = false, 
             }
         }
     };
-
-    // Init Map
-    setTimeout(() => {
-        const history = [];
-        const ratings = userData || {};
-        Object.keys(ratings).forEach(ratingKey => {
-            const coreId = ratingKey.split('_')[0];
-            const beer = allBeers.find(b => b.id == coreId || b.id == ratingKey);
-            const userRating = ratings[ratingKey];
-            if (beer && userRating && (userRating.count || 0) > 0) {
-                history.push({ beer: beer, rating: userRating });
-            }
-        });
-
-        const mapContainer = container.querySelector('#beer-map-container');
-        if (mapContainer) Map.renderMapWithData(mapContainer, history);
-    }, 100);
 }
 
 function renderTemplateEditor() {
@@ -1185,7 +1804,7 @@ function renderTemplateEditor() {
 
     const refreshList = () => {
         const listHtml = template.map((field, index) => `
-                <div style="background:rgba(0,0,0,0.3); padding:10px; margin-bottom:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+        <div style="background:rgba(0,0,0,0.3); padding:10px; margin-bottom:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
                     <div style="display:flex; align-items:center; gap:10px; flex:1;">
                         <div style="display:flex; flex-direction:column; gap:2px;">
                             ${index > 0 ? `<button type="button" data-idx="${index}" class="icon-btn mv-up" style="font-size:0.8rem; padding:0;">⬆️</button>` : '<div style="height:15px; width:15px;"></div>'}
@@ -1200,7 +1819,7 @@ function renderTemplateEditor() {
                         ${field.id === 'score' || field.id === 'comment' ? '' : `<button type="button" data-idx="${index}" class="icon-btn delete-field" style="color:red;">🗑️</button>`}
                     </div>
                 </div>
-                `).join('');
+        `).join('');
 
         wrapper.querySelector('#field-list').innerHTML = listHtml;
 
@@ -1264,7 +1883,7 @@ function renderTemplateEditor() {
     };
 
     wrapper.innerHTML = `
-                <h2>Configuration Notation</h2>
+        <h2>Configuration Notation</h2>
                 <div id="field-list" style="margin: 20px 0;"></div>
 
                 <div style="border-top:1px solid #333; padding-top:20px;">
@@ -1284,7 +1903,7 @@ function renderTemplateEditor() {
 
                 <button id="save-template" class="btn-primary" style="margin-top:20px;">Enregistrer la configuration</button>
                 <button id="reset-template" class="form-input" style="margin-top:10px; background:none; border:none; color:red;">Réinitialiser par défaut</button>
-                `;
+    `;
 
     setTimeout(refreshList, 0);
 
@@ -1385,9 +2004,9 @@ function renderAdvancedStats(allBeers, userData) {
         { label: 'Seaux (10L)', vol: 10000, icon: '🪣' },
         { label: 'Fûts (30L)', vol: 30000, icon: '🛢️' },
         { label: 'Douches (60L)', vol: 60000, icon: '🚿' },
-        { label: 'Baignoires (150L)', vol: 150000, icon: '�' },
+        { label: 'Baignoires (150L)', vol: 150000, icon: '🛁' },
         { label: 'Jacuzzis (1000L)', vol: 1000000, icon: '🧖' },
-        { label: 'Camions Citerne (30k L)', vol: 30000000, icon: '�' },
+        { label: 'Camions Citerne (30k L)', vol: 30000000, icon: '🚚' },
         { label: 'Piscines (50k L)', vol: 50000000, icon: '🏊' },
         { label: 'Piscines Olympiques', vol: 2500000000, icon: '🏟️' }
     ];
@@ -1410,7 +2029,7 @@ function renderAdvancedStats(allBeers, userData) {
         { label: 'Pintes de Pils (50cl, 5%)', pure: 25, icon: '🍺' },
         { label: 'Shots de Tequila (3cl, 40%)', pure: 12, icon: '🥃' },
         { label: 'Bouteilles de Vin (75cl, 12%)', pure: 90, icon: '🍷' },
-        { label: 'Bouteilles de Whisky (70cl, 40%)', pure: 280, icon: '�' },
+        { label: 'Bouteilles de Whisky (70cl, 40%)', pure: 280, icon: '🍾' },
         { label: 'Bouteilles de Vodka (70cl, 40%)', pure: 280, icon: '🍸' }
     ];
 
@@ -1436,7 +2055,7 @@ function renderAdvancedStats(allBeers, userData) {
     }
 
     return `
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:20px;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:20px;">
                     <div class="stat-card">
                         <div class="stat-value">${totalLiters} L</div>
                         <div class="stat-label">Volume Total</div>
@@ -1510,7 +2129,7 @@ function renderAchievementsList() {
 
             return `
         <div class="ach-item" style="opacity:${opacity}; filter:${filter}; position:relative; cursor:pointer;"
-    onclick="UI.showAchievementDetails('${safeTitle}', '${safeDesc}', '${safeIcon}', ${isUnlocked})">
+    onclick="UI.showAchievementDetails('${safeTitle}', '${safeDesc}', '${safeIcon}', ${isUnlocked})" >
         <div class="ach-icon">${ach.icon}</div>
                     </div>`;
         }).join('');
@@ -1522,57 +2141,482 @@ function renderAchievementsList() {
 }
 
 
+// --- Real App Overlay Tutorial ---
+
+// --- Real App Overlay Tutorial ---
+
+const TutorialSystem = {
+    steps: [
+        {
+            id: 'intro',
+            target: null,
+            message: `
+                <div style="font-size:3rem; margin-bottom:10px;">👋</div>
+                <h3 style="color:var(--accent-gold); margin-bottom:10px;">Le Grand Tour</h3>
+                <p>Découvrons ensemble toutes les fonctionnalités de Beerdex !</p>
+                <button class="btn-primary mt-20" onclick="TutorialSystem.next()">C'est parti !</button>
+            `
+        },
+        // --- HOME FEATURES ---
+        {
+            id: 'search',
+            target: '#search-toggle',
+            position: 'bottom',
+            message: `
+                <h3>Recherche</h3>
+                <p>Trouvez vos bières instantanément.</p>
+                <button class="btn-primary mt-10" style="font-size:0.8rem;" onclick="TutorialSystem.next()">Suivant</button>
+            `
+        },
+        {
+            id: 'filter',
+            target: '#filter-toggle',
+            position: 'bottom',
+            message: `
+                <h3>Filtres Intelligents</h3>
+                <p>Triez par goût, couleur, brasserie ou rareté.</p>
+                <button class="btn-primary mt-10" style="font-size:0.8rem;" onclick="TutorialSystem.next()">Suivant</button>
+            `
+        },
+        {
+            id: 'tap-beer',
+            target: '.beer-card:first-child',
+            position: 'auto',
+            message: `
+                <h3>Noter une Bière</h3>
+                <p>Touchez une carte pour ouvrir la fiche de dégustation.</p>
+                <button class="btn-primary mt-10" style="font-size:0.8rem;" onclick="TutorialSystem.next()">Suivant</button>
+            `
+        },
+        {
+            id: 'add-beer',
+            target: '#fab-add',
+            position: 'left',
+            message: `
+                <h3>Ajouter</h3>
+                <p>Scanner un code-barre ou ajouter manuellement.</p>
+                <button class="btn-primary mt-10" style="font-size:0.8rem;" onclick="TutorialSystem.next()">Suivant</button>
+            `
+        },
+        // --- STATS ---
+        {
+            id: 'go-stats',
+            target: '[data-view="stats"]',
+            position: 'top',
+            message: `
+                <h3>Statistiques</h3>
+                <p>Allons voir vos progrès. Cliquez ici !</p>
+            `,
+            waitFor: 'click'
+        },
+        {
+            id: 'stats-map',
+            target: '#beer-map-container',
+            position: 'top',
+            message: `
+                <h3>Carte des Bières</h3>
+                <p>Visualisez la provenance de vos dégustations.</p>
+                <button class="btn-primary mt-10" style="font-size:0.8rem;" onclick="TutorialSystem.next()">Suivant</button>
+            `
+        },
+        {
+            id: 'stats-achievements',
+            target: '#card-achievements',
+            position: 'top',
+            message: `
+                <h3>Succès</h3>
+                <p>Débloquez des badges en découvrant de nouveaux styles !</p>
+                <button class="btn-primary mt-10" style="font-size:0.8rem;" onclick="TutorialSystem.next()">Suivant</button>
+            `
+        },
+        {
+            id: 'stats-match',
+            target: '#btn-match',
+            position: 'top',
+            message: `
+                <h3>Beer Match ⚔️</h3>
+                <p>Comparez vos goûts avec ceux d'un ami via QR Code.</p>
+                <button class="btn-primary mt-10" style="font-size:0.8rem;" onclick="TutorialSystem.next()">Suivant</button>
+            `
+        },
+        {
+            id: 'stats-wrapped',
+            target: '#btn-open-wrapped',
+            position: 'top',
+            message: `
+                <h3>Wrapped 🎬</h3>
+                <p>Revivez votre année brassicole en Story animée !</p>
+                <button class="btn-primary mt-10" style="font-size:0.8rem;" onclick="TutorialSystem.next()">Suivant</button>
+            `
+        },
+        // --- SETTINGS ---
+        {
+            id: 'go-settings',
+            target: '[data-view="settings"]',
+            position: 'top',
+            message: `
+                <h3>Paramètres</h3>
+                <p>Passons à la configuration. Cliquez ici !</p>
+            `,
+            waitFor: 'click'
+        },
+        {
+            id: 'set-discovery',
+            target: '#toggle-discovery', // Requires checking actual structure logic in showStep
+            position: 'bottom',
+            message: `
+                <h3>Mode Découverte</h3>
+                <p>Cache les bières non bues pour garder le mystère.</p>
+                <button class="btn-primary mt-10" style="font-size:0.8rem;" onclick="TutorialSystem.next()">Suivant</button>
+            `
+        },
+        {
+            id: 'set-rarity',
+            target: '#check-reveal-rarity', // Check logic
+            position: 'bottom',
+            message: `
+                <h3>Révéler la Rareté</h3>
+                <p>Affiche le cadre coloré même pour les bières non bues.</p>
+                <button class="btn-primary mt-10" style="font-size:0.8rem;" onclick="TutorialSystem.next()">Suivant</button>
+            `
+        },
+        {
+            id: 'set-data',
+            target: '#btn-manage-export',
+            position: 'top',
+            message: `
+                <h3>Sauvegarde</h3>
+                <p>Exportez vos données pour ne jamais les perdre.</p>
+                <button class="btn-primary mt-10" style="font-size:0.8rem;" onclick="TutorialSystem.next()">Suivant</button>
+            `
+        },
+        {
+            id: 'noah-preset',
+            target: '#btn-preset-noah',
+            position: 'top',
+            message: `
+                <h3>Modèle prédéfinis</h3>
+                <p>Activez 'Noah' pour des notes détaillées (Nez, Bouche, Robe).</p>
+                <button class="btn-primary mt-10" onclick="TutorialSystem.finish()">Terminer</button>
+            `
+        }
+    ],
+    currentStep: 0,
+    panes: [], // Top, Bottom, Left, Right
+    spotlight: null,
+    tooltip: null,
+
+    init() {
+        if (this.panes.length > 0) return;
+
+        // Create 4 panes for the "Hole" approach
+        const createPane = () => {
+            const el = document.createElement('div');
+            el.className = 'tutorial-pane';
+            el.style.cssText = 'position:fixed; background:rgba(0,0,0,0.8); z-index:9998; transition:all 0.3s;';
+            document.body.appendChild(el);
+            return el;
+        };
+        this.panes = [createPane(), createPane(), createPane(), createPane()];
+
+        this.spotlight = document.createElement('div');
+        this.spotlight.className = 'tutorial-spotlight';
+        this.spotlight.style.cssText = `
+            position: fixed; border-radius: 8px;
+            box-shadow: 0 0 15px rgba(255,192,0,0.5), inset 0 0 0 2px var(--accent-gold);
+            z-index: 9999; pointer-events: none;
+            transition: all 0.3s; opacity: 0;
+        `;
+
+        this.tooltip = document.createElement('div');
+        this.tooltip.className = 'tutorial-tooltip';
+        this.tooltip.style.cssText = `
+            position: fixed; background: #222; border: 1px solid var(--accent-gold);
+            padding: 20px; border-radius: 12px; z-index: 10000;
+            max-width: 280px; color: #eee; text-align: center;
+            opacity: 0; transition: opacity 0.3s;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+        `;
+
+        document.body.appendChild(this.spotlight);
+        document.body.appendChild(this.tooltip);
+
+        // Resize handler
+        window.addEventListener('resize', this.boundUpdateObj = () => this.updatePosition());
+        window.addEventListener('scroll', this.boundUpdateObj, true);
+    },
+
+    start() {
+        this.init();
+        this.currentStep = 0;
+        this.showStep();
+    },
+
+    next() {
+        this.currentStep++;
+        if (this.currentStep >= this.steps.length) {
+            this.finish();
+        } else {
+            this.showStep();
+        }
+    },
+
+    showStep() {
+        const step = this.steps[this.currentStep];
+        if (!step) return;
+
+        let targetEl = null;
+
+        if (step.target) {
+            const attemptFind = () => {
+                targetEl = document.querySelector(step.target);
+                if (targetEl) {
+                    this.highlight(targetEl, step);
+                } else {
+                    // Retry briefly if dynamic content
+                    setTimeout(() => {
+                        targetEl = document.querySelector(step.target);
+                        if (targetEl) this.highlight(targetEl, step);
+                        else {
+                            if (step.target !== '#card-achievements') // Ignore strict fail on stats
+                                console.warn("Tutorial target not found:", step.target);
+                        }
+                    }, 500);
+                }
+            };
+
+            // Special Logic for Switches/Checkboxes targeting parent
+            if (step.id === 'set-discovery' || step.id === 'set-rarity') {
+                setTimeout(() => {
+                    const inp = document.querySelector(step.target);
+                    if (inp && inp.parentElement) {
+                        this.highlight(inp.parentElement, step);
+                    } else {
+                        attemptFind();
+                    }
+                }, 400); // Slightly longer wait for settings render
+                return;
+            }
+
+            // Wait for lazy views
+            if (step.id === 'noah-preset' || step.id === 'stats-map' || step.id === 'stats-achievements' || step.id === 'stats-wrapped') {
+                setTimeout(attemptFind, 600);
+            } else {
+                attemptFind();
+            }
+
+        } else {
+            this.highlight(null, step);
+        }
+    },
+
+    highlight(el, step) {
+        // Auto Scroll
+        if (el && !step.noScroll) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // 1. Calculate Hole Dimensions
+        let rect;
+        if (el) {
+            rect = el.getBoundingClientRect();
+        } else {
+            // Intro
+            rect = { top: window.innerHeight / 2, left: window.innerWidth / 2, width: 0, height: 0, bottom: window.innerHeight / 2, right: window.innerWidth / 2 };
+        }
+
+        const pad = el ? 5 : 0;
+        const top = Math.max(0, rect.top - pad);
+        const left = Math.max(0, rect.left - pad);
+        const width = rect.width + (pad * 2);
+        const height = rect.height + (pad * 2);
+        const right = left + width;
+        const bottom = top + height;
+
+        // 2. Position Panes
+        const p = this.panes;
+        p[0].style.top = '0'; p[0].style.left = '0'; p[0].style.width = '100vw'; p[0].style.height = top + 'px';
+        p[1].style.top = bottom + 'px'; p[1].style.left = '0'; p[1].style.width = '100vw'; p[1].style.height = (window.innerHeight - bottom) + 'px';
+        p[2].style.top = top + 'px'; p[2].style.left = '0'; p[2].style.width = left + 'px'; p[2].style.height = height + 'px';
+        p[3].style.top = top + 'px'; p[3].style.left = right + 'px'; p[3].style.width = (window.innerWidth - right) + 'px'; p[3].style.height = height + 'px';
+
+        // 3. Position Spotlight
+        if (el) {
+            this.spotlight.style.top = top + 'px';
+            this.spotlight.style.left = left + 'px';
+            this.spotlight.style.width = width + 'px';
+            this.spotlight.style.height = height + 'px';
+            this.spotlight.style.opacity = '1';
+        } else {
+            this.spotlight.style.opacity = '0';
+        }
+
+        // 4. Position Tooltip
+        this.tooltip.innerHTML = step.message +
+            `<div style="margin-top:10px; font-size:0.7rem; color:#888; text-decoration:underline; cursor:pointer;" onclick="TutorialSystem.finish()">Passer le tutoriel</div>`;
+        this.tooltip.style.opacity = '1';
+
+        requestAnimationFrame(() => {
+            const ttW = this.tooltip.offsetWidth;
+            const ttH = this.tooltip.offsetHeight;
+            let ttTop, ttLeft;
+
+            if (!el) {
+                ttTop = (window.innerHeight - ttH) / 2;
+                ttLeft = (window.innerWidth - ttW) / 2;
+            } else {
+                const fitsBottom = (bottom + ttH + 20) < window.innerHeight;
+                let pos = step.position || 'auto';
+                if (pos === 'auto') pos = fitsBottom ? 'bottom' : 'top';
+
+                if (pos === 'top') {
+                    ttTop = top - ttH - 15;
+                } else if (pos === 'left') {
+                    ttTop = top + (height / 2) - (ttH / 2);
+                    ttLeft = left - ttW - 15;
+                } else {
+                    ttTop = bottom + 15;
+                }
+
+                if (pos !== 'left' && pos !== 'right') {
+                    ttLeft = left + (width / 2) - (ttW / 2);
+                }
+
+                ttLeft = Math.max(10, Math.min(ttLeft, window.innerWidth - ttW - 10));
+
+                if (ttTop < 10) ttTop = 10;
+                if (ttTop + ttH > window.innerHeight) ttTop = window.innerHeight - ttH - 10;
+            }
+
+            this.tooltip.style.top = ttTop + 'px';
+            this.tooltip.style.left = ttLeft + 'px';
+        });
+
+        // 5. Binding
+        if (step.waitFor === 'click' && el) {
+            const oneTimeClick = (e) => {
+                setTimeout(() => this.next(), 200);
+            };
+            el.addEventListener('click', oneTimeClick, { once: true });
+        }
+    },
+
+    updatePosition() {
+        if (this.currentStep < this.steps.length) {
+            const step = this.steps[this.currentStep];
+            if (step) this.showStep();
+        }
+    },
+
+    finish() {
+        this.panes.forEach(p => p.style.opacity = '0');
+        this.spotlight.style.opacity = '0';
+        this.tooltip.style.opacity = '0';
+
+        setTimeout(() => {
+            this.panes.forEach(p => p.remove());
+            this.panes = [];
+            this.spotlight.remove();
+            this.tooltip.remove();
+            window.removeEventListener('resize', this.boundUpdateObj);
+            window.removeEventListener('scroll', this.boundUpdateObj, true);
+        }, 300);
+
+        localStorage.setItem('beerdex_welcome_seen_v3', 'true');
+        showToast("Tutoriel terminé ! À vous de jouer 🍻");
+    }
+};
+
 export function checkAndShowWelcome() {
-    const HAS_SEEN_KEY = 'beerdex_welcome_seen_v2';
+    const HAS_SEEN_KEY = 'beerdex_welcome_seen_v3';
     if (localStorage.getItem(HAS_SEEN_KEY)) return;
+    setTimeout(() => { TutorialSystem.start(); }, 1000);
+}
 
-    const wrapper = document.createElement('div');
-    wrapper.className = 'modal-content text-center';
-    wrapper.innerHTML = `
-        <div style="margin-bottom:20px; font-size:3rem;">🍻</div>
-        <h2 style="color:var(--accent-gold); margin-bottom:15px; font-family:'Russo One', sans-serif;">Bienvenue sur Beerdex !</h2>
-        
-        <p style="font-size:1rem; line-height:1.6; margin-bottom:20px; color:#ddd;">
-            Profitez de cette application (offerte par la maison 🎁) pour découvrir, noter et déguster les mille et une bières existantes.
-        </p>
-        
-        <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:12px; margin-bottom:25px; border:1px solid #444;">
-            <p style="font-size:0.9rem; color:#bbb; margin:0;">
-                ⚠️ <strong>Note de Sagesse :</strong><br>
-                Nous vous invitons à la <em>dégustation</em>, pas à la consommation à outrance.<br>
-                L'abus d'alcool est dangereux pour la santé.<br>
-                <strong>Dégustez avec sagesse !</strong> 🧡
-            </p>
-        </div>
+window.restartTutorial = () => TutorialSystem.start();
+window.TutorialSystem = TutorialSystem;
 
-        <div class="form-group" style="display:flex; align-items:center; gap:10px; justify-content:center; margin-bottom:20px; background:rgba(0,0,0,0.2); padding:10px; border-radius:8px;">
-            <input type="checkbox" id="check-discovery-intro" style="width:20px; height:20px;">
-            <label for="check-discovery-intro" style="font-size:0.9rem; color:#eee; cursor:pointer;">
-                Activer le <strong>Mode Découverte</strong> ? <br>
-                <span style="font-size:0.75rem; color:#aaa;">(Cache les bières tant qu'elles ne sont pas cherchées)</span>
-            </label>
-        </div>
+const PRESET_TRISTAN = [
+    { id: 'score', label: 'Note Globale (/20)', type: 'number', min: 0, max: 20, step: 0.1 },
+    { id: 'comment', label: 'Commentaire', type: 'textarea' },
 
-        <button id="btn-welcome-ok" class="btn-primary" style="width:100%; font-size:1.1rem; padding:12px;">Glou glou ! 🍺</button>
-    `;
+    // Visuel
+    { id: 'apparence', label: 'Apparence', type: 'textarea' },
+    { id: 'couleur', label: 'Couleur (1=Blanche, 10=Noire)', type: 'range', min: 1, max: 10, step: 1 },
+    { id: 'transparence', label: 'Transparence (1=Transp, 10=Opaque)', type: 'range', min: 1, max: 10, step: 1 },
+    { id: 'mousse', label: 'Mousse (1=Plate, 10=Incontrôlable)', type: 'range', min: 1, max: 10, step: 1 },
+    { id: 'mousse_tenue', label: 'Ténacité Mousse (1=Instant, 10=Eternelle)', type: 'range', min: 1, max: 10, step: 1 },
 
+    // Olfactif
+    { id: 'aromes_txt', label: 'Arômes (Desc)', type: 'textarea' },
+    { id: 'cafe', label: 'Café', type: 'range', min: 0, max: 10, step: 1 },
+    { id: 'caramel', label: 'Caramel', type: 'range', min: 0, max: 10, step: 1 },
+    { id: 'cereales', label: 'Céréales', type: 'range', min: 0, max: 10, step: 1 },
+    { id: 'chocolat', label: 'Chocolat', type: 'range', min: 0, max: 10, step: 1 },
+    { id: 'sucre', label: 'Sucré', type: 'range', min: 0, max: 10, step: 1 },
+    { id: 'noisette', label: 'Noisette', type: 'range', min: 0, max: 10, step: 1 },
+    { id: 'pain', label: 'Pain', type: 'range', min: 0, max: 10, step: 1 },
+    { id: 'agrumes', label: 'Agrumes', type: 'range', min: 0, max: 10, step: 1 },
+    { id: 'epices', label: 'Épices', type: 'range', min: 0, max: 10, step: 1 },
+    { id: 'fleurs', label: 'Fleurs', type: 'range', min: 0, max: 10, step: 1 },
+    { id: 'herbes', label: 'Herbes', type: 'range', min: 0, max: 10, step: 1 },
+    { id: 'poivre', label: 'Poivre', type: 'range', min: 0, max: 10, step: 1 },
+    { id: 'resine', label: 'Résine', type: 'range', min: 0, max: 10, step: 1 },
+    { id: 'fruit', label: 'Fruit', type: 'range', min: 0, max: 10, step: 1 },
+    { id: 'mais', label: 'Maïs', type: 'range', min: 0, max: 10, step: 1 },
 
-    wrapper.querySelector('#btn-welcome-ok').onclick = () => {
-        const isDiscovery = wrapper.querySelector('#check-discovery-intro').checked;
-        if (isDiscovery) {
-            Storage.savePreference('discoveryMode', true);
-        }
-        localStorage.setItem(HAS_SEEN_KEY, 'true');
+    // Goût
+    { id: 'intensite', label: 'Intensité (1=Faible, 10=Puissante)', type: 'range', min: 1, max: 10, step: 1 },
+    { id: 'equilibre', label: 'Equilibre (1=Doux, 10=Amer)', type: 'range', min: 1, max: 10, step: 1 },
+    { id: 'impression', label: 'Impression (1=Déplaisante, 10=Plaisante)', type: 'range', min: 1, max: 10, step: 1 },
+    { id: 'corps', label: 'Corps (1=Léger, 10=Plein)', type: 'range', min: 1, max: 10, step: 1 },
+    { id: 'carbonation', label: 'Carbonation (1=Plate, 10=Explosion)', type: 'range', min: 1, max: 10, step: 1 },
 
-        document.getElementById('modal-container').classList.add('hidden');
-        document.getElementById('modal-container').innerHTML = ''; // Clear
+    // Conclusion
+    { id: 'synthese', label: 'Synthèse', type: 'textarea' },
+    { id: 'duree', label: 'Durée (1=Fugace, 10=Forcing)', type: 'range', min: 1, max: 10, step: 1 },
+    { id: 'intensite_globale', label: 'Intensité Globale', type: 'range', min: 1, max: 10, step: 1 },
+    { id: 'ensemble_equilibre', label: 'Ensemble & Équilibre (Qualité)', type: 'range', min: 1, max: 10, step: 1 }
+];
 
-        if (isDiscovery) {
-            location.reload();
-        }
-    };
+function applyTristanPreset() {
+    Storage.saveRatingTemplate(PRESET_TRISTAN);
+    Storage.savePreference('activePreset', 'tristan'); // Persist selection
+}
 
-    openModal(wrapper);
+const PRESET_NOAH = [
+    { id: 'score', label: 'Note Globale (/20)', type: 'number', min: 0, max: 20, step: 0.1 },
+    { id: 'comment', label: 'Commentaire', type: 'textarea' },
+
+    // Visuel (Expert)
+    { id: 'robe', label: 'Robe (Couleur/Turbidité)', type: 'textarea' },
+    { id: 'mousse_aspect', label: 'Aspect Mousse', type: 'textarea' },
+
+    // Olfactif (Nez)
+    { id: 'nez_intensite', label: 'Intensité Nez (1-10)', type: 'range', min: 1, max: 10, step: 1 },
+    { id: 'nez_notes', label: 'Notes Olfactives', type: 'textarea' },
+
+    // Gustatif (Bouche)
+    { id: 'attaque', label: 'Attaque', type: 'textarea' },
+    { id: 'milieu_bouche', label: 'Milieu de Bouche', type: 'textarea' },
+    { id: 'finale', label: 'Finale / Arrière-goût', type: 'textarea' },
+
+    // Sensations
+    { id: 'corpulence', label: 'Corpulence (1=Eau, 10=Sirop)', type: 'range', min: 1, max: 10, step: 1 },
+    { id: 'petillance', label: 'Pétillance', type: 'range', min: 1, max: 10, step: 1 },
+    { id: 'amertume', label: 'Amertume Ressentie', type: 'range', min: 1, max: 10, step: 1 },
+
+    // Accord
+    { id: 'accord_mets', label: 'Accord ideal', type: 'textarea' },
+
+    // Conclusion
+    { id: 'potentiel_garde', label: 'Potentiel de Garde', type: 'textarea' },
+    { id: 'verdict', label: 'Verdict de l\'Expert', type: 'textarea' }
+];
+
+function applyNoahPreset() {
+    Storage.saveRatingTemplate(PRESET_NOAH);
+    Storage.savePreference('activePreset', 'noah');
 }
 
 export function showAchievementDetails(title, desc, icon, isUnlocked) {

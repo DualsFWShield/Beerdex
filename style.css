@@ -25,6 +25,346 @@
     --shadow-glow: 0 0 15px rgba(255, 192, 0, 0.15);
     --glass-bg: rgba(20, 20, 20, 0.85);
     --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+
+    /* Rarity Colors */
+    --rarity-base: #b0b0b0;
+    --rarity-common: #2ecc71;
+    --rarity-rare: #3498db;
+    --rarity-super_rare: #00bcd4;
+    /* Cyan */
+    --rarity-epic: #9b59b6;
+    --rarity-mythic: #e74c3c;
+    --rarity-legendary: #f39c12;
+    --rarity-ultra_legendary: linear-gradient(45deg, #ff00cc, #3333ff, #00ccff);
+    --rarity-seasonal: #e91e63;
+    /* Pink/Seasonal */
+}
+
+/* Rarity Badges & Effects */
+.rarity-badge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    display: inline-block;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.rarity-base {
+    background: var(--rarity-base);
+    color: #000;
+    text-shadow: none;
+}
+
+.rarity-commun {
+    background: var(--rarity-common);
+}
+
+.rarity-rare {
+    background: var(--rarity-rare);
+}
+
+.rarity-super_rare {
+    background: var(--rarity-super_rare);
+}
+
+.rarity-epique {
+    background: var(--rarity-epic);
+    box-shadow: 0 0 10px var(--rarity-epic);
+}
+
+.rarity-mythique {
+    background: var(--rarity-mythic);
+}
+
+.rarity-legendaire {
+    background: var(--rarity-legendary);
+    box-shadow: 0 0 15px var(--rarity-legendary);
+}
+
+.rarity-ultra_legendary {
+    background: var(--rarity-ultra_legendary);
+    animation: gradient-shift 2s infinite linear;
+}
+
+.rarity-saisonniere {
+    background: var(--rarity-seasonal);
+    border: 1px dashed #fff;
+}
+
+.rarity-hidden {
+    background: #333;
+    color: #aaa;
+    cursor: pointer;
+    font-family: monospace;
+    letter-spacing: 2px;
+}
+
+/* Rarity Animations */
+@keyframes rarity-bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-3px);
+    }
+}
+
+@keyframes rarity-flash {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+        filter: brightness(1.5);
+    }
+}
+
+@keyframes rarity-pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes rarity-shake {
+    0% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-2px) rotate(-2deg);
+    }
+
+    75% {
+        transform: translateX(2px) rotate(2deg);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
+@keyframes rarity-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes rarity-explode {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes gradient-shift {
+    0% {
+        filter: hue-rotate(0deg);
+    }
+
+    100% {
+        filter: hue-rotate(360deg);
+    }
+}
+
+@keyframes border-flow {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* Applied Classes */
+.anim-commun {
+    animation: rarity-bounce 2s infinite;
+}
+
+.anim-rare {
+    animation: rarity-flash 3s infinite;
+}
+
+.anim-super_rare {
+    animation: rarity-pulse 2s infinite;
+}
+
+.anim-epique {
+    animation: rarity-shake 4s infinite;
+}
+
+.anim-mythique {
+    position: relative;
+    overflow: hidden;
+}
+
+/* Needs particle effect js maybe, or simple shine */
+.anim-mythique::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(rgba(255, 255, 255, 0.2), transparent);
+    transform: rotate(45deg);
+    animation: rarity-spin 3s infinite linear;
+    pointer-events: none;
+}
+
+.anim-legendaire {
+    animation: rarity-pulse 1s infinite alternate;
+    border: 2px solid #fff;
+}
+
+
+/* Constant Animated Card Border for Ultra Legendary */
+.card-anim-ultra_legendary {
+    position: relative;
+    border: 3px solid transparent !important;
+    background-image: linear-gradient(var(--bg-card), var(--bg-card)), var(--rarity-ultra_legendary);
+    background-origin: border-box;
+    background-clip: content-box, border-box;
+    box-shadow: 0 0 15px rgba(255, 0, 204, 0.4);
+    animation: rarity-pulse 3s infinite ease-in-out;
+}
+
+/* Reveal Overlay Styles */
+.reveal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 200000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.reveal-card {
+    width: 200px;
+    height: 300px;
+    background: #222;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 5rem;
+    box-shadow: 0 0 50px rgba(255, 255, 255, 0.1);
+    animation: reveal-shake-hard 2s ease-in-out forwards;
+}
+
+@keyframes reveal-shake-hard {
+    0% {
+        transform: scale(0.8) rotate(0deg);
+    }
+
+    20% {
+        transform: scale(0.9) rotate(-5deg);
+    }
+
+    40% {
+        transform: scale(0.9) rotate(5deg);
+    }
+
+    60% {
+        transform: scale(1.0) rotate(-10deg);
+        filter: brightness(2);
+    }
+
+    80% {
+        transform: scale(1.1) rotate(10deg);
+        filter: brightness(3);
+    }
+
+    100% {
+        transform: scale(1.5);
+        opacity: 0;
+    }
+}
+
+.reveal-burst {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background: radial-gradient(circle, #fff, transparent);
+    opacity: 0;
+    animation: burst-fade 0.5s 2s forwards;
+    /* Starts after shake */
+}
+
+@keyframes burst-fade {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(3);
+        opacity: 0;
+    }
+}
+
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-gold);
 }
 
 /* Reset & Base */
@@ -319,7 +659,6 @@ h3 {
     overflow-y: auto;
     position: relative;
     box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
-    animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @media (min-width: 600px) {

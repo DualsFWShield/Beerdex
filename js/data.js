@@ -1,3 +1,5 @@
+import { calculateRarity } from './autoRarity.js';
+
 const DATA_FILES = [
     'data/belgiumbeer.json',
     'data/deutchbeer.json',
@@ -37,8 +39,24 @@ export async function fetchAllBeers() {
     });
 
     // Normalize IDs if missing (fallback to title)
+    // Map rarity_rank from data to internal rarity key
+    const rarityMap = {
+        'Base': 'base',
+        'Commun': 'commun',
+        'Rare': 'rare',
+        'Super Rare': 'super_rare',
+        'Épique': 'epique',
+        'Mythique': 'mythique',
+        'Légendaire': 'legendaire',
+        'Ultra Légendaire': 'ultra_legendaire',
+        'Saisonnière': 'saisonniere'
+    };
+
     return allBeers.map(beer => ({
         ...beer,
-        id: beer.id || beer.title.replace(/\s+/g, '_').toUpperCase() + '_' + Math.random().toString(36).substr(2, 5)
+        id: beer.id || beer.title.replace(/\s+/g, '_').toUpperCase() + '_' + Math.random().toString(36).substr(2, 5),
+        rarity: rarityMap[beer.rarity_rank] || beer.rarity || 'commun',
+        isSeasonal: beer.rarity_rank === 'Saisonnière' || beer.isSeasonal || false
     }));
 }
+

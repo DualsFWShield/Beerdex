@@ -309,6 +309,42 @@ function applyFilters(beers, filters) {
         });
     }
 
+    // --- NEW FILTERS ---
+    // Production Volume
+    if (filters.production_volume && filters.production_volume !== 'All') {
+        result = result.filter(b => b.production_volume === filters.production_volume);
+    }
+
+    // Distribution
+    if (filters.distribution && filters.distribution !== 'All') {
+        result = result.filter(b => b.distribution === filters.distribution);
+    }
+
+    // Barrel Aged
+    if (filters.barrel_aged) {
+        result = result.filter(b => b.barrel_aged === true);
+    }
+
+    // Community Rating
+    if (filters.community_rating !== undefined && filters.community_rating !== '') {
+        const minCommR = parseFloat(filters.community_rating);
+        result = result.filter(b => (b.community_rating || 0) >= minCommR);
+    }
+
+    // Ingredients
+    if (filters.ingredients) {
+        const kw = filters.ingredients.toLowerCase();
+        result = result.filter(b => (b.ingredients || '').toLowerCase().includes(kw));
+    }
+
+    // Rarity
+    if (filters.rarity && filters.rarity.length > 0) {
+        result = result.filter(b => {
+            const r = b.rarity || 'base';
+            return filters.rarity.includes(r);
+        });
+    }
+
     // Custom
     if (filters.onlyCustom) result = result.filter(b => String(b.id).startsWith('CUSTOM_'));
     if (filters.onlyFavorites) result = result.filter(b => Storage.isFavorite(b.id));
@@ -327,6 +363,14 @@ function applyFilters(beers, filters) {
         if (filters.sortBy === 'brewery') { valA = a.brewery.toLowerCase(); valB = b.brewery.toLowerCase(); }
         else if (filters.sortBy === 'alcohol') { valA = getAlc(a); valB = getAlc(b); }
         else if (filters.sortBy === 'volume') { valA = getVol(a); valB = getVol(b); }
+        else if (filters.sortBy === 'rarity') {
+            const ranks = { 'base': 0, 'commun': 1, 'rare': 2, 'super_rare': 3, 'epique': 4, 'mythique': 5, 'legendaire': 6, 'ultra_legendaire': 7 };
+            valA = ranks[a.rarity || 'base'] || 0;
+            valB = ranks[b.rarity || 'base'] || 0;
+        } else if (filters.sortBy === 'community_rating') {
+            valA = a.community_rating || 0;
+            valB = b.community_rating || 0;
+        }
         else { valA = a.title.toLowerCase(); valB = b.title.toLowerCase(); } // Default to Title
 
         if (valA < valB) return filters.sortOrder === 'desc' ? 1 : -1;
@@ -448,9 +492,12 @@ function renderCurrentView() {
 
     } else if (state.view === 'stats') {
         const isDiscovery = Storage.getPreference('discoveryMode', false);
-        UI.renderStats(state.beers, Storage.getAllUserData(), mainContent, isDiscovery, (newVal) => {
+        UI.renderStats(state.beers, Storage.getAllUserData(), mainContent, isDiscovery);
+    } else if (state.view === 'settings') {
+        const isDiscovery = Storage.getPreference('discoveryMode', false);
+        UI.renderSettings(state.beers, Storage.getAllUserData(), mainContent, isDiscovery, (newVal) => {
             Storage.savePreference('discoveryMode', newVal);
-            renderCurrentView();
+            // Optional: Reload logic if needed, or just stay on settings
         });
     }
 }

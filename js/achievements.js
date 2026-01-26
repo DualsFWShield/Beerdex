@@ -109,6 +109,19 @@ const ACHIEVEMENTS = [
         { id: 'secret_1', title: 'Glitch', desc: 'Avoir une bière avec des données manquantes', icon: '👾', condition: (s) => s.hasGlitch, hidden: true },
     ].map(a => ({ ...a, category: 'Fun & Secrets 🤫' })),
 
+    // --- RARETÉ (Rarity Hunter) --- (10)
+    ...[
+        { id: 'rare_hunter', title: 'Chasseur de Trésors', desc: 'Boire 1 bière Rare', icon: '💎', condition: (s) => s.countByRarity('rare') >= 1 },
+        { id: 'rare_elite', title: 'Elite', desc: 'Boire 5 bières Rares', icon: '💍', condition: (s) => s.countByRarity('rare') >= 5 },
+        { id: 'super_rare_1', title: 'Chanceux', desc: 'Boire 1 bière Super Rare', icon: '🍀', condition: (s) => s.countByRarity('super_rare') >= 1 },
+        { id: 'super_rare_5', title: 'Collectionneur', desc: 'Boire 5 bières Super Rares', icon: '🎖️', condition: (s) => s.countByRarity('super_rare') >= 5 },
+        { id: 'epique_1', title: 'Épique', desc: 'Boire 1 bière Épique', icon: '🟣', condition: (s) => s.countByRarity('epique') >= 1 },
+        { id: 'mythique_1', title: 'Mythique', desc: 'Boire 1 bière Mythique', icon: '🦄', condition: (s) => s.countByRarity('mythique') >= 1 },
+        { id: 'legendaire_1', title: 'Légende', desc: 'Boire 1 bière Légendaire', icon: '🐲', condition: (s) => s.countByRarity('legendaire') >= 1 },
+        { id: 'ultra_1', title: 'L\'Élu', desc: 'Boire 1 bière Ultra Légendaire', icon: '🌟', condition: (s) => s.countByRarity('ultra_legendaire') >= 1 },
+        { id: 'rarity_master', title: 'Collectionneur d\'Élite', desc: 'Boire au moins 1 bière de chaque rareté (sauf Ultra)', icon: '🏆', condition: (s) => s.countByRarity('rare') >= 1 && s.countByRarity('super_rare') >= 1 && s.countByRarity('epique') >= 1 && s.countByRarity('mythique') >= 1 && s.countByRarity('legendaire') >= 1 },
+    ].map(a => ({ ...a, category: 'Rareté 💎' })),
+
     // --- ALPHABET CHALLENGE (26) ---
     // A-Z
     ...Array.from('ABCDEFGHIJKLMNOPQRSTUVWXYZ').map(char => ({
@@ -249,6 +262,28 @@ export function checkAchievements(allBeers) {
 
     stats.alphabetCount = stats.firstLetters.size;
     stats.hasVolume = (v) => stats.volumes.has(v);
+
+    // Rarity Stats
+    stats.rarityCounts = {
+        'base': 0, 'commun': 0, 'rare': 0, 'super_rare': 0,
+        'epique': 0, 'mythique': 0, 'legendaire': 0, 'ultra_legendaire': 0
+    };
+    stats.countByRarity = (r) => stats.rarityCounts[r] || 0;
+
+    // Populate Rarity Stats (Iterate drunk beers)
+    userIds.forEach(id => {
+        const u = userData[id];
+        if ((u.count || 0) > 0) {
+            const beer = allBeers.find(b => b.id === id);
+            if (beer && beer.rarity) {
+                // Normalize rarity string just in case
+                const r = beer.rarity.toLowerCase();
+                if (stats.rarityCounts[r] !== undefined) {
+                    stats.rarityCounts[r]++;
+                }
+            }
+        }
+    });
 
     // 2. Check Conditions (Full Re-evaluation)
     let newUnlocks = [];

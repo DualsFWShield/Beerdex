@@ -6,7 +6,13 @@
     "volume": "30 L",
     "alcohol": "4.9°",
     "id": "ADLER HELLES TETE CREUSE_BLONDE_30",
-    "image": ""
+    "image": "",
+    "production_volume": "Régionale",
+    "distribution": "Cavistes & Horeca",
+    "barrel_aged": false,
+    "community_rating": 3.2,
+    "ingredients": "Loi de pureté (Reinheitsgebot)",
+    "rarity_rank": "Commun"
   },
   {
     "title": "BECK'S",
@@ -15,7 +21,13 @@
     "volume": "0.33 L",
     "alcohol": "4.9°",
     "id": "BECK'S_BLONDE_0.33",
-    "image": "images/beer/de/BECKS_BLONDE_033.png"
+    "image": "images/beer/de/BECKS_BLONDE_033.png",
+    "production_volume": "Industrielle",
+    "distribution": "Mondiale",
+    "barrel_aged": false,
+    "community_rating": 2.8,
+    "ingredients": "Standard",
+    "rarity_rank": "Base"
   },
   {
     "title": "BENEDIKTINER WEISSBIER",
@@ -24,7 +36,13 @@
     "volume": "0.5 L",
     "alcohol": "5.4°",
     "id": "BENEDIKTINER WEISSBIER_BLANCHE_0.5",
-    "image": "images/beer/de/BENEDIKTINER_WEISSBIER_BLANCHE_05.png"
+    "image": "images/beer/de/BENEDIKTINER_WEISSBIER_BLANCHE_05.png",
+    "production_volume": "Industrielle",
+    "distribution": "Partout",
+    "barrel_aged": false,
+    "community_rating": 3.5,
+    "ingredients": "Levure Weizen",
+    "rarity_rank": "Commun"
   },
   {
     "title": "BITBURGER PILS",
@@ -33,7 +51,13 @@
     "volume": "0.5 L",
     "alcohol": "4.8°",
     "id": "BITBURGER PILS_BLONDE_0.5",
-    "image": "images/beer/de/BITBURGER_PILS_BLONDE_05.png"
+    "image": "images/beer/de/BITBURGER_PILS_BLONDE_05.png",
+    "production_volume": "Industrielle",
+    "distribution": "Partout",
+    "barrel_aged": false,
+    "community_rating": 2.9,
+    "ingredients": "Standard",
+    "rarity_rank": "Base"
   },
   {
     "title": "BITBURGER SANS ALCOOL",
@@ -42,7 +66,13 @@
     "volume": "30 L",
     "alcohol": "0°",
     "id": "BITBURGER SANS ALCOOL",
-    "image": ""
+    "image": "",
+    "production_volume": "Industrielle",
+    "distribution": "Partout",
+    "barrel_aged": false,
+    "community_rating": 2.4,
+    "ingredients": "Sans alcool",
+    "rarity_rank": "Base"
   },
   {
     "title": "CREW REPUBLIC JACKPOT",
@@ -51,7 +81,13 @@
     "volume": "30 L",
     "alcohol": "5°",
     "id": "CREW REPUBLIC JACKPOT_BLONDE_30",
-    "image": ""
+    "image": "",
+    "production_volume": "Micro-brasserie",
+    "distribution": "Cavistes spécialisés",
+    "barrel_aged": false,
+    "community_rating": 3.5,
+    "ingredients": "Houblons US",
+    "rarity_rank": "Rare"
   },
   {
     "title": "DISTELHAUSER EXPORT",
@@ -60,7 +96,13 @@
     "volume": "15 L",
     "alcohol": "5.2°",
     "id": "DISTELHAUSER EXPORT_BLONDE_15",
-    "image": ""
+    "image": "",
+    "production_volume": "Régionale",
+    "distribution": "Cavistes généralistes",
+    "barrel_aged": false,
+    "community_rating": 3.3,
+    "ingredients": "Malt d'orge local",
+    "rarity_rank": "Commun"
   },
   {
     "title": "EICHBAUM AMBREE",
@@ -69,7 +111,13 @@
     "volume": "30 L",
     "alcohol": "5.9°",
     "id": "EICHBAUM AMBREE_AMBREE_30",
-    "image": ""
+    "image": "",
+    "production_volume": "Industrielle",
+    "distribution": "Supermarché",
+    "barrel_aged": false,
+    "community_rating": 2.9,
+    "ingredients": "Malt grillé",
+    "rarity_rank": "Base"
   },
   {
     "title": "EICHBAUM LAGER",
@@ -78,7 +126,13 @@
     "volume": "30 L",
     "alcohol": "4.2°",
     "id": "EICHBAUM LAGER_BLONDE_30",
-    "image": ""
+    "image": "",
+    "production_volume": "Industrielle",
+    "distribution": "Supermarché",
+    "barrel_aged": false,
+    "community_rating": 2.8,
+    "ingredients": "Standard",
+    "rarity_rank": "Base"
   },
   {
     "title": "EKU 28",
@@ -87,7 +141,13 @@
     "volume": "0.33 L",
     "alcohol": "11°",
     "id": "EKU 28_AMBREE_0.33",
-    "image": "images/beer/de/EKU_28_AMBREE_033.png"
+    "image": "images/beer/de/EKU_28_AMBREE_033.png",
+    "production_volume": "Régionale",
+    "distribution": "Cavistes spécialisés",
+    "barrel_aged": false,
+    "community_rating": 3.4,
+    "ingredients": "Doppelbock (Forte)",
+    "rarity_rank": "Rare"
   },
   {
     "title": "ENGEL GOLD",
@@ -96,7 +156,13 @@
     "volume": "20 L",
     "alcohol": "5.4°",
     "id": "ENGEL GOLD_BLONDE_20",
-    "image": ""
+    "image": "",
+    "production_volume": "Régionale",
+    "distribution": "Cavistes généralistes",
+    "barrel_aged": false,
+    "community_rating": 3.4,
+    "ingredients": "Bio / Local",
+    "rarity_rank": "Commun"
   },
   {
     "title": "FASSBRAUSE CITRON",
@@ -105,7 +171,13 @@
     "volume": "0.33 L",
     "alcohol": "0°",
     "id": "FASSBRAUSE CITRON_0.33",
-    "image": "images/beer/de/FASSBRAUSE_CITRON_033.png"
+    "image": "images/beer/de/FASSBRAUSE_CITRON_033.png",
+    "production_volume": "Industrielle",
+    "distribution": "Partout",
+    "barrel_aged": false,
+    "community_rating": 2.5,
+    "ingredients": "Limonade",
+    "rarity_rank": "Base"
   },
   {
     "title": "FASSBRAUSE FRAMBOISE",
@@ -114,7 +186,13 @@
     "volume": "0.33 L",
     "alcohol": "0°",
     "id": "FASSBRAUSE FRAMBOISE_0.33",
-    "image": "images/beer/de/FASSBRAUSE_FRAMBOISE_033.png"
+    "image": "images/beer/de/FASSBRAUSE_FRAMBOISE_033.png",
+    "production_volume": "Industrielle",
+    "distribution": "Partout",
+    "barrel_aged": false,
+    "community_rating": 2.5,
+    "ingredients": "Limonade",
+    "rarity_rank": "Base"
   },
   {
     "title": "FASSBRAUSE PASSION",
@@ -123,7 +201,13 @@
     "volume": "0.33 L",
     "alcohol": "0°",
     "id": "FASSBRAUSE PASSION_0.33",
-    "image": "images/beer/de/FASSBRAUSE_PASSION_033.png"
+    "image": "images/beer/de/FASSBRAUSE_PASSION_033.png",
+    "production_volume": "Industrielle",
+    "distribution": "Partout",
+    "barrel_aged": false,
+    "community_rating": 2.5,
+    "ingredients": "Limonade",
+    "rarity_rank": "Base"
   },
   {
     "title": "FRANKEN BRAU SPEZIAL",
@@ -132,7 +216,13 @@
     "volume": "30 L",
     "alcohol": "5.1°",
     "id": "FRANKEN BRAU SPEZIAL_BLONDE_30",
-    "image": ""
+    "image": "",
+    "production_volume": "Régionale",
+    "distribution": "Local",
+    "barrel_aged": false,
+    "community_rating": 3.3,
+    "ingredients": "Standard",
+    "rarity_rank": "Commun"
   },
   {
     "title": "FRANZISKANER HEFE-WEISSBIER NATURTRUB",
@@ -141,7 +231,13 @@
     "volume": "0.5 L",
     "alcohol": "5°",
     "id": "FRANZISKANER HEFE-WEISSBIER NATURTRUB_BLANCHE_0.5",
-    "image": "images/beer/de/FRANZISKANER_HEFE-WEISSBIER_NATURTRUB_BLANCHE_05.png"
+    "image": "images/beer/de/FRANZISKANER_HEFE-WEISSBIER_NATURTRUB_BLANCHE_05.png",
+    "production_volume": "Industrielle",
+    "distribution": "Partout",
+    "barrel_aged": false,
+    "community_rating": 3.6,
+    "ingredients": "Blé",
+    "rarity_rank": "Commun"
   },
   {
     "title": "FRUH KOLSCH",
@@ -150,7 +246,13 @@
     "volume": "0.5 L",
     "alcohol": "4.8°",
     "id": "FRUH KOLSCH_BLONDE_0.5",
-    "image": "images/beer/de/FRUH_KOLSCH_BLONDE_05.png"
+    "image": "images/beer/de/FRUH_KOLSCH_BLONDE_05.png",
+    "production_volume": "Régionale",
+    "distribution": "Partout (Cologne)",
+    "barrel_aged": false,
+    "community_rating": 3.4,
+    "ingredients": "Kölsch (IGP)",
+    "rarity_rank": "Commun"
   },
   {
     "title": "HEFE WEISSBIER 0,0%",
@@ -159,7 +261,13 @@
     "volume": "1.98 L",
     "alcohol": "0°",
     "id": "HEFE WEISSBIER 0,0%_BLANCHE_0.33",
-    "image": "images/beer/de/HEFE_WEISSBIER_00_BLANCHE_033.png"
+    "image": "images/beer/de/HEFE_WEISSBIER_00_BLANCHE_033.png",
+    "production_volume": "Industrielle",
+    "distribution": "Partout",
+    "barrel_aged": false,
+    "community_rating": 2.9,
+    "ingredients": "Sans alcool",
+    "rarity_rank": "Base"
   },
   {
     "title": "HEFE WEISSBIER DUNKEL",
@@ -168,7 +276,13 @@
     "volume": "0.5 L",
     "alcohol": "5°",
     "id": "HEFE WEISSBIER DUNKEL_BRUNE_0.5",
-    "image": "images/beer/de/HEFE_WEISSBIER_DUNKEL_BRUNE_05.png"
+    "image": "images/beer/de/HEFE_WEISSBIER_DUNKEL_BRUNE_05.png",
+    "production_volume": "Industrielle",
+    "distribution": "Partout",
+    "barrel_aged": false,
+    "community_rating": 3.5,
+    "ingredients": "Malt torréfié",
+    "rarity_rank": "Commun"
   },
   {
     "title": "HEFE WEISSBIER NATURTRUB",
@@ -177,7 +291,13 @@
     "volume": "0.5 L",
     "alcohol": "5.5°",
     "id": "HEFE WEISSBIER NATURTRUB_BLANCHE_0.5",
-    "image": "images/beer/de/HEFE_WEISSBIER_NATURTRUB_BLANCHE_05.png"
+    "image": "images/beer/de/HEFE_WEISSBIER_NATURTRUB_BLANCHE_05.png",
+    "production_volume": "Industrielle",
+    "distribution": "Partout",
+    "barrel_aged": false,
+    "community_rating": 3.6,
+    "ingredients": "Levure Weizen",
+    "rarity_rank": "Commun"
   },
   {
     "title": "HEFE WEISSE",
@@ -186,7 +306,13 @@
     "volume": "0.5 L",
     "alcohol": "5.5°",
     "id": "HEFE WEISSE_BLANCHE_0.5",
-    "image": "images/beer/de/HEFE_WEISSE_BLANCHE_05.png"
+    "image": "images/beer/de/HEFE_WEISSE_BLANCHE_05.png",
+    "production_volume": "Industrielle",
+    "distribution": "Supermarché",
+    "barrel_aged": false,
+    "community_rating": 3.6,
+    "ingredients": "Standard",
+    "rarity_rank": "Commun"
   },
   {
     "title": "HEFEWEISS",
@@ -195,7 +321,13 @@
     "volume": "0.5 L",
     "alcohol": "5.4°",
     "id": "HEFEWEISS_BLANCHE_0.5",
-    "image": "images/beer/de/HEFEWEISS_BLANCHE_05.png"
+    "image": "images/beer/de/HEFEWEISS_BLANCHE_05.png",
+    "production_volume": "Industrielle",
+    "distribution": "Partout",
+    "barrel_aged": false,
+    "community_rating": 3.8,
+    "ingredients": "Plus vieille brasserie du monde",
+    "rarity_rank": "Commun"
   },
   {
     "title": "HOFBRAU OKTO",
@@ -204,7 +336,13 @@
     "volume": "0.5 L",
     "alcohol": "6.3°",
     "id": "HOFBRAU OKTO",
-    "image": "images/beer/de/HOFBRAU_OKTO.png"
+    "image": "images/beer/de/HOFBRAU_OKTO.png",
+    "production_volume": "Industrielle",
+    "distribution": "Saisonnier",
+    "barrel_aged": false,
+    "community_rating": 3.5,
+    "ingredients": "Oktoberfest",
+    "rarity_rank": "Saisonnière"
   },
   {
     "title": "KELLERBIER - HACKER PSCHORR",
@@ -213,7 +351,13 @@
     "volume": "0.5 L",
     "alcohol": "5.5°",
     "id": "KELLERBIER - HACKER PSCHORR_BLONDE_0.5",
-    "image": "images/beer/de/KELLERBIER_-_HACKER_PSCHORR_BLONDE_05.png"
+    "image": "images/beer/de/KELLERBIER_-_HACKER_PSCHORR_BLONDE_05.png",
+    "production_volume": "Industrielle",
+    "distribution": "Cavistes généralistes",
+    "barrel_aged": false,
+    "community_rating": 3.6,
+    "ingredients": "Non filtrée",
+    "rarity_rank": "Commun"
   },
   {
     "title": "KROMBACHER AMBREE",
@@ -222,7 +366,13 @@
     "volume": "30 L",
     "alcohol": "5°",
     "id": "KROMBACHER AMBREE_AMBREE_30",
-    "image": ""
+    "image": "",
+    "production_volume": "Industrielle",
+    "distribution": "Supermarché",
+    "barrel_aged": false,
+    "community_rating": 3.1,
+    "ingredients": "Standard",
+    "rarity_rank": "Base"
   },
   {
     "title": "KROMBACHER KELLERBIER NON FILTREE",
@@ -231,7 +381,13 @@
     "volume": "20 L",
     "alcohol": "5.1°",
     "id": "KROMBACHER KELLERBIER NON FILTREE_BLONDE_20",
-    "image": ""
+    "image": "",
+    "production_volume": "Industrielle",
+    "distribution": "Supermarché",
+    "barrel_aged": false,
+    "community_rating": 3.2,
+    "ingredients": "Non filtrée",
+    "rarity_rank": "Commun"
   },
   {
     "title": "KROMBACHER PILS",
@@ -240,7 +396,13 @@
     "volume": "1.98 L",
     "alcohol": "4.8°",
     "id": "KROMBACHER PILS_BLONDE_1.98",
-    "image": "images/beer/de/KROMBACHER_PILS_BLONDE_198.png"
+    "image": "images/beer/de/KROMBACHER_PILS_BLONDE_198.png",
+    "production_volume": "Industrielle",
+    "distribution": "Partout",
+    "barrel_aged": false,
+    "community_rating": 3.0,
+    "ingredients": "Standard",
+    "rarity_rank": "Base"
   },
   {
     "title": "KROMBACHER PILS SANS ALCOOL",
@@ -249,7 +411,13 @@
     "volume": "0.33 L",
     "alcohol": "0°",
     "id": "KROMBACHER PILS SANS ALCOOL_BLONDE_1.98",
-    "image": "images/beer/de/KROMBACHER_PILS_SANS_ALCOOL_BLONDE_198.png"
+    "image": "images/beer/de/KROMBACHER_PILS_SANS_ALCOOL_BLONDE_198.png",
+    "production_volume": "Industrielle",
+    "distribution": "Partout",
+    "barrel_aged": false,
+    "community_rating": 2.5,
+    "ingredients": "Sans alcool",
+    "rarity_rank": "Base"
   },
   {
     "title": "KROMBACHER RADLER 0,0%",
@@ -258,7 +426,13 @@
     "volume": "0.33 L",
     "alcohol": "0°",
     "id": "KROMBACHER RADLER 0,0%_BLONDE_0.33",
-    "image": "images/beer/de/KROMBACHER_RADLER_00_BLONDE_033.png"
+    "image": "images/beer/de/KROMBACHER_RADLER_00_BLONDE_033.png",
+    "production_volume": "Industrielle",
+    "distribution": "Partout",
+    "barrel_aged": false,
+    "community_rating": 2.6,
+    "ingredients": "Jus de citron",
+    "rarity_rank": "Base"
   },
   {
     "title": "KROMBACHER WEIZEN",
@@ -267,7 +441,13 @@
     "volume": "0.5 L",
     "alcohol": "5.3°",
     "id": "KROMBACHER WEIZEN_BLANCHE_0.5",
-    "image": "images/beer/de/KROMBACHER_WEIZEN_BLANCHE_05.png"
+    "image": "images/beer/de/KROMBACHER_WEIZEN_BLANCHE_05.png",
+    "production_volume": "Industrielle",
+    "distribution": "Partout",
+    "barrel_aged": false,
+    "community_rating": 3.2,
+    "ingredients": "Blé",
+    "rarity_rank": "Commun"
   },
   {
     "title": "LANDBIER",
@@ -276,7 +456,13 @@
     "volume": "30 L",
     "alcohol": "4.2°",
     "id": "LANDBIER_BLONDE_30",
-    "image": ""
+    "image": "",
+    "production_volume": "Régionale",
+    "distribution": "Cavistes généralistes",
+    "barrel_aged": false,
+    "community_rating": 3.1,
+    "ingredients": "Standard",
+    "rarity_rank": "Commun"
   },
   {
     "title": "LOWENBRAU ORIGINAL",
@@ -285,7 +471,13 @@
     "volume": "0.5 L",
     "alcohol": "5.2°",
     "id": "LOWENBRAU ORIGINAL_BLONDE_0.5",
-    "image": "images/beer/de/LOWENBRAU_ORIGINAL_BLONDE_05.png"
+    "image": "images/beer/de/LOWENBRAU_ORIGINAL_BLONDE_05.png",
+    "production_volume": "Industrielle",
+    "distribution": "Partout",
+    "barrel_aged": false,
+    "community_rating": 3.0,
+    "ingredients": "Standard",
+    "rarity_rank": "Base"
   },
   {
     "title": "MUNCHNER",
@@ -294,7 +486,13 @@
     "volume": "0.5 L",
     "alcohol": "5°",
     "id": "MUNCHNER_BLONDE_0.5",
-    "image": "images/beer/de/MUNCHNER_BLONDE_05.png"
+    "image": "images/beer/de/MUNCHNER_BLONDE_05.png",
+    "production_volume": "Industrielle",
+    "distribution": "Partout",
+    "barrel_aged": false,
+    "community_rating": 3.5,
+    "ingredients": "Standard",
+    "rarity_rank": "Commun"
   },
   {
     "title": "PAULANER MUNCHNER HELL ORIGINAL",
@@ -303,7 +501,13 @@
     "volume": "0.5 L",
     "alcohol": "4.9°",
     "id": "MUNCHNER HELL_BLONDE_0.5",
-    "image": "images/beer/de/MUNCHNER_HELL_BLONDE_05.png"
+    "image": "images/beer/de/MUNCHNER_HELL_BLONDE_05.png",
+    "production_volume": "Industrielle",
+    "distribution": "Partout",
+    "barrel_aged": false,
+    "community_rating": 3.4,
+    "ingredients": "Standard",
+    "rarity_rank": "Commun"
   },
   {
     "title": "PAULANER SALVATOR",
@@ -312,7 +516,13 @@
     "volume": "0.5 L",
     "alcohol": "7.9°",
     "id": "PAULANER SALVATOR_AMBREE_0.5",
-    "image": "images/beer/de/PAULANER_SALVATOR_AMBREE_05.png"
+    "image": "images/beer/de/PAULANER_SALVATOR_AMBREE_05.png",
+    "production_volume": "Industrielle",
+    "distribution": "Cavistes & Supermarchés",
+    "barrel_aged": false,
+    "community_rating": 3.7,
+    "ingredients": "Doppelbock (Historique)",
+    "rarity_rank": "Rare"
   },
   {
     "title": "PAULANER SANS ALCOOL 0.0% CITRON",
@@ -321,7 +531,13 @@
     "volume": "0.33 L",
     "alcohol": "0°",
     "id": "PAULANER SANS ALCOOL 0.0% CITRON_BLONDE_0.33",
-    "image": "images/beer/de/PAULANER_SANS_ALCOOL_00_CITRON_BLONDE_033.png"
+    "image": "images/beer/de/PAULANER_SANS_ALCOOL_00_CITRON_BLONDE_033.png",
+    "production_volume": "Industrielle",
+    "distribution": "Partout",
+    "barrel_aged": false,
+    "community_rating": 2.8,
+    "ingredients": "Jus de citron",
+    "rarity_rank": "Base"
   },
   {
     "title": "PREMIUM PILSENER",
@@ -330,7 +546,13 @@
     "volume": "0.5 L",
     "alcohol": "4.8°",
     "id": "PREMIUM PILSENER_BLONDE_0.5",
-    "image": "images/beer/de/PREMIUM_PILSENER_BLONDE_05.png"
+    "image": "images/beer/de/PREMIUM_PILSENER_BLONDE_05.png",
+    "production_volume": "Industrielle",
+    "distribution": "Partout",
+    "barrel_aged": false,
+    "community_rating": 2.8,
+    "ingredients": "Standard",
+    "rarity_rank": "Base"
   },
   {
     "title": "SPATEN MUNCHNER HELL",
@@ -339,7 +561,13 @@
     "volume": "0.5 L",
     "alcohol": "5.2°",
     "id": "SPATEN MUNCHNER HELL_BLONDE_0.5",
-    "image": "images/beer/de/SPATEN_MUNCHNER_HELL_BLONDE_05.png"
+    "image": "images/beer/de/SPATEN_MUNCHNER_HELL_BLONDE_05.png",
+    "production_volume": "Industrielle",
+    "distribution": "Partout",
+    "barrel_aged": false,
+    "community_rating": 3.3,
+    "ingredients": "Standard",
+    "rarity_rank": "Commun"
   },
   {
     "title": "STARNBERGER HELL",
@@ -348,7 +576,13 @@
     "volume": "30 L",
     "alcohol": "4.8°",
     "id": "STARNBERGER HELL_BLONDE_30",
-    "image": ""
+    "image": "",
+    "production_volume": "Régionale",
+    "distribution": "Cavistes généralistes",
+    "barrel_aged": false,
+    "community_rating": 3.4,
+    "ingredients": "Standard",
+    "rarity_rank": "Commun"
   },
   {
     "title": "WEIHENSTEPHAN. VITUS",
@@ -357,7 +591,13 @@
     "volume": "0.5 L",
     "alcohol": "7.7°",
     "id": "WEIHENSTEPHAN VITUS_BLANCHE_0.5",
-    "image": "images/beer/de/WEIHENSTEPHAN_VITUS_BLANCHE_05.png"
+    "image": "images/beer/de/WEIHENSTEPHAN_VITUS_BLANCHE_05.png",
+    "production_volume": "Régionale",
+    "distribution": "Cavistes spécialisés",
+    "barrel_aged": false,
+    "community_rating": 3.9,
+    "ingredients": "Weizenbock",
+    "rarity_rank": "Rare"
   },
   {
     "title": "WEIHENSTEPHANER ORIGINAL",
@@ -366,7 +606,13 @@
     "volume": "0.5 L",
     "alcohol": "5.1°",
     "id": "WEIHENSTEPHANER ORIGINAL_BLONDE_0.5",
-    "image": "images/beer/de/WEIHENSTEPHANER_ORIGINAL_BLONDE_05.png"
+    "image": "images/beer/de/WEIHENSTEPHANER_ORIGINAL_BLONDE_05.png",
+    "production_volume": "Régionale",
+    "distribution": "Cavistes & Supermarchés",
+    "barrel_aged": false,
+    "community_rating": 3.7,
+    "ingredients": "Helles",
+    "rarity_rank": "Commun"
   },
   {
     "title": "WEISSBIER",
@@ -375,7 +621,13 @@
     "volume": "0.5 L",
     "alcohol": "5.3°",
     "id": "WEISSBIER_BLANCHE_0.5",
-    "image": "images/beer/de/WEISSBIER_BLANCHE_05.png"
+    "image": "images/beer/de/WEISSBIER_BLANCHE_05.png",
+    "production_volume": "Industrielle",
+    "distribution": "Partout",
+    "barrel_aged": false,
+    "community_rating": 3.4,
+    "ingredients": "Blé",
+    "rarity_rank": "Commun"
   },
   {
     "title": "WEISSBIER KRISTALLKLAR",
@@ -384,6 +636,12 @@
     "volume": "0.5 L",
     "alcohol": "5°",
     "id": "WEISSBIER KRISTALLKLAR_BLONDE_0.5",
-    "image": "images/beer/de/WEISSBIER_KRISTALLKLAR_BLONDE_05.png"
+    "image": "images/beer/de/WEISSBIER_KRISTALLKLAR_BLONDE_05.png",
+    "production_volume": "Industrielle",
+    "distribution": "Supermarché",
+    "barrel_aged": false,
+    "community_rating": 3.3,
+    "ingredients": "Blé filtré",
+    "rarity_rank": "Commun"
   }
 ]

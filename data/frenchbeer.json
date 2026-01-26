@@ -6,7 +6,13 @@
     "volume": "0.33 L",
     "alcohol": "5.9°",
     "id": "DESPERADOS_AROMATISEE_0.33",
-    "image": "images/beer/fr/DESPERADOS_AROMATISEE_033.png"
+    "image": "images/beer/fr/DESPERADOS_AROMATISEE_033.png",
+    "production_volume": "Industrielle",
+    "distribution": "Partout",
+    "barrel_aged": false,
+    "community_rating": 2.3,
+    "ingredients": "Arômes Tequila",
+    "rarity_rank": "Base"
   },
   {
     "title": "AMEL",
@@ -15,7 +21,13 @@
     "volume": "0.33 L",
     "alcohol": "4.8°",
     "id": "AMEL_BLONDE_0.33",
-    "image": "images/beer/fr/AMEL_BLONDE_033.png"
+    "image": "images/beer/fr/AMEL_BLONDE_033.png",
+    "production_volume": "Régionale",
+    "distribution": "Cavistes généralistes",
+    "barrel_aged": false,
+    "community_rating": 2.9,
+    "ingredients": "Standard",
+    "rarity_rank": "Commun"
   },
   {
     "title": "BONSECOURS AMBREE",
@@ -24,7 +36,13 @@
     "volume": "0.33 L",
     "alcohol": "8°",
     "id": "BONSECOURS AMBREE_AMBREE_0.33",
-    "image": "images/beer/fr/BONSECOURS_AMBREE_AMBREE_033.png"
+    "image": "images/beer/fr/BONSECOURS_AMBREE_AMBREE_033.png",
+    "production_volume": "Régionale",
+    "distribution": "Cavistes spécialisés",
+    "barrel_aged": false,
+    "community_rating": 3.5,
+    "ingredients": "Standard",
+    "rarity_rank": "Rare"
   },
   {
     "title": "CAMBIER MONGY BLONDE",
@@ -33,7 +51,13 @@
     "volume": "0.75 L",
     "alcohol": "6.2°",
     "id": "CAMBIER MONGY BLONDE_BLONDE_0.75",
-    "image": "images/beer/fr/CAMBIER_MONGY_BLONDE_BLONDE_075.png"
+    "image": "images/beer/fr/CAMBIER_MONGY_BLONDE_BLONDE_075.png",
+    "production_volume": "Micro-brasserie",
+    "distribution": "Cavistes spécialisés",
+    "barrel_aged": false,
+    "community_rating": 3.6,
+    "ingredients": "Houblons Nobles",
+    "rarity_rank": "Super Rare"
   },
   {
     "title": "CAMBIER MONGY SESSION IPA",
@@ -42,7 +66,13 @@
     "volume": "0.33 L",
     "alcohol": "4°",
     "id": "CAMBIER MONGY SESSION IPA_BLONDE_0.33",
-    "image": "images/beer/fr/CAMBIER_MONGY_SESSION_IPA_BLONDE_033.png"
+    "image": "images/beer/fr/CAMBIER_MONGY_SESSION_IPA_BLONDE_033.png",
+    "production_volume": "Micro-brasserie",
+    "distribution": "Cavistes spécialisés",
+    "barrel_aged": false,
+    "community_rating": 3.7,
+    "ingredients": "Houblonnage à cru",
+    "rarity_rank": "Super Rare"
   },
   {
     "title": "CIDRE BRUT VAL DE RANCE",
@@ -51,7 +81,13 @@
     "volume": "30 L",
     "alcohol": "5°",
     "id": "CIDRE BRUT VAL DE RANCE_DOREE_30",
-    "image": ""
+    "image": "",
+    "production_volume": "Industrielle",
+    "distribution": "Supermarché",
+    "barrel_aged": false,
+    "community_rating": 3.0,
+    "ingredients": "Pommes",
+    "rarity_rank": "Base"
   },
   {
     "title": "CIDRE DOUX VAL DE RANCE",
@@ -60,7 +96,13 @@
     "volume": "20 L",
     "alcohol": "2°",
     "id": "CIDRE DOUX VAL DE RANCE_DOREE_20",
-    "image": ""
+    "image": "",
+    "production_volume": "Industrielle",
+    "distribution": "Supermarché",
+    "barrel_aged": false,
+    "community_rating": 2.9,
+    "ingredients": "Pommes",
+    "rarity_rank": "Base"
   },
   {
     "title": "CUVEE DES JONQUILLES",
@@ -69,7 +111,13 @@
     "volume": "0.75 L",
     "alcohol": "7°",
     "id": "CUVEE DES JONQUILLES_DOREE_0.75",
-    "image": "images/beer/fr/CUVEE_DES_JONQUILLES_DOREE_075.png"
+    "image": "images/beer/fr/CUVEE_DES_JONQUILLES_DOREE_075.png",
+    "production_volume": "Micro-brasserie",
+    "distribution": "Cavistes experts",
+    "barrel_aged": false,
+    "community_rating": 3.9,
+    "ingredients": "Saison / Bière de Garde",
+    "rarity_rank": "Super Rare"
   },
   {
     "title": "FESSEE BLONDE",
@@ -78,7 +126,13 @@
     "volume": "0.33 L",
     "alcohol": "7.2°",
     "id": "FESSEE BLONDE_BLONDE_0.33",
-    "image": "images/beer/fr/FESSEE_BLONDE_BLONDE_033.png"
+    "image": "images/beer/fr/FESSEE_BLONDE_BLONDE_033.png",
+    "production_volume": "Régionale",
+    "distribution": "Cavistes généralistes",
+    "barrel_aged": false,
+    "community_rating": 3.1,
+    "ingredients": "Standard",
+    "rarity_rank": "Commun"
   },
   {
     "title": "FESSEE TRIPLE",
@@ -87,7 +141,13 @@
     "volume": "0.75 L",
     "alcohol": "8°",
     "id": "FESSEE TRIPLE_BLONDE_0.75",
-    "image": "images/beer/fr/FESSEE_TRIPLE_BLONDE_075.png"
+    "image": "images/beer/fr/FESSEE_TRIPLE_BLONDE_075.png",
+    "production_volume": "Régionale",
+    "distribution": "Cavistes généralistes",
+    "barrel_aged": false,
+    "community_rating": 3.3,
+    "ingredients": "Standard",
+    "rarity_rank": "Commun"
   },
   {
     "title": "HELLFEST IPA",
@@ -96,7 +156,13 @@
     "volume": "0.33 L",
     "alcohol": "6.66°",
     "id": "HELLFEST IPA_BLONDE_0.33",
-    "image": "images/beer/fr/HELLFEST_IPA_BLONDE_033.png"
+    "image": "images/beer/fr/HELLFEST_IPA_BLONDE_033.png",
+    "production_volume": "Régionale",
+    "distribution": "Cavistes & Evénementiel",
+    "barrel_aged": false,
+    "community_rating": 3.4,
+    "ingredients": "Collaboration Hellfest",
+    "rarity_rank": "Épique"
   },
   {
     "title": "KEKETTE AMBREE",
@@ -105,7 +171,13 @@
     "volume": "0.75 L",
     "alcohol": "6.9°",
     "id": "KEKETTE AMBREE_AMBREE_0.75",
-    "image": "images/beer/fr/KEKETTE_AMBREE_AMBREE_075.png"
+    "image": "images/beer/fr/KEKETTE_AMBREE_AMBREE_075.png",
+    "production_volume": "Régionale",
+    "distribution": "Cavistes généralistes",
+    "barrel_aged": false,
+    "community_rating": 3.0,
+    "ingredients": "Standard",
+    "rarity_rank": "Commun"
   },
   {
     "title": "KEKETTE BLONDE",
@@ -114,7 +186,13 @@
     "volume": "0.75 L",
     "alcohol": "6.2°",
     "id": "KEKETTE BLONDE_BLONDE_0.75",
-    "image": "images/beer/fr/KEKETTE_BLONDE_BLONDE_075.png"
+    "image": "images/beer/fr/KEKETTE_BLONDE_BLONDE_075.png",
+    "production_volume": "Régionale",
+    "distribution": "Cavistes généralistes",
+    "barrel_aged": false,
+    "community_rating": 3.0,
+    "ingredients": "Standard",
+    "rarity_rank": "Commun"
   },
   {
     "title": "KEKETTE RED",
@@ -123,7 +201,13 @@
     "volume": "0.33 L",
     "alcohol": "7.6°",
     "id": "KEKETTE RED_ROUGE/RUBIS_0.33",
-    "image": "images/beer/fr/KEKETTE_RED_ROUGERUBIS_033.png"
+    "image": "images/beer/fr/KEKETTE_RED_ROUGERUBIS_033.png",
+    "production_volume": "Régionale",
+    "distribution": "Cavistes généralistes",
+    "barrel_aged": false,
+    "community_rating": 2.9,
+    "ingredients": "Fruits Rouges",
+    "rarity_rank": "Commun"
   },
   {
     "title": "KEKETTE TRIPLE CHARGE",
@@ -132,7 +216,13 @@
     "volume": "0.33 L",
     "alcohol": "8.5°",
     "id": "KEKETTE TRIPLE CHARGE_BLONDE_0.33",
-    "image": "images/beer/fr/KEKETTE_TRIPLE_CHARGE_BLONDE_033.png"
+    "image": "images/beer/fr/KEKETTE_TRIPLE_CHARGE_BLONDE_033.png",
+    "production_volume": "Régionale",
+    "distribution": "Cavistes généralistes",
+    "barrel_aged": false,
+    "community_rating": 3.2,
+    "ingredients": "Standard",
+    "rarity_rank": "Commun"
   },
   {
     "title": "LA 36 BIO",
@@ -141,7 +231,13 @@
     "volume": "0.33 L",
     "alcohol": "4.8°",
     "id": "LA 36 BIO_BLONDE_0.33",
-    "image": "images/beer/fr/LA_36_BIO_BLONDE_033.png"
+    "image": "images/beer/fr/LA_36_BIO_BLONDE_033.png",
+    "production_volume": "Régionale",
+    "distribution": "Local",
+    "barrel_aged": false,
+    "community_rating": 3.0,
+    "ingredients": "Bio",
+    "rarity_rank": "Rare"
   },
   {
     "title": "LA BELLE LULU BIO",
@@ -150,7 +246,13 @@
     "volume": "0.33 L",
     "alcohol": "5.5°",
     "id": "LA BELLE LULU BIO_BLONDE_0.33",
-    "image": "images/beer/fr/LA_BELLE_LULU_BIO_BLONDE_033.png"
+    "image": "images/beer/fr/LA_BELLE_LULU_BIO_BLONDE_033.png",
+    "production_volume": "Régionale",
+    "distribution": "Local",
+    "barrel_aged": false,
+    "community_rating": 3.0,
+    "ingredients": "Bio",
+    "rarity_rank": "Rare"
   },
   {
     "title": "LA DEBAUCHE DOUBLE BELGE",
@@ -159,7 +261,13 @@
     "volume": "0.33 L",
     "alcohol": "7°",
     "id": "LA DEBAUCHE DOUBLE BELGE_AMBREE_0.33",
-    "image": "images/beer/fr/LA_DEBAUCHE_DOUBLE_BELGE_AMBREE_033.png"
+    "image": "images/beer/fr/LA_DEBAUCHE_DOUBLE_BELGE_AMBREE_033.png",
+    "production_volume": "Micro-brasserie",
+    "distribution": "Cavistes experts",
+    "barrel_aged": false,
+    "community_rating": 3.8,
+    "ingredients": "Style Belge",
+    "rarity_rank": "Super Rare"
   },
   {
     "title": "LA DILETTANTE LA BRINGUE",
@@ -168,7 +276,13 @@
     "volume": "0.33 L",
     "alcohol": "4.5°",
     "id": "LA DILETTANTE LA BRINGUE_BLANCHE_0.33",
-    "image": "images/beer/fr/LA_DILETTANTE_LA_BRINGUE_BLANCHE_033.png"
+    "image": "images/beer/fr/LA_DILETTANTE_LA_BRINGUE_BLANCHE_033.png",
+    "production_volume": "Micro-brasserie",
+    "distribution": "Cavistes spécialisés",
+    "barrel_aged": false,
+    "community_rating": 3.5,
+    "ingredients": "Blé / Craft",
+    "rarity_rank": "Rare"
   },
   {
     "title": "LA MOCHE BLONDE",
@@ -177,7 +291,13 @@
     "volume": "0.33 L",
     "alcohol": "6°",
     "id": "LA MOCHE BLONDE_BLONDE_0.33",
-    "image": "images/beer/fr/LA_MOCHE_BLONDE_BLONDE_033.png"
+    "image": "images/beer/fr/LA_MOCHE_BLONDE_BLONDE_033.png",
+    "production_volume": "Régionale",
+    "distribution": "Cavistes généralistes",
+    "barrel_aged": false,
+    "community_rating": 2.9,
+    "ingredients": "Standard",
+    "rarity_rank": "Commun"
   },
   {
     "title": "LA MOCHE TRIPLE",
@@ -186,7 +306,13 @@
     "volume": "0.33 L",
     "alcohol": "8°",
     "id": "LA MOCHE TRIPLE_AMBREE_0.33",
-    "image": "images/beer/fr/LA_MOCHE_TRIPLE_AMBREE_033.png"
+    "image": "images/beer/fr/LA_MOCHE_TRIPLE_AMBREE_033.png",
+    "production_volume": "Régionale",
+    "distribution": "Cavistes généralistes",
+    "barrel_aged": false,
+    "community_rating": 3.1,
+    "ingredients": "Standard",
+    "rarity_rank": "Commun"
   },
   {
     "title": "LA MORDUE CIDER ORIGINAL",
@@ -195,7 +321,13 @@
     "volume": "0.275 L",
     "alcohol": "6°",
     "id": "LA MORDUE CIDER ORIGINAL_DOREE_0.275",
-    "image": "images/beer/fr/LA_MORDUE_CIDER_ORIGINAL_DOREE_0275.png"
+    "image": "images/beer/fr/LA_MORDUE_CIDER_ORIGINAL_DOREE_0275.png",
+    "production_volume": "Industrielle",
+    "distribution": "Partout",
+    "barrel_aged": false,
+    "community_rating": 3.2,
+    "ingredients": "Pommes",
+    "rarity_rank": "Base"
   },
   {
     "title": "LA NANTELLE",
@@ -204,7 +336,13 @@
     "volume": "0.33 L",
     "alcohol": "4.8°",
     "id": "LA NANTELLE_BLONDE_0.33",
-    "image": "images/beer/fr/LA_NANTELLE_BLONDE_033.png"
+    "image": "images/beer/fr/LA_NANTELLE_BLONDE_033.png",
+    "production_volume": "Régionale",
+    "distribution": "Local",
+    "barrel_aged": false,
+    "community_rating": 3.0,
+    "ingredients": "Standard",
+    "rarity_rank": "Rare"
   },
   {
     "title": "LEVRETTE BLANCHE",
@@ -213,7 +351,13 @@
     "volume": "0.33 L",
     "alcohol": "5°",
     "id": "LEVRETTE BLANCHE_BLANCHE_0.33",
-    "image": "images/beer/fr/LEVRETTE_BLANCHE_BLANCHE_033.png"
+    "image": "images/beer/fr/LEVRETTE_BLANCHE_BLANCHE_033.png",
+    "production_volume": "Régionale",
+    "distribution": "Cavistes généralistes",
+    "barrel_aged": false,
+    "community_rating": 3.0,
+    "ingredients": "Standard",
+    "rarity_rank": "Commun"
   },
   {
     "title": "LEVRETTE BLONDE",
@@ -222,7 +366,13 @@
     "volume": "0.33 L",
     "alcohol": "5.7°",
     "id": "LEVRETTE BLONDE_BLONDE_0.33",
-    "image": "images/beer/fr/LEVRETTE_BLONDE_BLONDE_033.png"
+    "image": "images/beer/fr/LEVRETTE_BLONDE_BLONDE_033.png",
+    "production_volume": "Régionale",
+    "distribution": "Cavistes généralistes",
+    "barrel_aged": false,
+    "community_rating": 3.0,
+    "ingredients": "Standard",
+    "rarity_rank": "Commun"
   },
   {
     "title": "LEVRETTE CHERRY",
@@ -231,7 +381,13 @@
     "volume": "1 L",
     "alcohol": "3.5°",
     "id": "LEVRETTE CHERRY_ROUGE/RUBIS_1",
-    "image": "images/beer/fr/LEVRETTE_CHERRY_ROUGERUBIS_1.png"
+    "image": "images/beer/fr/LEVRETTE_CHERRY_ROUGERUBIS_1.png",
+    "production_volume": "Régionale",
+    "distribution": "Cavistes généralistes",
+    "barrel_aged": false,
+    "community_rating": 2.8,
+    "ingredients": "Cerises",
+    "rarity_rank": "Commun"
   },
   {
     "title": "LEVRETTE PECHE",
@@ -240,7 +396,13 @@
     "volume": "0.25 L",
     "alcohol": "3.7°",
     "id": "LEVRETTE PECHE_BLANCHE_0.25",
-    "image": "images/beer/fr/LEVRETTE_PECHE_BLANCHE_025.png"
+    "image": "images/beer/fr/LEVRETTE_PECHE_BLANCHE_025.png",
+    "production_volume": "Régionale",
+    "distribution": "Cavistes généralistes",
+    "barrel_aged": false,
+    "community_rating": 2.8,
+    "ingredients": "Pêche",
+    "rarity_rank": "Commun"
   },
   {
     "title": "LEVRETTE PECHE 25CL",
@@ -249,7 +411,13 @@
     "volume": "0.25 L",
     "alcohol": "3.7°",
     "id": "LEVRETTE PECHE 25CL_BLANCHE_0.25",
-    "image": "images/beer/fr/LEVRETTE_PECHE_25CL_BLANCHE_025.png"
+    "image": "images/beer/fr/LEVRETTE_PECHE_25CL_BLANCHE_025.png",
+    "production_volume": "Régionale",
+    "distribution": "Cavistes généralistes",
+    "barrel_aged": false,
+    "community_rating": 2.8,
+    "ingredients": "Pêche",
+    "rarity_rank": "Commun"
   },
   {
     "title": "LULU LA NANTELLE",
@@ -258,7 +426,13 @@
     "volume": "0.33 L",
     "alcohol": "3.5°",
     "id": "LULU LA NANTELLE_BLONDE_0.33",
-    "image": "images/beer/fr/LULU_LA_NANTELLE_BLONDE_033.png"
+    "image": "images/beer/fr/LULU_LA_NANTELLE_BLONDE_033.png",
+    "production_volume": "Régionale",
+    "distribution": "Local",
+    "barrel_aged": false,
+    "community_rating": 2.9,
+    "ingredients": "Standard",
+    "rarity_rank": "Rare"
   },
   {
     "title": "LULU LA ROUQUINE",
@@ -267,7 +441,13 @@
     "volume": "0.75 L",
     "alcohol": "8°",
     "id": "LULU LA ROUQUINE_BLONDE_0.75",
-    "image": "images/beer/fr/LULU_LA_ROUQUINE_BLONDE_075.png"
+    "image": "images/beer/fr/LULU_LA_ROUQUINE_BLONDE_075.png",
+    "production_volume": "Régionale",
+    "distribution": "Local",
+    "barrel_aged": false,
+    "community_rating": 3.1,
+    "ingredients": "Standard",
+    "rarity_rank": "Rare"
   },
   {
     "title": "MONT BLANC BLANCHE",
@@ -276,7 +456,13 @@
     "volume": "0.33 L",
     "alcohol": "4.7°",
     "id": "MONT BLANC BLANCHE_BLANCHE_0.33",
-    "image": "images/beer/fr/MONT_BLANC_BLANCHE_BLANCHE_033.png"
+    "image": "images/beer/fr/MONT_BLANC_BLANCHE_BLANCHE_033.png",
+    "production_volume": "Régionale",
+    "distribution": "Supermarché",
+    "barrel_aged": false,
+    "community_rating": 3.5,
+    "ingredients": "Eau des Glaciers",
+    "rarity_rank": "Commun"
   },
   {
     "title": "MONT BLANC BLONDE",
@@ -285,7 +471,13 @@
     "volume": "0.75 L",
     "alcohol": "5.8°",
     "id": "MONT BLANC BLONDE_BLONDE_0.75",
-    "image": "images/beer/fr/MONT_BLANC_BLONDE_BLONDE_075.png"
+    "image": "images/beer/fr/MONT_BLANC_BLONDE_BLONDE_075.png",
+    "production_volume": "Régionale",
+    "distribution": "Supermarché",
+    "barrel_aged": false,
+    "community_rating": 3.4,
+    "ingredients": "Eau des Glaciers",
+    "rarity_rank": "Commun"
   },
   {
     "title": "MONT BLANC MYRTILLE",
@@ -294,7 +486,13 @@
     "volume": "0.33 L",
     "alcohol": "5.8°",
     "id": "MONT BLANC MYRTILLE_BLONDE_0.33",
-    "image": "images/beer/fr/MONT_BLANC_MYRTILLE_BLONDE_033.png"
+    "image": "images/beer/fr/MONT_BLANC_MYRTILLE_BLONDE_033.png",
+    "production_volume": "Régionale",
+    "distribution": "Supermarché",
+    "barrel_aged": false,
+    "community_rating": 3.3,
+    "ingredients": "Myrtilles",
+    "rarity_rank": "Commun"
   },
   {
     "title": "MONT BLANC ROUSSE",
@@ -303,7 +501,13 @@
     "volume": "0.75 L",
     "alcohol": "6.5°",
     "id": "MONT BLANC ROUSSE_AMBREE_0.75",
-    "image": "images/beer/fr/MONT_BLANC_ROUSSE_AMBREE_075.png"
+    "image": "images/beer/fr/MONT_BLANC_ROUSSE_AMBREE_075.png",
+    "production_volume": "Régionale",
+    "distribution": "Supermarché",
+    "barrel_aged": false,
+    "community_rating": 3.6,
+    "ingredients": "3 Malts",
+    "rarity_rank": "Commun"
   },
   {
     "title": "MONT BLANC VERTE GENEPI",
@@ -312,7 +516,13 @@
     "volume": "0.33 L",
     "alcohol": "5.9°",
     "id": "MONT BLANC VERTE GENEPI_VERTE_0.33",
-    "image": "images/beer/fr/MONT_BLANC_VERTE_GENEPI_VERTE_033.png"
+    "image": "images/beer/fr/MONT_BLANC_VERTE_GENEPI_VERTE_033.png",
+    "production_volume": "Régionale",
+    "distribution": "Supermarché",
+    "barrel_aged": false,
+    "community_rating": 3.4,
+    "ingredients": "Génépi",
+    "rarity_rank": "Commun"
   },
   {
     "title": "MONT BLANC VIOLETTE",
@@ -321,7 +531,13 @@
     "volume": "0.33 L",
     "alcohol": "4.7°",
     "id": "MONT BLANC VIOLETTE_BLONDE_0.33",
-    "image": "images/beer/fr/MONT_BLANC_VIOLETTE_BLONDE_033.png"
+    "image": "images/beer/fr/MONT_BLANC_VIOLETTE_BLONDE_033.png",
+    "production_volume": "Régionale",
+    "distribution": "Supermarché",
+    "barrel_aged": false,
+    "community_rating": 3.1,
+    "ingredients": "Violette / Airelles",
+    "rarity_rank": "Commun"
   },
   {
     "title": "MONT HARDI BLANCHE",
@@ -330,7 +546,13 @@
     "volume": "0.75 L",
     "alcohol": "4.5°",
     "id": "MONT HARDI BLANCHE_BLANCHE_0.75",
-    "image": "images/beer/fr/MONT_HARDI_BLANCHE_BLANCHE_075.png"
+    "image": "images/beer/fr/MONT_HARDI_BLANCHE_BLANCHE_075.png",
+    "production_volume": "Régionale",
+    "distribution": "Cavistes spécialisés",
+    "barrel_aged": false,
+    "community_rating": 3.3,
+    "ingredients": "Bio",
+    "rarity_rank": "Rare"
   },
   {
     "title": "MONT HARDI BLONDE",
@@ -339,7 +561,13 @@
     "volume": "0.33 L",
     "alcohol": "5°",
     "id": "MONT HARDI BLONDE_BLONDE_0.33",
-    "image": "images/beer/fr/MONT_HARDI_BLONDE_BLONDE_033.png"
+    "image": "images/beer/fr/MONT_HARDI_BLONDE_BLONDE_033.png",
+    "production_volume": "Régionale",
+    "distribution": "Cavistes spécialisés",
+    "barrel_aged": false,
+    "community_rating": 3.3,
+    "ingredients": "Bio",
+    "rarity_rank": "Rare"
   },
   {
     "title": "MONT HARDI IPA",
@@ -348,7 +576,13 @@
     "volume": "0.33 L",
     "alcohol": "6°",
     "id": "MONT HARDI IPA_BLONDE_0.33",
-    "image": "images/beer/fr/MONT_HARDI_IPA_BLONDE_033.png"
+    "image": "images/beer/fr/MONT_HARDI_IPA_BLONDE_033.png",
+    "production_volume": "Régionale",
+    "distribution": "Cavistes spécialisés",
+    "barrel_aged": false,
+    "community_rating": 3.5,
+    "ingredients": "Bio / Houblons",
+    "rarity_rank": "Rare"
   },
   {
     "title": "MONT HARDI TRIPLE",
@@ -357,7 +591,13 @@
     "volume": "0.75 L",
     "alcohol": "8°",
     "id": "MONT HARDI TRIPLE_BLONDE_0.75",
-    "image": "images/beer/fr/MONT_HARDI_TRIPLE_BLONDE_075.png"
+    "image": "images/beer/fr/MONT_HARDI_TRIPLE_BLONDE_075.png",
+    "production_volume": "Régionale",
+    "distribution": "Cavistes spécialisés",
+    "barrel_aged": false,
+    "community_rating": 3.5,
+    "ingredients": "Bio",
+    "rarity_rank": "Rare"
   },
   {
     "title": "NEIZHAN BLONDE",
@@ -366,7 +606,13 @@
     "volume": "0.33 L",
     "alcohol": "5.5°",
     "id": "NEIZHAN BLONDE_BLONDE_0.33",
-    "image": "images/beer/fr/NEIZHAN_BLONDE_BLONDE_033.png"
+    "image": "images/beer/fr/NEIZHAN_BLONDE_BLONDE_033.png",
+    "production_volume": "Micro-brasserie",
+    "distribution": "Cavistes spécialisés",
+    "barrel_aged": false,
+    "community_rating": 3.4,
+    "ingredients": "Bio",
+    "rarity_rank": "Rare"
   },
   {
     "title": "NEIZHAN IPA",
@@ -375,7 +621,13 @@
     "volume": "0.33 L",
     "alcohol": "6.5°",
     "id": "NEIZHAN IPA_BLONDE_0.33",
-    "image": "images/beer/fr/NEIZHAN_IPA_BLONDE_033.png"
+    "image": "images/beer/fr/NEIZHAN_IPA_BLONDE_033.png",
+    "production_volume": "Micro-brasserie",
+    "distribution": "Cavistes spécialisés",
+    "barrel_aged": false,
+    "community_rating": 3.6,
+    "ingredients": "Bio",
+    "rarity_rank": "Rare"
   },
   {
     "title": "NEIZHAN NEIPA",
@@ -384,7 +636,13 @@
     "volume": "0.75 L",
     "alcohol": "6°",
     "id": "NEIZHAN NEIPA_BLONDE_0.75",
-    "image": "images/beer/fr/NEIZHAN_NEIPA_BLONDE_075.png"
+    "image": "images/beer/fr/NEIZHAN_NEIPA_BLONDE_075.png",
+    "production_volume": "Micro-brasserie",
+    "distribution": "Cavistes spécialisés",
+    "barrel_aged": false,
+    "community_rating": 3.7,
+    "ingredients": "Bio / Hazy",
+    "rarity_rank": "Super Rare"
   },
   {
     "title": "NEIZHAN TRIPLE",
@@ -393,7 +651,13 @@
     "volume": "0.33 L",
     "alcohol": "8°",
     "id": "NEIZHAN TRIPLE_BLONDE_0.33",
-    "image": "images/beer/fr/NEIZHAN_TRIPLE_BLONDE_033.png"
+    "image": "images/beer/fr/NEIZHAN_TRIPLE_BLONDE_033.png",
+    "production_volume": "Micro-brasserie",
+    "distribution": "Cavistes spécialisés",
+    "barrel_aged": false,
+    "community_rating": 3.5,
+    "ingredients": "Bio",
+    "rarity_rank": "Rare"
   },
   {
     "title": "PIETRA",
@@ -402,7 +666,13 @@
     "volume": "0.33 L",
     "alcohol": "6°",
     "id": "PIETRA_AMBREE_0.33",
-    "image": "images/beer/fr/PIETRA_AMBREE_033.png"
+    "image": "images/beer/fr/PIETRA_AMBREE_033.png",
+    "production_volume": "Régionale",
+    "distribution": "Partout",
+    "barrel_aged": false,
+    "community_rating": 3.4,
+    "ingredients": "Farine de châtaigne",
+    "rarity_rank": "Commun"
   },
   {
     "title": "SKUMENN LA BETISE BIO",
@@ -411,7 +681,13 @@
     "volume": "0.33 L",
     "alcohol": "5°",
     "id": "SKUMENN LA BETISE BIO_BLONDE_0.33",
-    "image": "images/beer/fr/SKUMENN_LA_BETISE_BIO_BLONDE_033.png"
+    "image": "images/beer/fr/SKUMENN_LA_BETISE_BIO_BLONDE_033.png",
+    "production_volume": "Micro-brasserie",
+    "distribution": "Cavistes spécialisés",
+    "barrel_aged": false,
+    "community_rating": 3.6,
+    "ingredients": "Bio / Craft",
+    "rarity_rank": "Super Rare"
   },
   {
     "title": "SPECIALE GOLD GAYANT",
@@ -420,7 +696,13 @@
     "volume": "30 L",
     "alcohol": "6°",
     "id": "SPECIALE GOLD GAYANT_BLONDE_30",
-    "image": ""
+    "image": "",
+    "production_volume": "Industrielle",
+    "distribution": "Supermarché",
+    "barrel_aged": false,
+    "community_rating": 2.7,
+    "ingredients": "Standard",
+    "rarity_rank": "Base"
   },
   {
     "title": "TANDEM BONNE PIOCHE BIO",
@@ -429,7 +711,13 @@
     "volume": "0.33 L",
     "alcohol": "5.5°",
     "id": "TANDEM BONNE PIOCHE BIO_BLONDE_0.33",
-    "image": "images/beer/fr/TANDEM_BONNE_PIOCHE_BIO_BLONDE_033.png"
+    "image": "images/beer/fr/TANDEM_BONNE_PIOCHE_BIO_BLONDE_033.png",
+    "production_volume": "Micro-brasserie",
+    "distribution": "Cavistes spécialisés",
+    "barrel_aged": false,
+    "community_rating": 3.3,
+    "ingredients": "Bio",
+    "rarity_rank": "Rare"
   },
   {
     "title": "TANDEM PAS CAP BIO",
@@ -438,7 +726,13 @@
     "volume": "0.33 L",
     "alcohol": "8°",
     "id": "TANDEM PAS CAP BIO_BLONDE_0.33",
-    "image": "images/beer/fr/TANDEM_PAS_CAP_BIO_BLONDE_033.png"
+    "image": "images/beer/fr/TANDEM_PAS_CAP_BIO_BLONDE_033.png",
+    "production_volume": "Micro-brasserie",
+    "distribution": "Cavistes spécialisés",
+    "barrel_aged": false,
+    "community_rating": 3.4,
+    "ingredients": "Bio",
+    "rarity_rank": "Rare"
   },
   {
     "title": "TANDEM POULE MOUILLEE BIO",
@@ -447,7 +741,13 @@
     "volume": "0.33 L",
     "alcohol": "6.5°",
     "id": "TANDEM POULE MOUILLEE BIO_BLONDE_0.33",
-    "image": "images/beer/fr/TANDEM_POULE_MOUILLEE_BIO_BLONDE_033.png"
+    "image": "images/beer/fr/TANDEM_POULE_MOUILLEE_BIO_BLONDE_033.png",
+    "production_volume": "Micro-brasserie",
+    "distribution": "Cavistes spécialisés",
+    "barrel_aged": false,
+    "community_rating": 3.4,
+    "ingredients": "Bio",
+    "rarity_rank": "Rare"
   },
   {
     "title": "UNAN 4.8%",
@@ -456,6 +756,12 @@
     "volume": "30 L",
     "alcohol": "4.8°",
     "id": "UNAN 4.8%_BLONDE_30",
-    "image": ""
+    "image": "",
+    "production_volume": "Micro-brasserie",
+    "distribution": "Cavistes spécialisés",
+    "barrel_aged": false,
+    "community_rating": 3.2,
+    "ingredients": "Bio",
+    "rarity_rank": "Rare"
   }
 ]
