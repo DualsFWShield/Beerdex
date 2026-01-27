@@ -157,83 +157,101 @@ function setupEventListeners() {
 
     // Scan Toggle
     document.getElementById('scan-toggle')?.addEventListener('click', () => {
-        UI.renderScannerModal((barcode) => {
-            UI.closeModal();
-            UI.showToast("Recherche produit...");
+        UI.renderScannerModal(async (barcode) => {
+            UI.setScannerFeedback("🔍 Recherche...", false);
 
-            fetchProductByBarcode(barcode).then(product => {
+            try {
+                const product = await fetchProductByBarcode(barcode);
+
                 if (product) {
-                    // --- DEDUPLICATION LOGIC ---
-                    // Check if we already have this beer in DB (Fuzzy Match on Title)
-                    // We check staticBeers (read-only) + customBeers.
-                    // Actually, 'state.beers' contains all.
+                    UI.setScannerFeedback("✅ Produit trouvé !", false);
 
-                    const normalize = (s) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
-                    const scanTitle = normalize(product.title);
+                    // Stop scanner & Close modal after short delay
+                    setTimeout(() => {
+                        UI.closeModal();
 
-                    // Find strict match or very close match
-                    const match = state.beers.find(b => {
-                        const dbTitle = normalize(b.title);
-                        return dbTitle === scanTitle || dbTitle.includes(scanTitle) || scanTitle.includes(dbTitle);
-                        // Includes is risky (e.g. "Leffe" matches "Leffe Ruby"). 
-                        // But combined with "BLE DUVEL V" -> "Duvel", strict equality is hard.
-                        // Let's rely on strict normalized equality first.
-                    });
+                        // --- DEDUPLICATION LOGIC (FUZZY) ---
+                        // Ensure we use latest state
+                        const normalize = (s) => s.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
+                        const getTokens = (s) => new Set(normalize(s).split(/\s+/).filter(t => t.length > 2));
 
-                    const exactMatch = state.beers.find(b => normalize(b.title) === scanTitle);
+                        const scanTokens = getTokens(product.title);
 
-                    if (exactMatch) {
-                        UI.showToast("Bière déjà connue !");
-                        // Open the EXISTING beer
-                        UI.renderBeerDetail(exactMatch, (data) => {
-                            Storage.saveBeerRating(exactMatch.id, data);
-                            Achievements.checkAchievements(state.beers);
+                        let bestMatch = null;
+                        let bestScore = 0;
+
+                        state.beers.forEach(beer => {
+                            const dbTokens = getTokens(beer.title);
+                            if (dbTokens.size === 0) return;
+
+                            const intersection = new Set([...scanTokens].filter(x => dbTokens.has(x)));
+                            const union = new Set([...scanTokens, ...dbTokens]);
+
+                            const jaccard = union.size === 0 ? 0 : intersection.size / union.size;
+                            const isSubset = intersection.size === dbTokens.size || intersection.size === scanTokens.size;
+
+                            let score = jaccard;
+                            if (isSubset && intersection.size >= 1) score += 0.5; // Boost subsets
+                            if (beer.id === 'API_' + product.id) score += 1; // ID Match
+
+                            if (score > bestScore) {
+                                bestScore = score;
+                                bestMatch = beer;
+                            }
+                        });
+
+                        // Check for strict match as fallback/priority
+                        const normalizedScan = normalize(product.title);
+                        const strictMatch = state.beers.find(b => normalize(b.title) === normalizedScan);
+                        if (strictMatch) {
+                            bestMatch = strictMatch;
+                            bestScore = 2.0;
+                        }
+
+                        if (bestMatch && bestScore > 0.8) {
+                            UI.showToast(`Trouvé en local : ${bestMatch.title}`);
+                            UI.renderBeerDetail(bestMatch, (data) => {
+                                Storage.saveBeerRating(bestMatch.id, data);
+                                Achievements.checkAchievements(state.beers);
+                                UI.showToast("Note mise à jour !");
+                            });
+                            return;
+                        }
+
+                        // If no exact match, proceed with API product
+                        UI.renderBeerDetail(product, (data) => {
+                            if (product.fromAPI) {
+                                const newBeer = { ...product };
+                                newBeer.id = 'CUSTOM_' + Date.now();
+                                delete newBeer.fromAPI;
+                                Storage.saveCustomBeer(newBeer);
+                                Storage.saveBeerRating(newBeer.id, data);
+                                window.dispatchEvent(new CustomEvent('beerdex-action'));
+                                renderCurrentView();
+                            } else {
+                                Storage.saveBeerRating(product.id, data);
+                                Achievements.checkAchievements(state.beers);
+                            }
                             UI.showToast("Note sauvegardée !");
                         });
-                        return;
-                    }
 
-                    // If no exact match, proceed with API product (Transient)
-                    UI.renderBeerDetail(product, (data) => {
-                        // This callback is for Rating Save
-                        // The actual "Drink to Save" logic is internal to renderBeerDetail button
-                        // But if they just rate:
-                        if (product.fromAPI) {
-                            // We might need to handle save here if UI doesn't do it for rating specifically
-                            // Use similar logic to UI.js: convert, save, reload
-                            // Actually UI.js handles logic inside the generic save handler we added?
-                            // No, UI.js calls onSave(data).
-                            // So we need to do the saving here.
+                    }, 200);
 
-                            const newBeer = { ...product };
-                            newBeer.id = 'CUSTOM_' + Date.now();
-                            delete newBeer.fromAPI;
-                            Storage.saveCustomBeer(newBeer);
-                            Storage.saveBeerRating(newBeer.id, data);
-                            window.dispatchEvent(new CustomEvent('beerdex-action'));
-                            renderCurrentView(); // Refresh list to show new beer
-                        } else {
-                            // Native beer
-                            Storage.saveBeerRating(product.id, data);
-                            Achievements.checkAchievements(state.beers);
-                        }
-                        UI.showToast("Note sauvegardée !");
-                    });
+                    return true; // Signal scanner to STOP
                 } else {
-                    UI.showToast("Produit inconnu sur OFF");
-                    // Fallback to manual add
-                    UI.renderAddBeerForm((newBeer) => {
-                        Storage.saveCustomBeer(newBeer);
-                        state.beers.unshift(newBeer);
-                        Achievements.checkAchievements(state.beers);
-                        renderCurrentView();
-                        UI.closeModal();
-                        UI.showToast("Bière ajoutée avec succès !");
-                    });
+                    // Invalid / Not a beer
+                    UI.setScannerFeedback("⛔ Ce n'est pas une bière...", true);
+                    return false; // Signal scanner to RESUME
                 }
-            });
+
+            } catch (e) {
+                console.error(e);
+                UI.setScannerFeedback("⚠️ Erreur réseau / API", true);
+                return false; // Signal scanner to RESUME
+            }
         });
     });
+
 
     // Search Toggle
     const searchToggle = document.getElementById('search-toggle');

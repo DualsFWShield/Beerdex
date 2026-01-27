@@ -1760,7 +1760,9 @@ export function renderScannerModal(onScan) {
     wrapper.className = 'modal-content';
     wrapper.innerHTML = `
         <h2 style="margin-bottom: 20px;">Scanner un Code-Barres</h2>
-        <div id="reader" style="width: 100%; min-height: 250px; background: #000; margin-bottom: 15px; border-radius: 8px; overflow: hidden;"></div>
+        <div id="reader" style="width: 100%; min-height: 250px; background: #000; margin-bottom: 15px; border-radius: 8px; overflow: hidden; position:relative;">
+            <div id="scanner-feedback" style="position:absolute; bottom:10px; left:0; width:100%; text-align:center; color:white; font-weight:bold; text-shadow:0 1px 3px rgba(0,0,0,0.8); pointer-events:none; z-index:10; font-size:1.2rem; transition:opacity 0.3s;"></div>
+        </div>
         <p style="text-align: center; color: #888; font-size: 0.9rem;">
             Placez le code-barres de la bière devant la caméra.
         </p>
@@ -1793,6 +1795,20 @@ export function renderScannerModal(onScan) {
             closeModal();
         }
     };
+}
+
+export function setScannerFeedback(message, isError = false) {
+    const el = document.getElementById('scanner-feedback');
+    if (el) {
+        el.innerHTML = message;
+        el.style.color = isError ? '#ff4444' : 'white';
+        // Add shake animation if error?
+        if (isError) {
+            el.style.textShadow = '0 0 5px red';
+        } else {
+            el.style.textShadow = '0 1px 3px rgba(0,0,0,0.8)';
+        }
+    }
 }
 
 export function renderStats(allBeers, userData, container) {

@@ -74,6 +74,19 @@ function mapProductToBeer(product) {
     // 1. Raw Data
     let rawTitle = product.product_name_fr || product.product_name || 'Bière Inconnue';
     const brands = product.brands || product.brands_tags?.[0] || 'Brasserie Inconnue';
+    const categories = (product.categories || '') + ' ' + (product.categories_tags || []).join(' ');
+
+    // 0. Beer Validation (Reject non-beers)
+    // We check keywords in Title, Categories, and Brands (Generic check)
+    const validKeywords = /bi[eè]re|beer|bier|cerveza|birra|pivo|ipa|ale|stout|porter|lager|pils|lambic|gueuze|trappist|abbaye|brewery|brasserie|brauerei|cidre/i;
+    const validationText = (rawTitle + ' ' + categories + ' ' + brands).toLowerCase();
+
+    if (!validKeywords.test(validationText)) {
+        console.warn("Product rejected (Not a beer):", rawTitle);
+        // We could return a special error object, but null forces "Not Found" handling
+        // Or we rely on UI to handle null as "Not a beer / Not found"
+        return null;
+    }
 
     // 2. Data Cleaning
     rawTitle = rawTitle

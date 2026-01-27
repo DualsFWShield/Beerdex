@@ -40,9 +40,19 @@ export async function startScanner(elementId, onScanSuccess, onScanFailure) {
                 { facingMode: "environment" }, // Prefer environment facing
                 config,
                 (decodedText, decodedResult) => {
-                    // Stop on first success to prevent multiple triggers
-                    stopScanner().then(() => {
-                        onScanSuccess(decodedText, decodedResult);
+                    // Pause on success to prevent multiple triggers while processing
+                    html5QrCode.pause();
+
+                    // Allow callback to determine if we should stop (valid) or resume (invalid)
+                    Promise.resolve(onScanSuccess(decodedText, decodedResult)).then((shouldStop) => {
+                        if (shouldStop) {
+                            stopScanner();
+                        } else {
+                            html5QrCode.resume();
+                        }
+                    }).catch(err => {
+                        console.error("Scanner callback error:", err);
+                        html5QrCode.resume(); // Resume on error?
                     });
                 },
                 (errorMessage) => {
