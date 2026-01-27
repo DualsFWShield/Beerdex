@@ -22,6 +22,7 @@ Construit avec la philosophie **"0$ Stack"**, le projet est entièrement statiqu
     *   Par Degré d'alcool (Min, Max, Exact)
     *   Par Volume
 *   **Recherche Instantanée** : Trouvez vos boissons par nom ou brasserie.
+*   **Scanner de Code-Barres** : Scannez le code-barres d'une bouteille ou canette pour l'ajouter automatiquement à votre collection grâce à l'intégration **Open Food Facts**.
 
 ### 📝 Notes & Dégustation
 *   **Fiches Détaillées** : Photo, infos techniques et statistiques personnelles pour chaque bière.

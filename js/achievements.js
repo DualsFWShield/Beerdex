@@ -95,6 +95,12 @@ const ACHIEVEMENTS = [
         { id: 'brew_trappiste', title: 'Trappiste', desc: 'Boire 3 Trappistes différentes', icon: '🙏', condition: (s) => s.countByType('Trappiste') >= 3 },
     ].map(a => ({ ...a, category: 'Styles 🍺' })),
 
+    // --- TRAPPEURS ---
+    ...[
+        { id: 'trappist_belgian', title: 'Trappeur Belge', desc: 'Goûter les 6 Trappistes Belges', icon: '🇧🇪', condition: (s) => ['chimay', 'orval', 'rochefort', 'westmalle', 'westvleteren', 'achel'].every(b => s.hasBrewery(b)), category: 'Styles 🍺' },
+        { id: 'trappist_world', title: 'Trappeur du Monde', desc: 'Goûter 12 Trappistes (Belges + Monde)', icon: '🌍', condition: (s) => ['chimay', 'orval', 'rochefort', 'westmalle', 'westvleteren', 'achel', 'la trappe', 'zundert', 'engelszell', 'spencer', 'tre fontane', 'tynt meadow'].every(b => s.hasBrewery(b)), category: 'Styles 🍺' },
+    ],
+
     // --- FUN / HIDDEN --- (25)
     ...[
         { id: 'fun_names', title: 'Alphabet', desc: 'Boire des bières commençant par 5 lettres différentes', icon: '🔤', condition: (s) => s.alphabetCount >= 5 },
@@ -167,6 +173,10 @@ export function checkAchievements(allBeers) {
         // Types/Breweries
         drunkTypes: [],
         countByType: (type) => stats.drunkTypes.filter(t => t.toLowerCase().includes(type.toLowerCase())).length,
+
+        // Breweries
+        drunkBreweries: new Set(),
+        hasBrewery: (name) => Array.from(stats.drunkBreweries).some(b => b.includes(name.toLowerCase())),
 
         // Names
         maxNameLength: 0,
@@ -248,6 +258,8 @@ export function checkAchievements(allBeers) {
 
                 // Type
                 if (beer.type) stats.drunkTypes.push(beer.type);
+                // Brewery
+                if (beer.brewery) stats.drunkBreweries.add(beer.brewery.toLowerCase());
 
                 // Name
                 if (beer.title) {

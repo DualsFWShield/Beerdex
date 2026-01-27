@@ -798,6 +798,12 @@ h3 {
 /* --- Added for UI Polish & Accessibility --- */
 
 /* Accessibility & Utils */
+@media (max-width: 600px) {
+    .desktop-only {
+        display: none !important;
+    }
+}
+
 .sr-only {
     position: absolute;
     width: 1px;

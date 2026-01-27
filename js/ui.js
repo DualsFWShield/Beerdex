@@ -2,7 +2,9 @@ import * as Storage from './storage.js';
 import * as Share from './share.js';
 import Match from './match.js';
 import * as Map from './map.js';
-import { calculateRarity } from './autoRarity.js';
+import * as API from './api.js';
+import * as Scanner from './scanner.js';
+import { fetchProductByBarcode, searchProducts } from './off-api.js';
 
 // We assume global libs: QRCode, Html5QrcodeScanner (handled via CDN)
 const QRCodeLib = window.QRCode;
@@ -415,6 +417,71 @@ export function renderBeerList(beers, container, filters = null, showCreatePromp
             return;
         }
 
+        // --- NEW: Empty Search State -> Propose API Search ---
+        if (!isDiscoveryCallback && filters.query && filters.query.length > 2) {
+            container.innerHTML = `
+                <div style="text-align:center; padding: 30px 20px; color: #666;">
+                    <h3 style="margin-bottom:10px;">Aucun résultat local 😢</h3>
+                    <p style="font-size:0.9rem;">On cherche plus loin ?</p>
+                    <button id="btn-search-api" class="btn-primary" style="margin-top:15px; background:var(--accent-gold); color:black;">
+                        🌍 Recherche Approfondie (OFF API)
+                    </button>
+                    <div id="api-results-area" style="margin-top:20px;"></div>
+                </div>`;
+
+            // Bind Click
+            setTimeout(() => {
+                const btn = document.getElementById('btn-search-api');
+                if (btn) {
+                    btn.onclick = async () => {
+                        btn.disabled = true;
+                        btn.innerHTML = '<span class="spinner"></span> Recherche...';
+                        try {
+                            const { products, count } = await searchProducts(filters.query);
+                            const area = document.getElementById('api-results-area');
+
+                            if (products.length === 0) {
+                                btn.innerHTML = '❌ Rien trouvé...';
+                            } else {
+                                btn.style.display = 'none'; // Hide button
+                                // Render API Results
+                                const grid = document.createElement('div');
+                                grid.className = 'beer-grid';
+
+                                products.forEach(p => {
+                                    // Use basic card render logic or reuse renderBeerList helper (tricky due to innerHTML reset)
+                                    // We'll create a simple specific renderer here for API results
+                                    const card = createApiBeerCard(p);
+                                    grid.appendChild(card);
+                                });
+                                area.appendChild(grid);
+
+                                // Show manual add button at bottom if still not found
+                                const manualDiv = document.createElement('div');
+                                manualDiv.innerHTML = `
+                                    <p style="margin-top:30px; color:#666;">Toujours pas ?</p>
+                                    <button id="btn-create-manual" class="form-input">➕ Créer manuellement</button>
+                                `;
+                                area.appendChild(manualDiv);
+                                manualDiv.querySelector('#btn-create-manual').onclick = () => {
+                                    renderAddBeerForm((newBeer) => {
+                                        Storage.saveCustomBeer(newBeer);
+                                        // Trigger refresh via custom event or reload
+                                        window.dispatchEvent(new CustomEvent('beerdex-action'));
+                                        location.reload();
+                                    });
+                                };
+                            }
+                        } catch (e) {
+                            btn.innerHTML = '⚠️ Erreur (Limite atteinte ?)';
+                            alert(e.message);
+                        }
+                    };
+                }
+            }, 0);
+            return;
+        }
+
         container.innerHTML = '<div style="text-align:center; padding: 20px; color: #666;">Aucune bière ne correspond aux critères...</div>';
         return;
     }
@@ -432,6 +499,15 @@ export function renderBeerList(beers, container, filters = null, showCreatePromp
     }
 
     filteredBeers.forEach((beer, index) => {
+        // ... (existing logic)
+        // CHECK IF API BEER (Mixed results support)
+        const isApi = beer.fromAPI;
+        if (isApi) {
+            const card = createApiBeerCard(beer);
+            grid.appendChild(card);
+            return; // Skip normal render
+        }
+
         const u = userData[beer.id];
         const isDrunk = u && u.count > 0;
         const card = document.createElement('div');
@@ -506,8 +582,141 @@ export function renderBeerList(beers, container, filters = null, showCreatePromp
                 </div>
             </div>
         `;
+
         grid.appendChild(card);
     });
+
+    // --- CASE 2: Results exist BUT text search is active -> Propose API search at the bottom ---
+    // Make sure we are not already in a callback or empty state that handles it
+    if (!isDiscoveryCallback && filters && filters.query && filters.query.length > 2) {
+
+        // Check if API Search Button Area already exists in this container (avoid dupes on append)
+        let apiArea = container.querySelector('#api-search-container');
+        if (!apiArea) {
+            apiArea = document.createElement('div');
+            apiArea.id = 'api-search-container';
+            apiArea.style.borderTop = '1px solid rgba(255,255,255,0.1)';
+            apiArea.style.marginTop = '30px';
+            apiArea.style.paddingTop = '20px';
+            apiArea.style.textAlign = 'center';
+            container.appendChild(apiArea);
+        }
+
+        apiArea.innerHTML = `
+            <p style="color:#666; font-size:0.9rem; margin-bottom:15px;">Pas ce que vous cherchez ?</p>
+            <button id="btn-search-api-footer" class="btn-primary" style="background:var(--accent-gold); color:black;">
+                🌍 Recherche Approfondie (OFF API)
+            </button>
+            <div id="api-results-area-footer" style="margin-top:20px;"></div>
+        `;
+
+        // Bind Click (Footer)
+        setTimeout(() => {
+            const btn = document.getElementById('btn-search-api-footer');
+            if (btn) {
+                btn.onclick = async () => {
+                    btn.disabled = true;
+                    btn.innerHTML = '<span class="spinner"></span> Recherche...';
+                    try {
+                        const { products } = await searchProducts(filters.query);
+                        const area = document.getElementById('api-results-area-footer');
+
+                        if (products.length === 0) {
+                            btn.innerHTML = '❌ Rien trouvé...';
+                        } else {
+                            btn.style.display = 'none';
+                            const grid = document.createElement('div');
+                            grid.className = 'beer-grid';
+                            products.forEach(p => {
+                                grid.appendChild(createApiBeerCard(p));
+                            });
+                            area.appendChild(grid);
+                        }
+                    } catch (e) {
+                        btn.innerHTML = '⚠️ Erreur';
+                        alert(e.message);
+                    }
+                };
+            }
+        }, 0);
+    }
+}
+
+
+export function renderApiSearchResults(products, container) {
+    container.innerHTML = '';
+
+    if (!products || products.length === 0) {
+        container.innerHTML = `
+            <div style="text-align:center; padding:40px; color:var(--text-secondary);">
+                <h3>Aucun résultat en ligne 😢</h3>
+                <p>Essayez avec d'autres mots-clés.</p>
+            </div>`;
+        return;
+    }
+
+    const grid = document.createElement('div');
+    grid.className = 'beer-grid';
+
+    products.forEach(product => {
+        grid.appendChild(createApiBeerCard(product));
+    });
+
+    container.appendChild(grid);
+}
+
+// Helper to create API cards
+function createApiBeerCard(beer) {
+    const card = document.createElement('div');
+    card.className = 'beer-card api-card'; // Special styling maybe
+    card.dataset.id = beer.id;
+    card.style.borderColor = 'var(--accent-gold)';
+    card.style.opacity = '0.9';
+
+    // Badge "API"
+    const apiBadge = '<div style="position:absolute; top:5px; right:5px; background:var(--accent-gold); color:black; font-size:0.6rem; padding:2px 6px; border-radius:10px; font-weight:bold;">🌍 WEB</div>';
+
+    // Image fallback
+    let displayImage = beer.image || 'images/beer/default.png';
+
+    card.innerHTML = `
+        ${apiBadge}
+        <div style="width:100%; height:120px; display:flex; justify-content:center; align-items:center;">
+             <img src="${displayImage}" alt="${beer.title}" class="beer-image" loading="lazy" 
+                  onerror="this.src='images/beer/default.png';">
+        </div>
+        <div class="beer-info">
+            <h3 class="beer-title">${beer.title}</h3>
+            <p class="beer-brewery">${beer.brewery}</p>
+            <div style="display:flex; gap:5px; justify-content:center; margin-top:5px; color:#aaa; flex-wrap:wrap;">
+                <span>${beer.alcohol}</span> <span>${beer.volume}</span>
+            </div>
+            <button class="btn-add-api" style="width:100%; margin-top:10px; font-size:0.8rem; padding:5px; background:#333; color:#fff; border:1px solid #555;">➕ Ajouter</button>
+        </div>
+    `;
+
+    // Click handler for "Add" or "Details"
+    // If click on card body -> Show Details (API Preview)
+    card.onclick = (e) => {
+        if (e.target.classList.contains('btn-add-api')) {
+            e.stopPropagation();
+            // Quick Add -> Convert to Custom
+            renderAddBeerForm((newBeer) => {
+                Storage.saveCustomBeer(newBeer);
+                window.dispatchEvent(new CustomEvent('beerdex-action'));
+                showToast("Bière importée !");
+                // Optional: Refresh triggers 
+                setTimeout(() => location.reload(), 500);
+            }, null, beer); // Autofill with API data
+        } else {
+            renderBeerDetail(beer, (data) => {
+                // Save rating -> implies converting to Custom Beer first IF not exists
+                // We need to handle this "Save Rating on API Beer" flow in renderBeerDetail's onSave
+            });
+        }
+    };
+
+    return card;
 }
 
 export function renderFilterModal(allBeers, activeFilters, onApply) {
@@ -1015,6 +1224,38 @@ export function renderBeerDetail(beer, onSave) {
 
     // Re-binding Logic for Consumption
     wrapper.querySelector('#btn-drink').onclick = async () => {
+        // --- SMART CACHING LOGIC ---
+        // If beer is from API (Transient), we must save it first!
+        if (beer.fromAPI) {
+            const newBeer = { ...beer };
+            // Use timestamp ID for permanent storage
+            newBeer.id = 'CUSTOM_' + Date.now();
+            delete newBeer.fromAPI; // Remove flag
+
+            // Save
+            Storage.saveCustomBeer(newBeer);
+
+            // Update local beer reference in Modal
+            // We can't easily swap the whole object reference for the caller, but we can update IDs
+            // Actually it's better to update the 'beer' variable in this scope
+            // But existingData is fetched by ID.
+
+            // 1. Show Toast
+            showToast("Bière sauvegardée dans votre Dex !");
+
+            // 2. Mock the switch
+            const oldId = beer.id;
+            beer.id = newBeer.id;
+            beer.fromAPI = false;
+
+            // 3. Since we changed ID, existingData (rating) is theoretically empty (which is true for new API beer)
+            // But we are about to add consumption.
+
+            // 4. IMPORTANT: We must signal the app to reload the list because we added a beer
+            // We can dispatch event, but current view might not update instantly if we don't force it.
+            window.dispatchEvent(new CustomEvent('beerdex-action'));
+        }
+
         const wasLocked = !existingData.count || existingData.count === 0;
 
         const vol = wrapper.querySelector('#consumption-volume').value;
@@ -1194,7 +1435,25 @@ export function renderBeerDetail(beer, onSave) {
         }
 
         onSave(data);
-        showToast("Note sauvegardée !");
+
+        // If API beer, we must save likely (auto-save on rate?)
+        // Similar logic to drink. If user rates, we save the beer.
+        if (beer.fromAPI) {
+            const newBeer = { ...beer };
+            newBeer.id = 'CUSTOM_' + Date.now();
+            delete newBeer.fromAPI;
+            Storage.saveCustomBeer(newBeer);
+            beer.id = newBeer.id; // Switch ref
+
+            // Now save the rating with new ID
+            Storage.saveBeerRating(newBeer.id, data);
+
+            window.dispatchEvent(new CustomEvent('beerdex-action'));
+            showToast("Bière & Note sauvegardées !");
+        } else {
+            showToast("Note sauvegardée !");
+        }
+
         wrapper.querySelector('details').open = false;
         wrapper.querySelector('summary').innerHTML = "📝 Note de dégustation ✅";
     };
@@ -1202,18 +1461,31 @@ export function renderBeerDetail(beer, onSave) {
     openModal(wrapper);
 }
 
-export function renderAddBeerForm(onSave, editModeBeer = null) {
+export function renderAddBeerForm(onSave, editModeBeer = null, prefillData = null) {
     const wrapper = document.createElement('div');
     wrapper.className = 'modal-content';
 
     const title = editModeBeer ? "Modifier la bière" : "Ajouter une bière";
     const btnText = editModeBeer ? "Sauvegarder les modifications" : "Ajouter";
 
-    // Fill values
-    const v = (key) => editModeBeer ? (editModeBeer[key] || '') : '';
+    // Fill values: Priority -> editModeBeer -> prefillData -> ''
+    const v = (key) => {
+        if (editModeBeer && editModeBeer[key]) return editModeBeer[key];
+        if (prefillData && prefillData[key]) return prefillData[key];
+        return '';
+    };
 
     wrapper.innerHTML = `
-                <h2 style="margin-bottom: 20px;">${title}</h2>
+                <h2 style="margin-bottom: 5px;">${title}</h2>
+                <div style="display:flex; gap:10px; margin-bottom:15px;">
+                     <button type="button" id="btn-autofill-scan" class="form-input" style="font-size:0.8rem; padding: 5px; flex:1; display:flex; align-items:center; justify-content:center; gap:5px; background:rgba(255,255,255,0.1);">
+                        📷 Scanner & Remplir
+                    </button>
+                    <button type="button" id="btn-autofill-name" class="form-input" style="font-size:0.8rem; padding: 5px; flex:1; display:flex; align-items:center; justify-content:center; gap:5px; background:rgba(255,255,255,0.1);">
+                        🔍 Remplir via Nom
+                    </button>
+                    <!-- "Check DB" button could be here too but let's stick to request -->
+                </div>
                 <form id="add-beer-form">
                     <div class="form-group">
                         <label class="form-label">Nom de la bière</label>
@@ -1336,7 +1608,7 @@ export function renderAddBeerForm(onSave, editModeBeer = null) {
                 </form>
                 `;
 
-    let imageBase64 = editModeBeer ? editModeBeer.image : '';
+    let imageBase64 = (editModeBeer ? editModeBeer.image : '') || (prefillData ? prefillData.image : '');
 
     // File Reader Logic with Resize
     const fileInput = wrapper.querySelector('#image-file-input');
@@ -1376,6 +1648,67 @@ export function renderAddBeerForm(onSave, editModeBeer = null) {
         if (t.match(/gueuze|lambic|kriek|barrel aged|vieillie|barrique|ba |bourbon|cognac|whisky|rum/)) return 4;
         return 2; // Default
     };
+
+    // --- Bind Auto-Fill Logic ---
+    setTimeout(() => {
+        const btnScan = wrapper.querySelector('#btn-autofill-scan');
+        const btnName = wrapper.querySelector('#btn-autofill-name');
+
+        if (btnScan) {
+            btnScan.onclick = () => {
+                renderScannerModal(async (barcode) => {
+                    closeModal(); // Scanner replaces modal content, so we close to reset or just rely on re-render
+                    // Actually renderScannerModal uses openModal, so it overwrites current modal content.
+                    // The callback is executed. 
+
+                    showToast("Analyse...");
+                    const product = await fetchProductByBarcode(barcode);
+                    if (product) {
+                        renderAddBeerForm(onSave, editModeBeer, product);
+                        showToast("Données trouvées !");
+                    } else {
+                        showToast("Produit inconnu.");
+                        renderAddBeerForm(onSave, editModeBeer, prefillData);
+                    }
+                });
+            };
+        }
+
+        if (btnName) {
+            btnName.onclick = async () => {
+                const titleInput = wrapper.querySelector('#title');
+                const currentName = titleInput ? titleInput.value : '';
+
+                if (!currentName || currentName.length < 3) {
+                    alert("Entrez au moins 3 lettres du nom dans le champ Titre.");
+                    return;
+                }
+
+                const originalText = btnName.innerHTML;
+                btnName.innerHTML = "⏳...";
+                btnName.disabled = true;
+
+                try {
+                    const { products } = await searchProducts(currentName);
+                    if (products && products.length > 0) {
+                        const product = products[0];
+                        // Merge image if exists in product, otherwise keep current? 
+                        // Logic of renderAddBeerForm prefers passed prefillData.
+                        renderAddBeerForm(onSave, editModeBeer, product);
+                        showToast("Meilleure correspondance appliquée.");
+                    } else {
+                        showToast("Rien trouvé.");
+                        btnName.innerHTML = originalText;
+                        btnName.disabled = false;
+                    }
+                } catch (e) {
+                    alert(e.message);
+                    btnName.innerHTML = originalText;
+                    btnName.disabled = false;
+                }
+            };
+        }
+    }, 100);
 
     wrapper.querySelector('form').onsubmit = (e) => {
         e.preventDefault();
@@ -1420,6 +1753,46 @@ export function renderAddBeerForm(onSave, editModeBeer = null) {
     };
 
     openModal(wrapper);
+}
+
+export function renderScannerModal(onScan) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'modal-content';
+    wrapper.innerHTML = `
+        <h2 style="margin-bottom: 20px;">Scanner un Code-Barres</h2>
+        <div id="reader" style="width: 100%; min-height: 250px; background: #000; margin-bottom: 15px; border-radius: 8px; overflow: hidden;"></div>
+        <p style="text-align: center; color: #888; font-size: 0.9rem;">
+            Placez le code-barres de la bière devant la caméra.
+        </p>
+        <button id="btn-close-scanner" class="btn-primary" style="background:#333; margin-top:15px;">Fermer</button>
+    `;
+
+    openModal(wrapper);
+
+    // Give time for DOM to paint
+    setTimeout(() => {
+        Scanner.startScanner("reader", (decodedText, decodedResult) => {
+            // Success
+            // Stop scanner is handled inside startScanner callback wrapper usually or here
+            onScan(decodedText);
+        }, (errorMessage) => {
+            // console.log(errorMessage);
+        });
+    }, 100);
+
+    wrapper.querySelector('#btn-close-scanner').onclick = () => {
+        Scanner.stopScanner();
+        closeModal();
+    };
+
+    // Hook into global modal close to stop scanner if user clicks outside
+    const originalClose = modalContainer.onclick;
+    modalContainer.onclick = (e) => {
+        if (e.target === modalContainer) {
+            Scanner.stopScanner();
+            closeModal();
+        }
+    };
 }
 
 export function renderStats(allBeers, userData, container) {

@@ -4,6 +4,7 @@ import * as Storage from './storage.js';
 import * as Achievements from './achievements.js';
 import * as API from './api.js';
 import * as Share from './share.js';
+import { fetchProductByBarcode, searchProducts } from './off-api.js';
 
 window.Share = Share;
 
@@ -154,11 +155,132 @@ function setupEventListeners() {
         });
     });
 
+    // Scan Toggle
+    document.getElementById('scan-toggle')?.addEventListener('click', () => {
+        UI.renderScannerModal((barcode) => {
+            UI.closeModal();
+            UI.showToast("Recherche produit...");
+
+            fetchProductByBarcode(barcode).then(product => {
+                if (product) {
+                    // --- DEDUPLICATION LOGIC ---
+                    // Check if we already have this beer in DB (Fuzzy Match on Title)
+                    // We check staticBeers (read-only) + customBeers.
+                    // Actually, 'state.beers' contains all.
+
+                    const normalize = (s) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+                    const scanTitle = normalize(product.title);
+
+                    // Find strict match or very close match
+                    const match = state.beers.find(b => {
+                        const dbTitle = normalize(b.title);
+                        return dbTitle === scanTitle || dbTitle.includes(scanTitle) || scanTitle.includes(dbTitle);
+                        // Includes is risky (e.g. "Leffe" matches "Leffe Ruby"). 
+                        // But combined with "BLE DUVEL V" -> "Duvel", strict equality is hard.
+                        // Let's rely on strict normalized equality first.
+                    });
+
+                    const exactMatch = state.beers.find(b => normalize(b.title) === scanTitle);
+
+                    if (exactMatch) {
+                        UI.showToast("Bière déjà connue !");
+                        // Open the EXISTING beer
+                        UI.renderBeerDetail(exactMatch, (data) => {
+                            Storage.saveBeerRating(exactMatch.id, data);
+                            Achievements.checkAchievements(state.beers);
+                            UI.showToast("Note sauvegardée !");
+                        });
+                        return;
+                    }
+
+                    // If no exact match, proceed with API product (Transient)
+                    UI.renderBeerDetail(product, (data) => {
+                        // This callback is for Rating Save
+                        // The actual "Drink to Save" logic is internal to renderBeerDetail button
+                        // But if they just rate:
+                        if (product.fromAPI) {
+                            // We might need to handle save here if UI doesn't do it for rating specifically
+                            // Use similar logic to UI.js: convert, save, reload
+                            // Actually UI.js handles logic inside the generic save handler we added?
+                            // No, UI.js calls onSave(data).
+                            // So we need to do the saving here.
+
+                            const newBeer = { ...product };
+                            newBeer.id = 'CUSTOM_' + Date.now();
+                            delete newBeer.fromAPI;
+                            Storage.saveCustomBeer(newBeer);
+                            Storage.saveBeerRating(newBeer.id, data);
+                            window.dispatchEvent(new CustomEvent('beerdex-action'));
+                            renderCurrentView(); // Refresh list to show new beer
+                        } else {
+                            // Native beer
+                            Storage.saveBeerRating(product.id, data);
+                            Achievements.checkAchievements(state.beers);
+                        }
+                        UI.showToast("Note sauvegardée !");
+                    });
+                } else {
+                    UI.showToast("Produit inconnu sur OFF");
+                    // Fallback to manual add
+                    UI.renderAddBeerForm((newBeer) => {
+                        Storage.saveCustomBeer(newBeer);
+                        state.beers.unshift(newBeer);
+                        Achievements.checkAchievements(state.beers);
+                        renderCurrentView();
+                        UI.closeModal();
+                        UI.showToast("Bière ajoutée avec succès !");
+                    });
+                }
+            });
+        });
+    });
+
     // Search Toggle
     const searchToggle = document.getElementById('search-toggle');
     const searchBar = document.getElementById('search-bar');
     const searchInput = document.getElementById('search-input');
     const searchClose = document.getElementById('search-close');
+    const btnApi = document.getElementById('btn-search-api-bar');
+
+    if (btnApi) {
+        btnApi.addEventListener('click', async () => {
+            const query = searchInput.value.trim();
+            if (query.length < 2) {
+                UI.showToast("Tapez au moins 2 lettres...");
+                return;
+            }
+
+            // Visual Feedback
+            const originalContent = btnApi.innerHTML;
+            btnApi.disabled = true;
+            btnApi.innerHTML = '<span class="spinner" style="width:14px;height:14px;border-width:2px;"></span>';
+
+            try {
+                const { products } = await searchProducts(query);
+
+                // Render Results
+                const main = document.getElementById('main-content');
+
+                // Stop local pagination
+                if (state.observer) state.observer.disconnect();
+
+                UI.renderApiSearchResults(products, main);
+
+                if (products.length > 0) {
+                    UI.showToast(`${products.length} résultats trouvés !`);
+                } else {
+                    UI.showToast("Aucun résultat.");
+                }
+
+            } catch (e) {
+                console.error(e);
+                UI.showToast("Erreur recherche API");
+            } finally {
+                btnApi.disabled = false;
+                btnApi.innerHTML = originalContent;
+            }
+        });
+    }
 
     searchToggle.addEventListener('click', () => {
         searchBar.classList.toggle('hidden');

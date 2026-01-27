@@ -27,7 +27,7 @@ export function calculateRarity(beer) {
 
     // --- 1. Distribution / Brewery Prestige (Base Score) ---
     // Mass Market -> Negative
-    if (brewery.match(/heineken|leffe|kronenbourg|1664|jupiler|stella|maes|bavaria|carlsberg|budweiser/)) {
+    if (brewery.match(/heineken|leffe|kronenbourg|1664|jupiler|stella|maes|bavaria|carlsberg|budweiser|desperados|grimbergen|affligem|hoegaarden/)) {
         score -= 5;
         reasons.push("Brasserie Industrielle (-5)");
     }
@@ -46,12 +46,17 @@ export function calculateRarity(beer) {
         score += 8;
         reasons.push("Trappiste Exclusive (+8)");
     }
+    // Small / Craft (Not Mass Market) -> Bonus
+    else {
+        score += 2;
+        // reasons.push("Brasserie Indépendante (+2)"); 
+    }
 
     // --- 2. Type / Style ---
     if (type.match(/pils|lager|blonde|pale ale|blanche|weizen/)) {
         score += 0; // Neutral
     }
-    else if (type.match(/ipa|stout|porter|saison|tripel|double|quadrupel/)) {
+    else if (type.match(/ipa|stout|porter|saison|tripel|double|quadrupel|abbaye|trappiste/)) {
         score += 2;
         reasons.push("Style Craft Standard (+2)");
     }
@@ -79,6 +84,9 @@ export function calculateRarity(beer) {
     } else if (abv > 10) {
         score += 2;
         reasons.push("Alcool Fort > 10% (+2)");
+    } else if (abv > 6.5) {
+        score += 1;
+        reasons.push("Alcool Soutenu > 6.5% (+1)");
     }
 
     // --- 4. Keywords ---
