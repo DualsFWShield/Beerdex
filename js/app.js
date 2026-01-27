@@ -209,13 +209,21 @@ function setupEventListeners() {
                         }
 
                         if (bestMatch && bestScore > 0.8) {
+                            // Valid match found -> Stop scanner immediately
+                            // But we need to close the modal first or replace it?
+                            // renderBeerDetail opens a new modal (or replaces content).
+
                             UI.showToast(`Trouvé en local : ${bestMatch.title}`);
+
+                            // Close scanner first to stop camera
+                            UI.closeModal();
+
                             UI.renderBeerDetail(bestMatch, (data) => {
                                 Storage.saveBeerRating(bestMatch.id, data);
                                 Achievements.checkAchievements(state.beers);
                                 UI.showToast("Note mise à jour !");
                             });
-                            return;
+                            return true; // STOP SCANNER
                         }
 
                         // If no exact match, proceed with API product
