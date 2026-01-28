@@ -157,7 +157,12 @@ function setupEventListeners() {
 
     // Scan Toggle
     document.getElementById('scan-toggle')?.addEventListener('click', () => {
+        const scanCache = new Set();
+
         UI.renderScannerModal(async (barcode) => {
+            if (scanCache.has(barcode)) return false;
+            scanCache.add(barcode);
+
             UI.setScannerFeedback("🔍 Recherche...", false);
 
             try {
