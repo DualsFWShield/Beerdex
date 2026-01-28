@@ -40,6 +40,10 @@ export async function startScanner(elementId, onScanSuccess, onScanFailure) {
                 { facingMode: "environment" }, // Prefer environment facing
                 config,
                 (decodedText, decodedResult) => {
+                    // Prevent multiple triggers if already processing
+                    if (html5QrCode.isProcessing) return;
+                    html5QrCode.isProcessing = true;
+
                     // Pause on success to prevent multiple triggers while processing
                     html5QrCode.pause();
 
@@ -48,10 +52,12 @@ export async function startScanner(elementId, onScanSuccess, onScanFailure) {
                         if (shouldStop) {
                             stopScanner();
                         } else {
+                            html5QrCode.isProcessing = false;
                             html5QrCode.resume();
                         }
                     }).catch(err => {
                         console.error("Scanner callback error:", err);
+                        html5QrCode.isProcessing = false;
                         html5QrCode.resume(); // Resume on error?
                     });
                 },

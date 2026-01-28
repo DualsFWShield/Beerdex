@@ -657,6 +657,8 @@ h3 {
     border-radius: 20px 20px 0 0;
     padding: var(--spacing-lg);
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    /* Momentum scroll on iOS */
     position: relative;
     box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
 }
