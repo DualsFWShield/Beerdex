@@ -1783,16 +1783,16 @@ export function renderScannerModal(onScan) {
         });
     }, 100);
 
-    wrapper.querySelector('#btn-close-scanner').onclick = () => {
-        Scanner.stopScanner();
+    wrapper.querySelector('#btn-close-scanner').onclick = async () => {
+        await Scanner.stopScanner();
         closeModal();
     };
 
     // Hook into global modal close to stop scanner if user clicks outside
     const originalClose = modalContainer.onclick;
-    modalContainer.onclick = (e) => {
+    modalContainer.onclick = async (e) => {
         if (e.target === modalContainer) {
-            Scanner.stopScanner();
+            await Scanner.stopScanner();
             closeModal();
         }
     };

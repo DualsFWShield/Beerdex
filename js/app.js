@@ -157,10 +157,15 @@ function setupEventListeners() {
 
     // Scan Toggle
     document.getElementById('scan-toggle')?.addEventListener('click', () => {
+        console.log("[App] Scan toggle clicked. Resetting session cache.");
         const scanCache = new Set();
 
         UI.renderScannerModal(async (barcode) => {
-            if (scanCache.has(barcode)) return false;
+            console.log("[App] Scanner Callback for:", barcode);
+            if (scanCache.has(barcode)) {
+                console.log("[App] Barcode cached, ignoring.");
+                return false;
+            }
             scanCache.add(barcode);
 
             UI.setScannerFeedback("🔍 Recherche...", false);

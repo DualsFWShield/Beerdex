@@ -40,9 +40,14 @@ export async function startScanner(elementId, onScanSuccess, onScanFailure) {
                 { facingMode: "environment" }, // Prefer environment facing
                 config,
                 (decodedText, decodedResult) => {
+                    console.log("[Scanner] Code detected:", decodedText);
                     // Prevent multiple triggers if already processing
-                    if (html5QrCode.isProcessing) return;
+                    if (html5QrCode.isProcessing) {
+                        console.log("[Scanner] Ignored - already processing");
+                        return;
+                    }
                     html5QrCode.isProcessing = true;
+                    console.log("[Scanner] Processing...");
 
                     // Pause on success to prevent multiple triggers while processing
                     html5QrCode.pause();
@@ -50,8 +55,10 @@ export async function startScanner(elementId, onScanSuccess, onScanFailure) {
                     // Allow callback to determine if we should stop (valid) or resume (invalid)
                     Promise.resolve(onScanSuccess(decodedText, decodedResult)).then((shouldStop) => {
                         if (shouldStop) {
+                            console.log("[Scanner] Callback requested stop.");
                             stopScanner();
                         } else {
+                            console.log("[Scanner] Callback requested resume.");
                             html5QrCode.isProcessing = false;
                             html5QrCode.resume();
                         }
@@ -87,9 +94,11 @@ export async function stopScanner() {
                 await html5QrCode.stop();
             }
             html5QrCode.clear();
-            html5QrCode = null;
         } catch (err) {
             console.error("Failed to stop scanner", err);
+        } finally {
+            html5QrCode = null;
+            console.log("[Scanner] Instance cleared.");
         }
     }
 }
