@@ -556,8 +556,11 @@ window.addEventListener('beerdex-action', () => {
     Achievements.checkAchievements(state.beers);
 });
 
-// Register Service Worker for PWA
-if ('serviceWorker' in navigator) {
+// Register Service Worker for PWA (Only in Web Mode)
+// Check if running in Capacitor
+const isCapacitor = window.Capacitor !== undefined;
+
+if (!isCapacitor && 'serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
             .then(registration => {
@@ -584,6 +587,8 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.addEventListener('controllerchange', () => {
         window.location.reload();
     });
+} else if (isCapacitor) {
+    console.log("Capacitor detected: Service Worker disabled.");
 }
 
 function notifyUpdate(worker) {

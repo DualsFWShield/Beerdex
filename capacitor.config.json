@@ -1,0 +1,8 @@
+{
+  "appId": "be.dualsfwshield.beerdex",
+  "appName": "Beerdex",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  }
+}
