@@ -1,0 +1,7 @@
+How to Build via CLI
+To update the Android app after making changes to the code:
+
+# 1. Update the 'www' folder and sync with native project
+npm run cap:sync
+# 2. Open Android Studio to build/run
+npx cap open android

@@ -5,6 +5,7 @@ import * as Achievements from './achievements.js';
 import * as API from './api.js';
 import * as Share from './share.js';
 import { fetchProductByBarcode, searchProducts } from './off-api.js';
+import { Feedback } from './feedback.js';
 
 window.Share = Share;
 
@@ -367,6 +368,8 @@ function setupEventListeners() {
             Achievements.checkAchievements(state.beers);
             renderCurrentView();
             UI.closeModal();
+            Feedback.playSuccess();
+            Feedback.impactMedium();
             UI.showToast("Bière ajoutée avec succès !");
         });
     });
