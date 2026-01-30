@@ -1,10 +1,10 @@
-import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
+import { Haptics, ImpactStyle, NotificationType } from './vendor/haptics-shim.js';
 import * as Storage from './storage.js';
 
 /*
     Feedback Engine
     - Handles Audio (Native Web Audio API)
-    - Handles Haptics (Capacitor)
+    - Handles Haptics (Native/Shim)
 */
 
 class FeedbackEngine {

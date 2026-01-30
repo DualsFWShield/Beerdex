@@ -1,7 +1,7 @@
 /* js/vendor/haptics-shim.js */
 /* 
-   Shim for @capacitor/haptics to allow running in browser/webview 
-   without a bundler. Uses standard navigator.vibrate API.
+   Shim for Haptics to allow running in browser/webview 
+   without external dependencies. Uses standard navigator.vibrate API.
 */
 
 export const ImpactStyle = {

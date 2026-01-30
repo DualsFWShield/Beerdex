@@ -77,12 +77,7 @@ Ce projet est réalisé **sans aucun framework** (No React, No Vue, No Build Ste
 2.  Ouvrez `index.html` dans votre navigateur.
     *   *Note : Pour que le Service Worker (PWA) fonctionne, il est préférable d'utiliser un serveur local simple (ex: Live Server sur VSCode ou `python -m http.server`).*
 
-### Version Android (Capacitor)
-Ce projet peut être compilé en application Android native :
-1.  Installez les dépendances : `npm install`
-2.  Préparez les fichiers : `npm run cap:sync`
-3.  Ouvrez Android Studio : `npx cap open android`
-4.  Lancez le build/émulateur depuis Android Studio.
+
 
 ## 🤝 Contribuer
 
